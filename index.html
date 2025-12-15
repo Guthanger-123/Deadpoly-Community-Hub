@@ -1,369 +1,101 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>DeadPoly Community Hub</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<title>DeadPoly Community Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    :root{
-      --bg:#0b0b0f;
-      --panel:rgba(18,18,26,.86);
-      --border:rgba(255,255,255,.10);
-      --txt:#f4f4ff;
-      --muted:rgba(244,244,255,.72);
-      --btn:rgba(255,255,255,.08);
-      --btnH:rgba(255,255,255,.14);
-      --shadow:0 18px 50px rgba(0,0,0,.45);
-      --radius:16px;
-    }
-    html,body{height:100%;margin:0;background:var(--bg);color:var(--txt);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
-    /* Background can be changed here */
-    body{
-      background:
-        radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,.10), transparent 60%),
-        radial-gradient(900px 500px at 10% 20%, rgba(99,102,241,.18), transparent 55%),
-        radial-gradient(900px 500px at 90% 70%, rgba(16,185,129,.12), transparent 55%),
-        #07070c;
-    }
+<style>
+body {
+  margin:0;
+  height:100vh;
+  background:#0e0e0e;
+  color:white;
+  font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
 
-    .wrap{min-height:100%;display:grid;place-items:center;padding:24px;}
-    .card{
-      width:min(980px, 96vw);
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:20px;
-      position:relative;
-      overflow:hidden;
-    }
+.logo {
+  width:420px;
+  max-width:80%;
+  margin-bottom:40px;
+}
 
-    /* top logo */
-    .brand{
-      display:flex;align-items:center;justify-content:center;
-      padding:10px 0 6px;
-    }
-    .brand img{width:min(520px, 86vw);height:auto;filter:drop-shadow(0 10px 28px rgba(0,0,0,.55));}
+.menu {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:30px 60px;
+  align-items:center;
+}
 
-    /* big title text (matches your “DeadPoly text big” request) */
-    .title{
-      text-align:center;
-      font-weight:900;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      font-size:clamp(28px, 4.2vw, 54px);
-      margin:8px 0 0;
-    }
-    .subtitle{ text-align:center; color:var(--muted); margin:4px 0 16px; }
+.menu a {
+  text-decoration:none;
+  color:white;
+  font-size:22px;
+  border:2px solid #555;
+  padding:14px 26px;
+  border-radius:10px;
+  text-align:center;
+  transition:background .15s ease, transform .15s ease;
+}
 
-    /* layout like your sketch: left/middle/right blocks */
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap:14px;
-      margin-top:10px;
-    }
-    @media (max-width: 840px){
-      .grid{grid-template-columns:1fr; }
-    }
+.menu a:hover {
+  background:#222;
+  transform:none; /* NO bouncing */
+}
 
-    .section{
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:14px;
-      background:rgba(0,0,0,.18);
-      min-height:140px;
-    }
-    .section h3{margin:0 0 8px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
-    .btn{
-      display:block;
-      width:100%;
-      padding:12px 12px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:var(--btn);
-      color:var(--txt);
-      text-decoration:none;
-      cursor:pointer;
-      user-select:none;
-      transition:transform .12s ease, background .12s ease; /* no layout shift */
-      transform:translateY(0);
-    }
-    .btn:hover{ background:var(--btnH); transform:translateY(-2px); }
-    .btn:active{ transform:translateY(0); }
+.center {
+  grid-column:1 / -1;
+}
 
-    /* bottom corners */
-    .creditsBtn{
-      position:absolute;left:14px;bottom:14px;
-      font-size:12px;opacity:.85;
-      padding:8px 10px;border-radius:10px;
-      border:1px solid var(--border);background:rgba(0,0,0,.20);
-      cursor:pointer;
-      transition:transform .12s ease, background .12s ease;
-    }
-    .creditsBtn:hover{ background:rgba(255,255,255,.08); transform:translateY(-2px); }
+.footer {
+  position:fixed;
+  bottom:12px;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  padding:0 16px;
+}
 
-    .links{
-      position:absolute;right:14px;bottom:14px;
-      display:flex;gap:10px;align-items:center;
-    }
-    .iconLink{
-      width:38px;height:38px;border-radius:12px;
-      display:grid;place-items:center;
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.20);
-      text-decoration:none;
-      transition:transform .12s ease, background .12s ease;
-    }
-    .iconLink:hover{ background:rgba(255,255,255,.08); transform:translateY(-2px); }
-    .iconLink img{width:22px;height:22px;object-fit:contain;opacity:.95;}
+.socials img {
+  width:26px;
+  margin-left:10px;
+  opacity:.8;
+}
 
-    /* page switching */
-    .page{display:none;}
-    .page.active{display:block;}
+.socials img:hover { opacity:1; }
 
-    /* maps list */
-    .mapCard{
-      border:1px solid var(--border);
-      border-radius:14px;
-      overflow:hidden;
-      background:rgba(0,0,0,.16);
-    }
-    .mapCardHeader{
-      padding:12px 12px 10px;
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-    }
-    .mapCardHeader strong{font-size:14px;letter-spacing:.06em;text-transform:uppercase;}
-    .mapCardHeader .openBtn{
-      padding:8px 10px;border-radius:12px;border:1px solid var(--border);
-      background:rgba(255,255,255,.10);color:var(--txt);text-decoration:none;
-      transition:transform .12s ease, background .12s ease;
-      transform:translateY(0);
-    }
-    .mapCardHeader .openBtn:hover{background:rgba(255,255,255,.16);transform:translateY(-2px);}
-    .mapImgWrap{padding:10px;}
-    .mapImg{
-      width:100%;
-      height:auto;
-      display:block;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.08);
-    }
-
-    /* modal */
-    .modalBack{
-      position:fixed;inset:0;background:rgba(0,0,0,.6);
-      display:none;align-items:center;justify-content:center;
-      padding:18px;z-index:9999;
-    }
-    .modal{
-      width:min(520px, 94vw);
-      background:#12121a;border:1px solid rgba(255,255,255,.12);
-      border-radius:16px;box-shadow:var(--shadow);padding:14px 16px;
-    }
-    .modal h4{margin:0 0 8px;}
-    .modal p{margin:6px 0;color:var(--muted);}
-    .modal .row{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;}
-    .modal button{
-      padding:9px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.10);color:var(--txt);cursor:pointer;
-      transition:transform .12s ease, background .12s ease;
-    }
-    .modal button:hover{background:rgba(255,255,255,.16);transform:translateY(-2px);}
-  </style>
+.credits {
+  font-size:12px;
+  opacity:.6;
+}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="card">
 
-      <div class="brand">
-        <!-- Uses your repo file -->
-        <img alt="DeadPoly" src="deadpoly_box-hor-wht.png">
-      </div>
+<img src="assets/deadpoly_logo_big.png" class="logo" alt="DeadPoly">
 
-      <div class="title">DeadPoly</div>
-      <div class="subtitle">Community Hub • Maps • Tips n Tricks • Wiki</div>
+<div class="menu">
+  <a href="maps.html">Maps</a>
+  <a href="tips.html">Tips & Tricks</a>
 
-      <!-- HOME PAGE -->
-      <div id="page-home" class="page active">
-        <div class="grid">
-          <!-- Left middle: Maps -->
-          <div class="section">
-            <h3>Maps</h3>
-            <a class="btn" href="#maps">Open Maps</a>
-            <div style="height:8px"></div>
-            <!-- Example of “small buttons for future stuff” -->
-            <a class="btn" href="#maps" style="opacity:.9">Add future map button here</a>
-          </div>
+  <a href="wiki.html" class="center">Wiki</a>
+</div>
 
-          <!-- Center: Wiki -->
-          <div class="section">
-            <h3>Wiki</h3>
-            <a class="btn" href="#wiki">Open Wiki Template</a>
-            <div style="height:8px"></div>
-            <a class="btn" href="https://deadpoly.wiki/" target="_blank" rel="noopener">Official Wiki</a>
-          </div>
+<div class="footer">
+  <div class="credits">Credits</div>
 
-          <!-- Right middle: Tips n Tricks -->
-          <div class="section">
-            <h3>Tips n Tricks</h3>
-            <a class="btn" href="#tips">Open Tips n Tricks</a>
-            <div style="height:8px"></div>
-            <a class="btn" href="#tips" style="opacity:.9">Add future tips button here</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- MAPS PAGE -->
-      <div id="page-maps" class="page">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 10px;">
-          <div>
-            <div style="font-weight:900;letter-spacing:.06em;text-transform:uppercase;font-size:16px;">Maps</div>
-            <div style="color:var(--muted);font-size:12px;">Pick a map to open.</div>
-          </div>
-          <a class="btn" href="#home" style="max-width:180px;text-align:center;">Back to Menu</a>
-        </div>
-
-        <!-- Garden City with image right below (your request) -->
-        <div class="mapCard" style="margin-bottom:12px;">
-          <div class="mapCardHeader">
-            <strong>Garden City</strong>
-            <a class="openBtn" href="maps/garden-city.html">Open</a>
-          </div>
-          <div class="mapImgWrap">
-            <img class="mapImg" alt="Garden City map preview" src="GCMap_.png">
-          </div>
-        </div>
-
-        <div class="mapCard">
-          <div class="mapCardHeader">
-            <strong>Delta</strong>
-            <a class="openBtn" href="maps/delta.html">Open</a>
-          </div>
-          <div class="mapImgWrap">
-            <img class="mapImg" alt="Delta map preview" src="Screenshot 2025-09-08 194255.png">
-          </div>
-        </div>
-      </div>
-
-      <!-- TIPS PAGE -->
-      <div id="page-tips" class="page">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 10px;">
-          <div>
-            <div style="font-weight:900;letter-spacing:.06em;text-transform:uppercase;font-size:16px;">Tips n Tricks</div>
-            <div style="color:var(--muted);font-size:12px;">Add your tips here.</div>
-          </div>
-          <a class="btn" href="#home" style="max-width:180px;text-align:center;">Back to Menu</a>
-        </div>
-
-        <div class="section">
-          <h3>Template</h3>
-          <p style="color:var(--muted);margin:0;">
-            • Tip title<br>
-            • Short explanation<br>
-            • Link to wiki page (optional)<br>
-            • Screenshot (optional)
-          </p>
-        </div>
-      </div>
-
-      <!-- WIKI PAGE -->
-      <div id="page-wiki" class="page">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 10px;">
-          <div>
-            <div style="font-weight:900;letter-spacing:.06em;text-transform:uppercase;font-size:16px;">Wiki</div>
-            <div style="color:var(--muted);font-size:12px;">Template page you can expand.</div>
-          </div>
-          <a class="btn" href="#home" style="max-width:180px;text-align:center;">Back to Menu</a>
-        </div>
-
-        <div class="section">
-          <h3>Wiki Template</h3>
-          <p style="color:var(--muted);margin:0;">
-            <b>Page Title</b><br>
-            Summary: …<br><br>
-            <b>Sections</b><br>
-            • How to get there<br>
-            • Loot / rewards<br>
-            • Enemies / threats<br>
-            • Notes / variants<br><br>
-            <b>Links</b><br>
-            • Related pages<br>
-            • Official links
-          </p>
-        </div>
-      </div>
-
-      <!-- bottom-left credits -->
-      <button class="creditsBtn" id="openCredits">Credits</button>
-
-      <!-- bottom-right icons (replace href + icons as you add them) -->
-      <div class="links" aria-label="Official links">
-        <!-- tiny DeadPoly logo button you requested -->
-        <a class="iconLink" href="https://deadpoly.wiki/" target="_blank" rel="noopener" title="Official Wiki">
-          <img alt="DeadPoly" src="deadpoly_box_full-wht.png">
-        </a>
-
-        <!-- placeholders: add your own icon files later -->
-        <a class="iconLink" href="https://discord.com/" target="_blank" rel="noopener" title="Discord (set your real link)">
-          <span style="font-weight:900;color:var(--muted)">D</span>
-        </a>
-        <a class="iconLink" href="https://youtube.com/" target="_blank" rel="noopener" title="YouTube (set your real link)">
-          <span style="font-weight:900;color:var(--muted)">Y</span>
-        </a>
-        <a class="iconLink" href="https://store.steampowered.com/" target="_blank" rel="noopener" title="Steam (set your real link)">
-          <span style="font-weight:900;color:var(--muted)">S</span>
-        </a>
-        <a class="iconLink" href="https://store.epicgames.com/" target="_blank" rel="noopener" title="Epic (set your real link)">
-          <span style="font-weight:900;color:var(--muted)">E</span>
-        </a>
-      </div>
-
-    </div>
+  <div class="socials">
+    <a href="https://discord.gg/YOURDISCORD" target="_blank"><img src="assets/discord.png"></a>
+    <a href="https://youtube.com" target="_blank"><img src="assets/youtube.png"></a>
+    <a href="https://store.steampowered.com" target="_blank"><img src="assets/steam.png"></a>
+    <a href="https://epicgames.com" target="_blank"><img src="assets/epic.png"></a>
   </div>
+</div>
 
-  <!-- credits modal -->
-  <div class="modalBack" id="creditsModal">
-    <div class="modal" role="dialog" aria-modal="true">
-      <h4>Credits</h4>
-      <p>Created by <b>Guthanger123</b>.</p>
-      <p>Contributors: <b>Deadpoly Community</b>.</p>
-      <div class="row">
-        <button id="closeCredits">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // simple hash router
-    const pages = {
-      home: document.getElementById('page-home'),
-      maps: document.getElementById('page-maps'),
-      tips: document.getElementById('page-tips'),
-      wiki: document.getElementById('page-wiki'),
-    };
-
-    function showPage(name){
-      Object.values(pages).forEach(p => p.classList.remove('active'));
-      (pages[name] || pages.home).classList.add('active');
-    }
-
-    function onHash(){
-      const h = (location.hash || '#home').replace('#','').trim();
-      showPage(h);
-    }
-    window.addEventListener('hashchange', onHash);
-    onHash();
-
-    // credits modal
-    const creditsModal = document.getElementById('creditsModal');
-    document.getElementById('openCredits').addEventListener('click', ()=> creditsModal.style.display='flex');
-    document.getElementById('closeCredits').addEventListener('click', ()=> creditsModal.style.display='none');
-    creditsModal.addEventListener('click', (e)=>{ if(e.target===creditsModal) creditsModal.style.display='none'; });
-
-    // Background change: edit in CSS at body{ background: ... }
-  </script>
 </body>
 </html>
