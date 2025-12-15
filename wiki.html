@@ -5,21 +5,22 @@
 <title>DeadPoly Wiki – 3D Preview</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- ================= THREE.JS CORE ================= -->
+<!-- THREE CORE -->
 <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://unpkg.com/three@0.158.0/examples/js/loaders/FBXLoader.js"></script>
 
 <style>
-body {
+html, body {
   margin:0;
-  background:#0e0f13;
-  color:#eaeaea;
+  height:100%;
+  background:#0b0d12;
+  color:#fff;
   font-family:system-ui;
 }
 
 .topbar {
-  height:54px;
+  height:50px;
   display:flex;
   align-items:center;
   padding:0 16px;
@@ -32,198 +33,145 @@ body {
   margin-right:16px;
 }
 
-.layout {
+#container {
   display:grid;
-  grid-template-columns: 1fr 360px;
-  height: calc(100vh - 54px);
+  grid-template-columns: 1fr 320px;
+  height: calc(100% - 50px);
 }
 
 #viewer {
   position:relative;
-}
-
-canvas {
-  display:block;
+  width:100%;
+  height:100%;
 }
 
 .sidebar {
   border-left:1px solid #222;
-  padding:16px;
-  overflow:auto;
+  padding:12px;
 }
-
-h2 { margin-top:0; }
 
 button {
-  background:#1a1d24;
-  color:#fff;
+  width:100%;
+  padding:10px;
+  margin-bottom:8px;
+  background:#1b1f2a;
   border:1px solid #333;
-  padding:8px 12px;
+  color:#fff;
   border-radius:6px;
   cursor:pointer;
-  margin:4px 0;
 }
 
-button:hover { background:#232733; }
-
-.part-group {
-  margin-bottom:16px;
-}
-
-.part-group h4 {
-  margin:8px 0;
-  color:#9aa3ff;
-}
-
-.small {
-  color:#888;
-  font-size:12px;
-}
+button:hover { background:#242a3a; }
 </style>
 </head>
 
 <body>
 
-<!-- ================= TOP BAR ================= -->
 <div class="topbar">
   <a href="index.html">← Menu</a>
-  <strong>Wiki – 3D Preview & Character Builder</strong>
+  <strong>Wiki – 3D Viewer</strong>
 </div>
 
-<!-- ================= PAGE LAYOUT ================= -->
-<div class="layout">
+<div id="container">
+  <div id="viewer"></div>
 
-<!-- ================= 3D VIEWPORT ================= -->
-<div id="viewer"></div>
+  <div class="sidebar">
+    <button onclick="loadBase()">Load Base Model</button>
+    <button onclick="clearScene()">Clear Scene</button>
 
-<!-- ================= SIDEBAR ================= -->
-<div class="sidebar">
-  <h2>Character Parts</h2>
-
-  <button onclick="loadBase()">Load Base</button>
-  <button onclick="clearParts()">Clear Parts</button>
-
-  <div class="part-group">
-    <h4>Head</h4>
-    <button onclick="loadPart('head','SK_SCFI_CIVL_09_22AHED_HU01.fbx')">Sci-Fi Head</button>
-    <button onclick="loadPart('head','SK_FANT_KNGT_17_22AHED_HU01.fbx')">Knight Head</button>
+    <p style="font-size:12px;color:#aaa;">
+      If you see a grid + light, Three.js is working.<br>
+      If the FBX loads, your model path is correct.
+    </p>
   </div>
-
-  <div class="part-group">
-    <h4>Torso</h4>
-    <button onclick="loadPart('torso','SK_FANT_KNGT_17_10TORS_HU01.fbx')">Knight Torso</button>
-  </div>
-
-  <div class="part-group">
-    <h4>Arms</h4>
-    <button onclick="loadPart('arms','SK_FANT_KNGT_17_11AUPL_HU01.fbx')">Upper L</button>
-    <button onclick="loadPart('arms','SK_FANT_KNGT_17_12AUPR_HU01.fbx')">Upper R</button>
-  </div>
-
-  <p class="small">
-    FBX files load from <code>assets/models/</code><br>
-    Parts must share the same skeleton/origin as the base.
-  </p>
 </div>
 
-</div>
-
-<!-- ================= SCRIPT ================= -->
 <script>
-/* ===================================================
-   SCENE SETUP
-=================================================== */
+/* ================= SCENE ================= */
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0e0f13);
+scene.background = new THREE.Color(0x0b0d12);
 
+/* ================= CAMERA ================= */
 const camera = new THREE.PerspectiveCamera(
   60,
-  window.innerWidth / (window.innerHeight - 54),
+  1,
   0.1,
   5000
 );
-camera.position.set(0, 140, 260);
+camera.position.set(0, 150, 300);
 
+/* ================= RENDERER ================= */
 const renderer = new THREE.WebGLRenderer({ antialias:true });
-renderer.setSize(window.innerWidth, window.innerHeight - 54);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(100, 100); // temp
 document.getElementById('viewer').appendChild(renderer.domElement);
 
+/* ================= CONTROLS ================= */
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.target.set(0, 110, 0);
+controls.target.set(0, 120, 0);
 
-/* ===================================================
-   LIGHTING
-=================================================== */
-scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+/* ================= LIGHTS ================= */
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
 
 const dir = new THREE.DirectionalLight(0xffffff, 1);
-dir.position.set(200,300,200);
+dir.position.set(200, 300, 200);
 scene.add(dir);
 
-/* ===================================================
-   FBX LOADER
-=================================================== */
+/* ================= GRID (DEBUG – SHOULD ALWAYS SHOW) ================= */
+const grid = new THREE.GridHelper(500, 20, 0x444444, 0x222222);
+scene.add(grid);
+
+/* ================= FBX ================= */
 const loader = new THREE.FBXLoader();
-
 let baseModel = null;
-const equipped = {};
 
-/* ===================================================
-   LOAD BASE
-=================================================== */
 function loadBase() {
-  clearParts();
-  loader.load('assets/models/SK_BaseModel.fbx', fbx => {
-    fbx.scale.set(0.1,0.1,0.1);
-    baseModel = fbx;
-    scene.add(fbx);
-  });
+  loader.load(
+    'assets/models/SK_BaseModel.fbx',
+    fbx => {
+      if (baseModel) scene.remove(baseModel);
+
+      fbx.scale.setScalar(0.1);
+      fbx.position.set(0, 0, 0);
+      baseModel = fbx;
+      scene.add(fbx);
+
+      console.log('FBX loaded');
+    },
+    xhr => {
+      console.log(`Loading FBX: ${(xhr.loaded / xhr.total * 100).toFixed(0)}%`);
+    },
+    err => {
+      console.error('FBX ERROR', err);
+      alert('FBX failed to load. Check path & filename.');
+    }
+  );
 }
 
-/* ===================================================
-   LOAD PART
-=================================================== */
-function loadPart(slot, file) {
-  if (equipped[slot]) {
-    scene.remove(equipped[slot]);
-  }
-
-  loader.load('assets/models/' + file, fbx => {
-    fbx.scale.set(0.1,0.1,0.1);
-    equipped[slot] = fbx;
-    scene.add(fbx);
-  });
-}
-
-/* ===================================================
-   CLEAR
-=================================================== */
-function clearParts() {
+function clearScene() {
   if (baseModel) scene.remove(baseModel);
-  for (let k in equipped) scene.remove(equipped[k]);
   baseModel = null;
-  for (let k in equipped) delete equipped[k];
 }
 
-/* ===================================================
-   RENDER LOOP
-=================================================== */
+/* ================= RESIZE FIX ================= */
+function resize() {
+  const viewer = document.getElementById('viewer');
+  const w = viewer.clientWidth;
+  const h = viewer.clientHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+}
+window.addEventListener('resize', resize);
+resize();
+
+/* ================= LOOP ================= */
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
 }
 animate();
-
-/* ===================================================
-   RESIZE
-=================================================== */
-window.addEventListener('resize', () => {
-  const h = window.innerHeight - 54;
-  camera.aspect = window.innerWidth / h;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, h);
-});
 </script>
 
 </body>
