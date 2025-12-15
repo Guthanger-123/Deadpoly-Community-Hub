@@ -7,42 +7,57 @@
 
   <style>
     :root{
-      --bg:#0b0b0b;
-      --panel:rgba(18,18,18,.72);
-      --panel2:rgba(18,18,18,.55);
-      --border:rgba(255,255,255,.18);
-      --border2:rgba(255,255,255,.12);
+      /* EASY BACKGROUND CONTROL */
+      --bg-solid:#0b0b0b;
+      --bg-image: none; /* e.g. url('bg.jpg') */
+      --bg-position:center;
+      --bg-size:cover;
+
+      --panel: rgba(18,18,18,.78);
+      --panel2: rgba(18,18,18,.58);
+      --border: rgba(255,255,255,.18);
+      --border2: rgba(255,255,255,.12);
+
       --text:#fff;
-      --muted:rgba(255,255,255,.78);
-      --shadow:0 16px 34px rgba(0,0,0,.42);
+      --muted: rgba(255,255,255,.78);
+      --shadow: 0 16px 34px rgba(0,0,0,.42);
     }
 
-    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
-    *{box-sizing:border-box}
-
-    /* --- app pages --- */
-    .page{
-      display:none;
-      min-height:100vh;
-      padding:22px;
+    html, body{
+      height:100%;
+      margin:0;
+      color:var(--text);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,.85)),
+        var(--bg-image),
+        var(--bg-solid);
+      background-position: var(--bg-position);
+      background-size: var(--bg-size);
+      background-repeat: no-repeat;
+      overflow-x:hidden;
     }
-    .page.active{display:block;}
+    *{ box-sizing:border-box; }
 
-    /* --- MENU PAGE LAYOUT (matches your sketch) --- */
+    /* PAGES */
+    .page{ display:none; min-height:100vh; padding:22px; }
+    .page.active{ display:block; }
+
+    /* MENU (HOME) PAGE */
     #home{
       position:fixed;
       inset:0;
       padding:0;
-      background:var(--bg);
       overflow:hidden;
     }
-    #home.active{display:block;}
 
-    /* center stage container so positions don’t drift */
     #home .stage{
-      position:absolute; inset:0;
-      display:flex; align-items:center; justify-content:center;
-      padding:20px;
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:22px;
     }
     #home .layout{
       position:relative;
@@ -50,37 +65,24 @@
       height:min(780px, 90vh);
     }
 
-    /* BIG DEADPOLY text (simple, bold, huge) */
-    #home .deadpolyText{
+    /* Top logo */
+    .logo-wrap{
       position:absolute;
-      top:90px;
+      top:64px;
       left:50%;
       transform:translateX(-50%);
-      font-weight:1000;
-      font-size:clamp(48px, 9vw, 140px);
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      color:#fff;
-      text-shadow:0 10px 30px rgba(0,0,0,.6);
+      z-index:5;
       user-select:none;
-      white-space:nowrap;
+      pointer-events:none;
     }
-    #home .subText{
-      position:absolute;
-      top:calc(90px + clamp(48px, 9vw, 140px));
-      left:50%;
-      transform:translateX(-50%);
-      margin-top:10px;
-      font-weight:800;
-      font-size:clamp(14px, 2.2vw, 22px);
-      letter-spacing:.08em;
-      opacity:.8;
-      text-transform:uppercase;
-      user-select:none;
-      white-space:nowrap;
+    .logo-main{
+      width:min(720px, 86vw);
+      height:auto;
+      opacity:.98;
+      filter: drop-shadow(0 10px 26px rgba(0,0,0,.55));
     }
 
-    /* Primary buttons */
+    /* Menu buttons (NO transform hover to avoid “bounce”) */
     .menuBtn{
       position:absolute;
       border:1px solid var(--border);
@@ -92,34 +94,32 @@
       font-size:22px;
       cursor:pointer;
       box-shadow:var(--shadow);
-      transition:transform .08s ease, background .15s ease, border-color .15s ease;
+      transition: background .15s ease, border-color .15s ease, filter .15s ease;
     }
-.menuBtn:hover{
-  background:rgba(28,28,28,.86);
-  border-color:rgba(255,255,255,.28);
-  filter: brightness(1.06);
-}
-.menuBtn:active{
-  filter: brightness(.98);
-}
+    .menuBtn:hover{
+      background: rgba(28,28,28,.88);
+      border-color: rgba(255,255,255,.30);
+      filter: brightness(1.06);
+    }
+    .menuBtn:active{
+      filter: brightness(.98);
+    }
 
-
-
-    /* Button positions like your drawing */
+    /* Positions like your sketch */
     .btnMaps{
       top:52%;
       left:10%;
-      transform:translateY(-50%);
+      transform: translateY(-50%);
     }
     .btnWiki{
       top:44%;
       left:50%;
-      transform:translate(-50%,-50%);
+      transform: translate(-50%,-50%);
     }
     .btnTips{
       top:52%;
       right:10%;
-      transform:translateY(-50%);
+      transform: translateY(-50%);
     }
 
     /* Bottom-left Credits */
@@ -135,44 +135,56 @@
       font-weight:900;
       font-size:12px;
       cursor:pointer;
+      transition: background .15s ease, filter .15s ease;
     }
-    .creditsBtn:hover{background:rgba(26,26,26,.70);}
+    .creditsBtn:hover{
+      background: rgba(26,26,26,.72);
+      filter: brightness(1.06);
+    }
 
-    /* Bottom-right tiny icon buttons (placeholders) */
-    .iconRow{
+    /* Bottom-right official icon links */
+    .official-links{
       position:absolute;
       right:18px;
       bottom:18px;
       display:flex;
       gap:10px;
       align-items:center;
+      z-index:10;
     }
-    .iconBtn{
-      width:36px;height:36px;
+    .official-links a{
+      width:36px; height:36px;
       border-radius:10px;
       border:1px solid var(--border2);
       background:var(--panel2);
-      cursor:pointer;
       display:grid;
       place-items:center;
-      color:#fff;
-      font-weight:900;
-      font-size:12px;
       text-decoration:none;
+      transition: background .15s ease, border-color .15s ease, filter .15s ease;
     }
-    .iconBtn:hover{background:rgba(26,26,26,.70);}
+    .official-links a:hover{
+      background: rgba(26,26,26,.72);
+      border-color: rgba(255,255,255,.22);
+      filter: brightness(1.06);
+    }
+    .official-links img{
+      width:20px; height:20px;
+      object-fit:contain;
+      display:block;
+      opacity:.95;
+    }
 
-    /* --- Inner pages header --- */
+    /* INNER PAGES */
     .topbar{
       display:flex;
-      gap:10px;
+      gap:12px;
       align-items:center;
       justify-content:space-between;
       padding:12px 14px;
       border:1px solid rgba(255,255,255,.10);
       border-radius:14px;
-      background:rgba(16,16,16,.70);
-      box-shadow:0 10px 22px rgba(0,0,0,.35);
+      background: rgba(16,16,16,.70);
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
       margin-bottom:14px;
     }
     .brand{
@@ -190,79 +202,95 @@
     }
     .nav button{
       border:1px solid rgba(255,255,255,.14);
-      background:rgba(18,18,18,.65);
+      background: rgba(18,18,18,.65);
       color:#fff;
       border-radius:10px;
       padding:8px 10px;
       font-weight:900;
       cursor:pointer;
+      transition: background .15s ease, filter .15s ease;
     }
-    .nav button:hover{background:rgba(26,26,26,.8);}
+    .nav button:hover{
+      background: rgba(26,26,26,.80);
+      filter: brightness(1.05);
+    }
 
     .card{
       border:1px solid rgba(255,255,255,.10);
-      background:rgba(18,18,18,.55);
+      background: rgba(18,18,18,.55);
       border-radius:14px;
       padding:14px;
-      box-shadow:0 10px 22px rgba(0,0,0,.30);
+      box-shadow: 0 10px 22px rgba(0,0,0,.30);
     }
-    .muted{color:var(--muted)}
+    .muted{ color: var(--muted); }
 
-    /* mobile: stack menu buttons */
+    .bigLinkBtn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(18,18,18,.65);
+      color:#fff;
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:900;
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      transition: background .15s ease, filter .15s ease;
+    }
+    .bigLinkBtn:hover{ background: rgba(26,26,26,.82); filter: brightness(1.05); }
+
+    /* Mobile stacking for main menu */
     @media (max-width: 860px){
-      .btnMaps{left:50%; top:54%; transform:translate(-50%,-50%);}
-      .btnWiki{left:50%; top:44%;}
-      .btnTips{right:auto; left:50%; top:64%; transform:translate(-50%,-50%);}
+      .logo-wrap{ top:48px; }
+      .btnMaps{ left:50%; top:56%; transform: translate(-50%,-50%); }
+      .btnWiki{ left:50%; top:46%; transform: translate(-50%,-50%); }
+      .btnTips{ left:50%; right:auto; top:66%; transform: translate(-50%,-50%); }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Main Header Image -->
-  <div class="logo-wrap">
-  <img src="https://raw.githubusercontent.com/Guthanger-123/Deadpoly-Community-Hub/main/deadpoly_box-hor-wht.png"
-       alt="DeadPoly"
-       class="logo-main">
-</div>
-
-  .logo-wrap{
-  position:absolute;
-  top:90px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:5;
-}
-
-.logo-main{
-  width:420px;
-  max-width:80vw;
-  height:auto;
-  opacity:.95;
-}
-
-  
   <!-- HOME / MENU -->
   <section id="home" class="page active">
     <div class="stage">
       <div class="layout">
 
-        <div class="deadpolyText">DEADPOLY</div>
-        <div class="subText">Community Hub</div>
+        <!-- BIG LOGO (your provided image) -->
+        <div class="logo-wrap">
+          <img
+            class="logo-main"
+            src="https://raw.githubusercontent.com/Guthanger-123/Deadpoly-Community-Hub/main/deadpoly_box-hor-wht.png"
+            alt="DeadPoly"
+          />
+        </div>
 
-        <button class="menuBtn btnMaps" onclick="openPage('maps')">Maps</button>
-        <button class="menuBtn btnWiki" onclick="openPage('wiki')">Wiki</button>
-        <button class="menuBtn btnTips" onclick="openPage('tips')">Tips n Tricks</button>
+        <button class="menuBtn btnMaps" type="button" onclick="openPage('maps')">Maps</button>
+        <button class="menuBtn btnWiki" type="button" onclick="openPage('wiki')">Wiki</button>
+        <button class="menuBtn btnTips" type="button" onclick="openPage('tips')">Tips n Tricks</button>
 
-        <button class="creditsBtn" onclick="openPage('credits')">Credits</button>
+        <button class="creditsBtn" type="button" onclick="openPage('credits')">Credits</button>
 
-        <!-- Bottom-right placeholders (swap links later) -->
-        <div class="iconRow" aria-label="Official links">
-          <a class="iconBtn" href="https://discord.com" target="_blank" rel="noopener" title="Discord">D</a>
-          <a class="iconBtn" href="https://youtube.com" target="_blank" rel="noopener" title="YouTube">Y</a>
-          <a class="iconBtn" href="https://store.steampowered.com" target="_blank" rel="noopener" title="Steam">S</a>
-          <a class="iconBtn" href="https://www.epicgames.com" target="_blank" rel="noopener" title="Epic">E</a>
-          <a class="iconBtn" href="https://deadpoly.wiki" target="_blank" rel="noopener" title="Official Site">O</a>
+        <!-- Bottom-right icon-only links -->
+        <div class="official-links" aria-label="Official links">
+          <!-- Replace hrefs with your real links -->
+          <a href="https://discord.gg/YOUR_DISCORD" target="_blank" rel="noopener" title="Discord">
+            <img alt="Discord" src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png">
+          </a>
+          <a href="https://www.youtube.com" target="_blank" rel="noopener" title="YouTube">
+            <img alt="YouTube" src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">
+          </a>
+          <a href="https://store.steampowered.com" target="_blank" rel="noopener" title="Steam">
+            <img alt="Steam" src="https://cdn-icons-png.flaticon.com/512/3670/3670151.png">
+          </a>
+          <a href="https://www.epicgames.com" target="_blank" rel="noopener" title="Epic Games">
+            <img alt="Epic" src="https://cdn-icons-png.flaticon.com/512/5968/5968863.png">
+          </a>
+          <!-- “Official Site” using your tiny DeadPoly icon -->
+          <a href="https://deadpoly.wiki" target="_blank" rel="noopener" title="Official Site">
+            <img alt="Official" src="https://raw.githubusercontent.com/Guthanger-123/Deadpoly-Community-Hub/main/deadpoly_box_full-wht.png">
+          </a>
         </div>
 
       </div>
@@ -274,26 +302,28 @@
     <div class="topbar">
       <div class="brand">DeadPoly Hub</div>
       <div class="nav">
-        <button onclick="openPage('home')">Home</button>
-        <button onclick="openPage('maps')">Maps</button>
-        <button onclick="openPage('tips')">Tips</button>
-        <button onclick="openPage('wiki')">Wiki</button>
+        <button type="button" onclick="openPage('home')">Home</button>
+        <button type="button" onclick="openPage('maps')">Maps</button>
+        <button type="button" onclick="openPage('tips')">Tips</button>
+        <button type="button" onclick="openPage('wiki')">Wiki</button>
       </div>
     </div>
 
     <div class="card">
       <h2 style="margin:0 0 8px;">Maps</h2>
-      <p class="muted" style="margin:0 0 12px;">Choose a map:</p>
+      <p class="muted" style="margin:0 0 12px;">Pick a map (opens in a new tab):</p>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <a class="iconBtn" style="width:auto;padding:10px 12px;border-radius:12px;"
-           href="https://guthanger-123.github.io/DeadPoly-Map-Delta/" target="_blank" rel="noopener">
-          Open Delta Map
+        <a class="bigLinkBtn" href="https://guthanger-123.github.io/DeadPoly-Map-Delta/" target="_blank" rel="noopener">
+          Delta Map →
         </a>
-        <a class="iconBtn" style="width:auto;padding:10px 12px;border-radius:12px;"
-           href="https://guthanger-123.github.io/Deadpoly-Map-Garden-City-/" target="_blank" rel="noopener">
-          Open Garden City Map
+        <a class="bigLinkBtn" href="https://guthanger-123.github.io/Deadpoly-Map-Garden-City-/" target="_blank" rel="noopener">
+          Garden City Map →
         </a>
+      </div>
+
+      <div style="margin-top:14px;">
+        <button class="bigLinkBtn" type="button" onclick="openPage('home')">← Back to Menu</button>
       </div>
     </div>
   </section>
@@ -303,16 +333,29 @@
     <div class="topbar">
       <div class="brand">DeadPoly Hub</div>
       <div class="nav">
-        <button onclick="openPage('home')">Home</button>
-        <button onclick="openPage('maps')">Maps</button>
-        <button onclick="openPage('tips')">Tips</button>
-        <button onclick="openPage('wiki')">Wiki</button>
+        <button type="button" onclick="openPage('home')">Home</button>
+        <button type="button" onclick="openPage('maps')">Maps</button>
+        <button type="button" onclick="openPage('tips')">Tips</button>
+        <button type="button" onclick="openPage('wiki')">Wiki</button>
       </div>
     </div>
 
     <div class="card">
       <h2 style="margin:0 0 8px;">Tips n Tricks</h2>
-      <p class="muted" style="margin:0;">Drop your tips here. (This is your template page.)</p>
+      <p class="muted" style="margin:0 0 10px;">Template page. Add your tips here as bullet lists, cards, or categories.</p>
+
+      <div class="card">
+        <h3 style="margin:0 0 6px;">Example</h3>
+        <ul style="margin:0; padding-left:18px;">
+          <li>Tip #1: ...</li>
+          <li>Tip #2: ...</li>
+          <li>Tip #3: ...</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:14px;">
+        <button class="bigLinkBtn" type="button" onclick="openPage('home')">← Back to Menu</button>
+      </div>
     </div>
   </section>
 
@@ -321,27 +364,31 @@
     <div class="topbar">
       <div class="brand">DeadPoly Hub</div>
       <div class="nav">
-        <button onclick="openPage('home')">Home</button>
-        <button onclick="openPage('maps')">Maps</button>
-        <button onclick="openPage('tips')">Tips</button>
-        <button onclick="openPage('wiki')">Wiki</button>
+        <button type="button" onclick="openPage('home')">Home</button>
+        <button type="button" onclick="openPage('maps')">Maps</button>
+        <button type="button" onclick="openPage('tips')">Tips</button>
+        <button type="button" onclick="openPage('wiki')">Wiki</button>
       </div>
     </div>
 
     <div class="card">
       <h2 style="margin:0 0 8px;">Wiki</h2>
       <p class="muted" style="margin:0 0 10px;">
-        Template page. Add sections like “Weapons”, “Armor”, “Quests”, “Locations”, etc.
+        Template page. Add categories like Weapons, Armor, Quests, Locations, Traders, etc.
       </p>
 
       <div class="card" style="margin-top:10px;">
-        <h3 style="margin:0 0 6px;">Example Wiki Entry</h3>
+        <h3 style="margin:0 0 6px;">Template Entry</h3>
         <p class="muted" style="margin:0;">
-          <b>Title:</b> Item/Location Name<br>
-          <b>Info:</b> Short description…<br>
-          <b>How to get:</b> Steps…<br>
-          <b>Notes:</b> Extra details…
+          <b>Title:</b> ...<br>
+          <b>What it is:</b> ...<br>
+          <b>How to get:</b> ...<br>
+          <b>Notes:</b> ...
         </p>
+      </div>
+
+      <div style="margin-top:14px;">
+        <button class="bigLinkBtn" type="button" onclick="openPage('home')">← Back to Menu</button>
       </div>
     </div>
   </section>
@@ -351,10 +398,10 @@
     <div class="topbar">
       <div class="brand">DeadPoly Hub</div>
       <div class="nav">
-        <button onclick="openPage('home')">Home</button>
-        <button onclick="openPage('maps')">Maps</button>
-        <button onclick="openPage('tips')">Tips</button>
-        <button onclick="openPage('wiki')">Wiki</button>
+        <button type="button" onclick="openPage('home')">Home</button>
+        <button type="button" onclick="openPage('maps')">Maps</button>
+        <button type="button" onclick="openPage('tips')">Tips</button>
+        <button type="button" onclick="openPage('wiki')">Wiki</button>
       </div>
     </div>
 
@@ -362,47 +409,27 @@
       <h2 style="margin:0 0 8px;">Credits</h2>
       <p style="margin:0;"><b>Created by:</b> Guthanger123</p>
       <p style="margin:6px 0 0;"><b>Contributors:</b> Deadpoly Community</p>
+
+      <div style="margin-top:14px;">
+        <button class="bigLinkBtn" type="button" onclick="openPage('home')">← Back to Menu</button>
+      </div>
     </div>
   </section>
 
   <script>
     function openPage(id){
-      // hide all pages
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      // show selected
       const el = document.getElementById(id);
       if (el) el.classList.add('active');
-      // scroll to top
-      window.scrollTo({top:0, behavior:'instant'});
+      window.scrollTo(0,0);
     }
+
+    /*
+      HOW TO ADD A NEW BUTTON ON THE MENU:
+      1) Add a new <button class="menuBtn ..."> on #home
+      2) Create a new <section id="yourNewPage" class="page"> ... </section>
+      3) Call openPage('yourNewPage')
+    */
   </script>
-
-  <div class="official-links">
-  <a href="https://discord.gg/YOUR_DISCORD" target="_blank" title="Discord">
-    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png">
-  </a>
-
-  <a href="https://www.youtube.com/@DeadPoly" target="_blank" title="YouTube">
-    <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">
-  </a>
-
-  <a href="https://store.steampowered.com/app/DeadPoly" target="_blank" title="Steam">
-    <img src="https://cdn-icons-png.flaticon.com/512/3670/3670151.png">
-  </a>
-
-  <a href="https://store.epicgames.com" target="_blank" title="Epic Games">
-    <img src="https://cdn-icons-png.flaticon.com/512/5968/5968863.png">
-  </a>
-
-  <a href="https://deadpoly.wiki" target="_blank" title="Official Site">
-    <img src="https://raw.githubusercontent.com/Guthanger-123/Deadpoly-Community-Hub/main/deadpoly_box_full-wht.png">
-  </a>
-</div>
-
-
-
 </body>
 </html>
-
-
-
