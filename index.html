@@ -1,582 +1,354 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>DeadPoly Community Hub</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeadPoly Community Hub</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root{
+      --bg:#0b0b0b;
+      --panel:rgba(18,18,18,.72);
+      --panel2:rgba(18,18,18,.55);
+      --border:rgba(255,255,255,.18);
+      --border2:rgba(255,255,255,.12);
+      --text:#fff;
+      --muted:rgba(255,255,255,.78);
+      --shadow:0 16px 34px rgba(0,0,0,.42);
+    }
 
-<style>
-:root {
-  --bg:#0e0e0e;
-  --panel:#1a1a1a;
-  --border:#2b2b2b;
-  --text:#ffffff;
-  --muted:#bbbbbb;
-  --accent:#5da9ff;
-  --radius:12px;
-  --font:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-}
-html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:var(--font)}
-button{cursor:pointer}
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
+    *{box-sizing:border-box}
 
-header{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:12px 16px;
-  border-bottom:1px solid var(--border);
-  background:#111;
-}
-header h1{font-size:16px;margin:0}
+    /* --- app pages --- */
+    .page{
+      display:none;
+      min-height:100vh;
+      padding:22px;
+    }
+    .page.active{display:block;}
 
-nav button{
-  background:#1c1c1c;
-  border:1px solid var(--border);
-  color:var(--text);
-  padding:8px 12px;
-  border-radius:10px;
-}
-nav button.active{border-color:var(--accent)}
+    /* --- MENU PAGE LAYOUT (matches your sketch) --- */
+    #home{
+      position:fixed;
+      inset:0;
+      padding:0;
+      background:var(--bg);
+      overflow:hidden;
+    }
+    #home.active{display:block;}
 
-main{height:calc(100vh - 58px)}
-section{display:none;height:100%}
-section.active{display:block}
+    /* center stage container so positions don’t drift */
+    #home .stage{
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      padding:20px;
+    }
+    #home .layout{
+      position:relative;
+      width:min(1200px, 92vw);
+      height:min(780px, 90vh);
+    }
 
-/* Home */
-.home{
-  max-width:900px;
-  margin:0 auto;
-  padding:24px;
-}
-.card-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:16px;
-}
-.card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:16px;
-}
-.card h3{margin-top:0}
+    /* BIG DEADPOLY text (simple, bold, huge) */
+    #home .deadpolyText{
+      position:absolute;
+      top:90px;
+      left:50%;
+      transform:translateX(-50%);
+      font-weight:1000;
+      font-size:clamp(48px, 9vw, 140px);
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:#fff;
+      text-shadow:0 10px 30px rgba(0,0,0,.6);
+      user-select:none;
+      white-space:nowrap;
+    }
+    #home .subText{
+      position:absolute;
+      top:calc(90px + clamp(48px, 9vw, 140px));
+      left:50%;
+      transform:translateX(-50%);
+      margin-top:10px;
+      font-weight:800;
+      font-size:clamp(14px, 2.2vw, 22px);
+      letter-spacing:.08em;
+      opacity:.8;
+      text-transform:uppercase;
+      user-select:none;
+      white-space:nowrap;
+    }
 
-/* Maps */
-.map-shell{height:100%;display:flex}
-.map-nav{
-  width:220px;
-  background:#111;
-  border-right:1px solid var(--border);
-  padding:10px;
-}
-.map-nav button{
-  width:100%;
-  margin-bottom:8px;
-  background:#1a1a1a;
-  border:1px solid var(--border);
-  color:#fff;
-  padding:8px;
-  border-radius:8px;
-}
-.map-nav button.active{border-color:var(--accent)}
-.map-area{flex:1;position:relative}
-.map{height:100%}
+    /* Primary buttons */
+    .menuBtn{
+      position:absolute;
+      border:1px solid var(--border);
+      background:var(--panel);
+      color:var(--text);
+      border-radius:999px;
+      padding:16px 34px;
+      font-weight:900;
+      font-size:22px;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+      transition:transform .08s ease, background .15s ease, border-color .15s ease;
+    }
+    .menuBtn:hover{
+      background:rgba(28,28,28,.86);
+      border-color:rgba(255,255,255,.28);
+      transform:translateY(-1px);
+    }
+    .menuBtn:active{transform:translateY(1px);}
 
-/* Tips & Wiki */
-.content{
-  max-width:900px;
-  margin:0 auto;
-  padding:24px;
-}
-.anchor{scroll-margin-top:70px}
-</style>
+    /* Button positions like your drawing */
+    .btnMaps{
+      top:52%;
+      left:10%;
+      transform:translateY(-50%);
+    }
+    .btnWiki{
+      top:44%;
+      left:50%;
+      transform:translate(-50%,-50%);
+    }
+    .btnTips{
+      top:52%;
+      right:10%;
+      transform:translateY(-50%);
+    }
+
+    /* Bottom-left Credits */
+    .creditsBtn{
+      position:absolute;
+      left:18px;
+      bottom:18px;
+      border:1px solid var(--border2);
+      background:var(--panel2);
+      color:var(--text);
+      border-radius:10px;
+      padding:8px 10px;
+      font-weight:900;
+      font-size:12px;
+      cursor:pointer;
+    }
+    .creditsBtn:hover{background:rgba(26,26,26,.70);}
+
+    /* Bottom-right tiny icon buttons (placeholders) */
+    .iconRow{
+      position:absolute;
+      right:18px;
+      bottom:18px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .iconBtn{
+      width:36px;height:36px;
+      border-radius:10px;
+      border:1px solid var(--border2);
+      background:var(--panel2);
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      font-weight:900;
+      font-size:12px;
+      text-decoration:none;
+    }
+    .iconBtn:hover{background:rgba(26,26,26,.70);}
+
+    /* --- Inner pages header --- */
+    .topbar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 14px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      background:rgba(16,16,16,.70);
+      box-shadow:0 10px 22px rgba(0,0,0,.35);
+      margin-bottom:14px;
+    }
+    .brand{
+      font-weight:1000;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      opacity:.95;
+      white-space:nowrap;
+    }
+    .nav{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .nav button{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(18,18,18,.65);
+      color:#fff;
+      border-radius:10px;
+      padding:8px 10px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .nav button:hover{background:rgba(26,26,26,.8);}
+
+    .card{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(18,18,18,.55);
+      border-radius:14px;
+      padding:14px;
+      box-shadow:0 10px 22px rgba(0,0,0,.30);
+    }
+    .muted{color:var(--muted)}
+
+    /* mobile: stack menu buttons */
+    @media (max-width: 860px){
+      .btnMaps{left:50%; top:54%; transform:translate(-50%,-50%);}
+      .btnWiki{left:50%; top:44%;}
+      .btnTips{right:auto; left:50%; top:64%; transform:translate(-50%,-50%);}
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-  <h1>DeadPoly Community Hub</h1>
-  <nav>
-    <button data-tab="home" class="active">Home</button>
-    <button data-tab="maps">Maps</button>
-    <button data-tab="tips">Tips & Tricks</button>
-    <button data-tab="wiki">Mini Wiki</button>
-  </nav>
-</header>
+  <!-- HOME / MENU -->
+  <section id="home" class="page active">
+    <div class="stage">
+      <div class="layout">
 
-<main>
+        <div class="deadpolyText">DEADPOLY</div>
+        <div class="subText">Community Hub</div>
 
+        <button class="menuBtn btnMaps" onclick="openPage('maps')">Maps</button>
+        <button class="menuBtn btnWiki" onclick="openPage('wiki')">Wiki</button>
+        <button class="menuBtn btnTips" onclick="openPage('tips')">Tips n Tricks</button>
 
-<!-- HOME -->
-<section id="home" class="tab menuTab active">
-  <div class="menuBg"></div>
+        <button class="creditsBtn" onclick="openPage('credits')">Credits</button>
 
-  <div class="stage">
-    <div class="layout">
+        <!-- Bottom-right placeholders (swap links later) -->
+        <div class="iconRow" aria-label="Official links">
+          <a class="iconBtn" href="https://discord.com" target="_blank" rel="noopener" title="Discord">D</a>
+          <a class="iconBtn" href="https://youtube.com" target="_blank" rel="noopener" title="YouTube">Y</a>
+          <a class="iconBtn" href="https://store.steampowered.com" target="_blank" rel="noopener" title="Steam">S</a>
+          <a class="iconBtn" href="https://www.epicgames.com" target="_blank" rel="noopener" title="Epic">E</a>
+          <a class="iconBtn" href="https://deadpoly.wiki" target="_blank" rel="noopener" title="Official Site">O</a>
+        </div>
 
-      <!-- Title text instead of logo -->
-      <div class="hubTitle">DeadPoly Hub</div>
-
-      <button class="menuBtn btnMaps" onclick="openTab('maps')">Maps</button>
-      <button class="menuBtn btnWiki" onclick="openTab('wiki')">Wiki</button>
-      <button class="menuBtn btnTips" onclick="openTab('tips')">Tips n Tricks</button>
-
-      <button class="creditsBtn" onclick="openTab('credits')">Credits</button>
-
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
+  <!-- MAPS -->
+  <section id="maps" class="page">
+    <div class="topbar">
+      <div class="brand">DeadPoly Hub</div>
+      <div class="nav">
+        <button onclick="openPage('home')">Home</button>
+        <button onclick="openPage('maps')">Maps</button>
+        <button onclick="openPage('tips')">Tips</button>
+        <button onclick="openPage('wiki')">Wiki</button>
+      </div>
+    </div>
 
-      <div class="menuLinks">
-        <a class="iconLink" href="https://discord.gg/" target="_blank" rel="noopener" title="Discord">
-          <img src="https://cdn.simpleicons.org/discord/ffffff" alt="Discord">
+    <div class="card">
+      <h2 style="margin:0 0 8px;">Maps</h2>
+      <p class="muted" style="margin:0 0 12px;">Choose a map:</p>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a class="iconBtn" style="width:auto;padding:10px 12px;border-radius:12px;"
+           href="https://guthanger-123.github.io/DeadPoly-Map-Delta/" target="_blank" rel="noopener">
+          Open Delta Map
         </a>
-        <a class="iconLink" href="https://www.youtube.com/" target="_blank" rel="noopener" title="YouTube">
-          <img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube">
-        </a>
-        <a class="iconLink" href="https://deadpoly.wiki/" target="_blank" rel="noopener" title="Official Site">
-          <img src="https://cdn.simpleicons.org/googlechrome/ffffff" alt="Official Site">
-        </a>
-        <a class="iconLink" href="https://store.steampowered.com/" target="_blank" rel="noopener" title="Steam">
-          <img src="https://cdn.simpleicons.org/steam/ffffff" alt="Steam">
-        </a>
-        <a class="iconLink" href="https://store.epicgames.com/" target="_blank" rel="noopener" title="Epic Games">
-          <img src="https://cdn.simpleicons.org/epicgames/ffffff" alt="Epic Games">
+        <a class="iconBtn" style="width:auto;padding:10px 12px;border-radius:12px;"
+           href="https://guthanger-123.github.io/Deadpoly-Map-Garden-City-/" target="_blank" rel="noopener">
+          Open Garden City Map
         </a>
       </div>
+    </div>
+  </section>
 
+  <!-- TIPS -->
+  <section id="tips" class="page">
+    <div class="topbar">
+      <div class="brand">DeadPoly Hub</div>
+      <div class="nav">
+        <button onclick="openPage('home')">Home</button>
+        <button onclick="openPage('maps')">Maps</button>
+        <button onclick="openPage('tips')">Tips</button>
+        <button onclick="openPage('wiki')">Wiki</button>
+      </div>
+    </div>
 
-<!-- WIKI -->
-<section id="wiki">
-  <h1>Wiki</h1>
-  <p class="muted">Quick articles for DeadPoly community info. Add pages by editing the list on the left.</p>
+    <div class="card">
+      <h2 style="margin:0 0 8px;">Tips n Tricks</h2>
+      <p class="muted" style="margin:0;">Drop your tips here. (This is your template page.)</p>
+    </div>
+  </section>
 
-  <div class="wikiLayout">
-    <aside class="wikiSide">
-      <div class="wikiBlockTitle">Pages</div>
+  <!-- WIKI -->
+  <section id="wiki" class="page">
+    <div class="topbar">
+      <div class="brand">DeadPoly Hub</div>
+      <div class="nav">
+        <button onclick="openPage('home')">Home</button>
+        <button onclick="openPage('maps')">Maps</button>
+        <button onclick="openPage('tips')">Tips</button>
+        <button onclick="openPage('wiki')">Wiki</button>
+      </div>
+    </div>
 
-      <button class="wikiLink active" data-page="welcome">Welcome</button>
-      <button class="wikiLink" data-page="animals">Animals</button>
-      <button class="wikiLink" data-page="bunkers">Bunkers</button>
-      <button class="wikiLink" data-page="loot">Loot</button>
-      <button class="wikiLink" data-page="traders">Traders</button>
+    <div class="card">
+      <h2 style="margin:0 0 8px;">Wiki</h2>
+      <p class="muted" style="margin:0 0 10px;">
+        Template page. Add sections like “Weapons”, “Armor”, “Quests”, “Locations”, etc.
+      </p>
 
-      <div class="wikiBlockTitle" style="margin-top:14px;">Official</div>
-      <a class="wikiExternal" href="https://deadpoly.wiki/Main_Page" target="_blank" rel="noopener">Open Official Wiki ↗</a>
-    </aside>
+      <div class="card" style="margin-top:10px;">
+        <h3 style="margin:0 0 6px;">Example Wiki Entry</h3>
+        <p class="muted" style="margin:0;">
+          <b>Title:</b> Item/Location Name<br>
+          <b>Info:</b> Short description…<br>
+          <b>How to get:</b> Steps…<br>
+          <b>Notes:</b> Extra details…
+        </p>
+      </div>
+    </div>
+  </section>
 
-    <article class="wikiArticle" id="wikiArticle">
-      <!-- injected by JS -->
-    </article>
-  </div>
-</section>
+  <!-- CREDITS -->
+  <section id="credits" class="page">
+    <div class="topbar">
+      <div class="brand">DeadPoly Hub</div>
+      <div class="nav">
+        <button onclick="openPage('home')">Home</button>
+        <button onclick="openPage('maps')">Maps</button>
+        <button onclick="openPage('tips')">Tips</button>
+        <button onclick="openPage('wiki')">Wiki</button>
+      </div>
+    </div>
 
-.muted { opacity:.75; }
+    <div class="card">
+      <h2 style="margin:0 0 8px;">Credits</h2>
+      <p style="margin:0;"><b>Created by:</b> Guthanger123</p>
+      <p style="margin:6px 0 0;"><b>Contributors:</b> Deadpoly Community</p>
+    </div>
+  </section>
 
-.wikiLayout{
-  display:grid;
-  grid-template-columns: 260px 1fr;
-  gap:14px;
-  margin-top:12px;
-}
-.wikiSide{
-  background: rgba(30,30,30,.9);
-  border:1px solid #444;
-  border-radius:10px;
-  padding:10px;
-}
-.wikiBlockTitle{
-  font-weight:700;
-  font-size:12px;
-  opacity:.85;
-  margin:6px 0 8px;
-}
-.wikiLink{
-  width:100%;
-  text-align:left;
-  padding:8px 10px;
-  margin:4px 0;
-  border-radius:8px;
-  border:1px solid #555;
-  background:#222;
-  color:#fff;
-  cursor:pointer;
-}
-.wikiLink:hover{ background:#2b2b2b; }
-.wikiLink.active{ border-color:#8aa; background:#2a2a2a; }
-
-.wikiExternal{
-  display:block;
-  margin-top:6px;
-  padding:8px 10px;
-  border-radius:8px;
-  border:1px solid #555;
-  background:#222;
-  color:#fff;
-  text-decoration:none;
-}
-.wikiExternal:hover{ background:#2b2b2b; }
-
-.wikiArticle{
-  background: rgba(18,18,18,.9);
-  border:1px solid #444;
-  border-radius:10px;
-  padding:14px 16px;
-  line-height:1.5;
-}
-.wikiArticle h2{ margin:0 0 10px; }
-.wikiArticle ul{ margin:8px 0 8px 18px; }
-
-
-
-</main>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-/* TAB CONTROL */
-function openTab(name){
-  document.querySelectorAll("nav button").forEach(b =>
-    b.classList.toggle("active", b.dataset.tab === name)
-  );
-  document.querySelectorAll("main section").forEach(s =>
-    s.classList.toggle("active", s.id === name)
-  );
-
-  // When opening Maps, force Leaflet to resize properly
-  if (name === "maps") {
-    setTimeout(() => {
-      if (currentMap === "delta") deltaMap.invalidateSize();
-      if (currentMap === "gc") gcMap.invalidateSize();
-    }, 50);
-  }
-}
-
-/* MAPS */
-let deltaMap, gcMap, currentMap="delta"
-
-function initMaps(){
-  deltaMap = L.map("map-delta",{crs:L.CRS.Simple,minZoom:-5})
-  const bounds=[[0,0],[1264,1264]]
-  L.imageOverlay("YOUR_DELTA_IMAGE.png",bounds).addTo(deltaMap)
-  deltaMap.fitBounds(bounds)
-
-  gcMap = L.map("map-gc",{crs:L.CRS.Simple,minZoom:-5})
-  L.imageOverlay("YOUR_GC_IMAGE.png",bounds).addTo(gcMap)
-  gcMap.fitBounds(bounds)
-}
-
-function openMap(which){
-  document.getElementById("map-delta").style.display=which==="delta"?"block":"none"
-  document.getElementById("map-gc").style.display=which==="gc"?"block":"none"
-  currentMap=which
-  setTimeout(()=>{(which==="delta"?deltaMap:gcMap).invalidateSize()},50)
-}
-
-
-
-// Hook up the top nav buttons
-document.querySelectorAll("nav button").forEach(btn => {
-  btn.addEventListener("click", () => openTab(btn.dataset.tab));
-});
-
-const wikiPages = {
-  welcome: `
-    <h2>Welcome</h2>
-    <p>This is the community mini-wiki hub for map-related info.</p>
-    <ul>
-      <li>Use <b>Maps</b> to switch between Delta and Garden City.</li>
-      <li>Use <b>Tips & Tricks</b> for quick gameplay help.</li>
-      <li>Use <b>Wiki</b> for short reference pages.</li>
-    </ul>
-  `,
-  animals: `
-    <h2>Animals</h2>
-    <p>Common hunt targets:</p>
-    <ul>
-      <li><a href="https://deadpoly.wiki/Animals#Deer" target="_blank" rel="noopener">Deer</a></li>
-      <li><a href="https://deadpoly.wiki/Animals#Bears" target="_blank" rel="noopener">Bears</a></li>
-    </ul>
-  `,
-  bunkers: `
-    <h2>Bunkers</h2>
-    <p>Template section. Add bunker info here.</p>
-    <p><b>Example:</b> “Bunker 16 requires no keycard.”</p>
-  `,
-  loot: `
-    <h2>Loot</h2>
-    <p>Template section. Add loot tiers, spawn logic, or community notes.</p>
-  `,
-  traders: `
-    <h2>Traders</h2>
-    <p>Template section. Add trader locations + what they sell.</p>
-  `
-};
-
-function openWikiPage(pageId){
-  const article = document.getElementById("wikiArticle");
-  article.innerHTML = wikiPages[pageId] || `<h2>Not Found</h2><p>No content for "${pageId}".</p>`;
-
-  document.querySelectorAll(".wikiLink").forEach(b =>
-    b.classList.toggle("active", b.dataset.page === pageId)
-  );
-}
-
-document.querySelectorAll(".wikiLink").forEach(btn => {
-  btn.addEventListener("click", () => openWikiPage(btn.dataset.page));
-});
-
-// default wiki page
-openWikiPage("welcome");
-
-/* ===== HOME MENU (CONSISTENT ON ALL SCREENS) ===== */
-#home.menuTab{
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  display: none;
-  background: #0b0b0b;
-  z-index: 9999;
-  overflow: hidden;
-}
-#home.menuTab.active{ display:block; }
-
-#home .menuBg{
-  position:absolute; inset:0;
-  background:
-    radial-gradient(900px 520px at 50% 18%, rgba(255,255,255,.05), rgba(0,0,0,0)),
-    radial-gradient(900px 700px at 50% 100%, rgba(0,255,140,.04), rgba(0,0,0,0)),
-    #0b0b0b;
-}
-
-/* Stage keeps layout from drifting on ultrawide screens */
-#home .stage{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-/* This is the “canvas” your sketch lives in */
-#home .layout{
-  position:relative;
-  width: min(1100px, 92vw);
-  height: min(720px, 86vh);
-}
-
-/* SMALLER LOGO TOP CENTER */
-#home .menuLogo{
-  position:absolute;
-  top: 34px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(520px, 70%);
-  height: auto;
-  max-height: 170px;
-  object-fit: contain;
-  filter: drop-shadow(0 10px 22px rgba(0,0,0,.55));
-  user-select:none;
-  pointer-events:none;
-}
-
-/* Button base */
-#home .menuBtn{
-  border: 1px solid rgba(255,255,255,.18);
-  background: rgba(18,18,18,.70);
-  color:#fff;
-  border-radius: 999px;
-  padding: 14px 26px;
-  font: 800 20px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  letter-spacing: .02em;
-  cursor:pointer;
-  box-shadow: 0 16px 34px rgba(0,0,0,.42);
-  transition: transform .12s ease, background .12s ease, border-color .12s ease;
-}
-#home .menuBtn:hover{
-  transform: translateY(-2px);
-  background: rgba(28,28,28,.84);
-  border-color: rgba(0,255,140,.35);
-}
-
-/* Button positions (match sketch) */
-#home .btnWiki{
-  position:absolute;
-  top: 42%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-#home .btnMaps{
-  position:absolute;
-  top: 52%;
-  left: 12%;
-  transform: translateY(-50%);
-}
-#home .btnTips{
-  position:absolute;
-  top: 52%;
-  right: 12%;
-  transform: translateY(-50%);
-}
-
-/* Bottom-left Credits (tiny) */
-#home .creditsBtn{
-  position:absolute;
-  left: 18px;
-  bottom: 18px;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(18,18,18,.55);
-  color:#fff;
-  border-radius: 10px;
-  padding: 7px 10px;
-  font: 700 12px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  cursor:pointer;
-  opacity:.92;
-}
-#home .creditsBtn:hover{
-  opacity:1;
-  border-color: rgba(255,255,255,.22);
-}
-
-/* Bottom-right icon links (small) */
-#home .menuLinks{
-  position:absolute;
-  right: 18px;
-  bottom: 18px;
-  display:flex;
-  gap: 10px;
-}
-#home .iconLink{
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  display:grid;
-  place-items:center;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(18,18,18,.55);
-  text-decoration:none;
-  box-shadow: 0 12px 26px rgba(0,0,0,.32);
-  transition: transform .12s ease, border-color .12s ease, background .12s ease;
-}
-#home .iconLink:hover{
-  transform: translateY(-2px);
-  border-color: rgba(0,255,140,.35);
-  background: rgba(28,28,28,.80);
-}
-#home .iconLink img{
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-}
-
-/* Mobile: stack buttons */
-@media (max-width: 820px){
-  #home .layout{ height: min(780px, 92vh); }
-  #home .btnMaps{
-    left:50%;
-    top: 54%;
-    transform: translate(-50%, -50%);
-  }
-  #home .btnTips{
-    right:auto;
-    left:50%;
-    top: 64%;
-    transform: translate(-50%, -50%);
-  }
-  #home .btnWiki{ top: 44%; }
-}
-
-  /* --- HOME: NO LOGOS, BUTTONS LIKE YOUR SKETCH --- */
-#home.menuTab{ position:fixed; inset:0; display:none; background:#0b0b0b; z-index:9999; }
-#home.menuTab.active{ display:block; }
-
-#home .menuBg{ position:absolute; inset:0; background:#0b0b0b; }
-
-#home .stage{
-  position:absolute; inset:0;
-  display:flex; align-items:center; justify-content:center;
-}
-
-#home .layout{
-  position:relative;
-  width:min(1100px, 92vw);
-  height:min(720px, 88vh);
-}
-
-#home .hubTitle{
-  position:absolute;
-  top: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  color:#fff;
-  font: 900 56px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  letter-spacing: .02em;
-  opacity: .95;
-}
-
-/* Button base */
-#home .menuBtn{
-  position:absolute;
-  border:1px solid rgba(255,255,255,.18);
-  background: rgba(18,18,18,.70);
-  color:#fff;
-  border-radius: 999px;
-  padding: 16px 30px;
-  font: 900 22px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  cursor:pointer;
-  box-shadow: 0 16px 34px rgba(0,0,0,.42);
-}
-#home .menuBtn:hover{
-  background: rgba(28,28,28,.84);
-  border-color: rgba(255,255,255,.28);
-}
-
-/* MATCH YOUR SKETCH POSITIONS */
-#home .btnWiki{
-  top: 42%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-#home .btnMaps{
-  top: 52%;
-  left: 12%;
-  transform: translateY(-50%);
-}
-#home .btnTips{
-  top: 52%;
-  right: 12%;
-  transform: translateY(-50%);
-}
-
-/* Credits bottom-left */
-#home .creditsBtn{
-  position:absolute;
-  left: 18px;
-  bottom: 18px;
-  border:1px solid rgba(255,255,255,.14);
-  background: rgba(18,18,18,.55);
-  color:#fff;
-  border-radius: 10px;
-  padding: 7px 10px;
-  font: 800 12px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  cursor:pointer;
-}
-
-/* Mobile: stack instead of drifting */
-@media (max-width: 820px){
-  #home .hubTitle{ font-size: 42px; top: 50px; }
-  #home .btnWiki{ top: 40%; }
-  #home .btnMaps{ left:50%; top:52%; transform: translate(-50%,-50%); }
-  #home .btnTips{ right:auto; left:50%; top:62%; transform: translate(-50%,-50%); }
-}
-
-
-initMaps()
-</script>
+  <script>
+    function openPage(id){
+      // hide all pages
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      // show selected
+      const el = document.getElementById(id);
+      if (el) el.classList.add('active');
+      // scroll to top
+      window.scrollTo({top:0, behavior:'instant'});
+    }
+  </script>
 
 </body>
 </html>
-
