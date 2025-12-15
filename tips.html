@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeadPoly Community Hub — Tips & Tricks</title>
+
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD7LNZHQMM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GD7LNZHQMM');
+</script>
+  
+  <style>
+    :root{
+      --bg:#0b0b0f;
+      --panel:#14141b;
+      --panel2:#101016;
+      --text:#f2f2f2;
+      --muted:#b7b7c2;
+      --line:#2a2a36;
+      --btn:#1c1c26;
+      --btnHover:#242434;
+      --accent:#ffffff;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
+    a{color:inherit}
+    .topbar{
+      position:sticky;top:0;z-index:999;
+      background:linear-gradient(to bottom, rgba(10,10,14,.92), rgba(10,10,14,.7));
+      backdrop-filter: blur(6px);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar-inner{
+      max-width:1100px;margin:0 auto;padding:10px 14px;
+      display:flex;gap:10px;align-items:center;justify-content:space-between;
+    }
+    .btn{
+      display:inline-flex;align-items:center;gap:8px;
+      background:var(--btn);border:1px solid var(--line);color:var(--text);
+      padding:8px 10px;border-radius:10px;text-decoration:none;
+      transition:transform .08s ease, background .12s ease;
+      user-select:none;
+    }
+    .btn:hover{background:var(--btnHover)}
+    .btn:active{transform:scale(.98)}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px 14px 40px}
+    .title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    h1{margin:0;font-size:26px;letter-spacing:.3px}
+    .sub{margin:6px 0 0;color:var(--muted)}
+    .controls{
+      display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px
+    }
+    .search{
+      flex:1;min-width:240px;
+      background:var(--panel);border:1px solid var(--line);border-radius:12px;
+      padding:10px 12px;color:var(--text);outline:none;
+    }
+    .pill{
+      background:var(--panel);border:1px solid var(--line);border-radius:999px;
+      padding:8px 10px;color:var(--text);cursor:pointer;user-select:none;
+    }
+    .pill.active{outline:2px solid #ffffff22}
+    .grid{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:12px;margin-top:16px;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border:1px solid var(--line);border-radius:16px;padding:12px 12px 10px;
+    }
+    .card h3{margin:0 0 6px;font-size:16px}
+    .tagrow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+    .tag{font-size:12px;color:var(--muted);border:1px solid var(--line);padding:3px 8px;border-radius:999px;background:var(--panel2)}
+    details{
+      border-top:1px solid var(--line);padding-top:10px;margin-top:10px
+    }
+    summary{cursor:pointer;color:var(--accent);font-weight:600}
+    .item{margin:8px 0;color:var(--text)}
+    .muted{color:var(--muted)}
+    .footer{margin-top:18px;color:var(--muted);font-size:12px}
+    code{
+      background:rgba(255,255,255,.08);
+      padding:2px 6px;border-radius:6px
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a class="btn" href="index.html">← Menu</a>
+      <div class="muted">Tips & Tricks</div>
+      <a class="btn" href="wiki.html">Wiki</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="title">
+      <div>
+        <h1>Tips & Tricks</h1>
+        <div class="sub">Community notes, shortcuts, and survival help. (WIP — easy to expand)</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <input id="q" class="search" placeholder="Search tips (ex: bunker, loot, trader, car spawn)..." />
+      <div id="filters"></div>
+    </div>
+
+    <div id="cards" class="grid"></div>
+
+    <div class="footer">
+      Want to add tips? Edit <code>tips.html</code> → the <code>tipsData</code> array near the bottom.
+    </div>
+  </div>
+
+<script>
+  // ----- Edit here: add / remove tips -----
+  const tipsData = [
+    {
+      title: "Starting fast (first 10 minutes)",
+      tags: ["Basics", "Loot"],
+      bullets: [
+        "Pick a simple loot loop and repeat it until you have meds + ammo.",
+        "Don’t over-carry early. Weight kills your stamina and escape options.",
+        "Mark a safe fallback building on the map (return point)."
+      ]
+    },
+    {
+      title: "Bunkers (general)",
+      tags: ["Bunkers", "Combat"],
+      bullets: [
+        "Bring a light + extra meds before committing.",
+        "Clear corners slow—sound cues are everything.",
+        "If you’re farming, learn one bunker route perfectly before adding more."
+      ]
+    },
+    {
+      title: "Traders (quick habits)",
+      tags: ["Traders", "Economy"],
+      bullets: [
+        "Sell junk often—stash value piles become dead weight.",
+        "Track what each trader specializes in so you don’t waste runs."
+      ]
+    },
+    {
+      title: "Cars & spawns",
+      tags: ["Vehicles", "Map"],
+      bullets: [
+        "Check a few reliable spawn clusters rather than driving the whole map.",
+        "If you find one, mark the spot and the nearest safe refuel/repair area."
+      ]
+    },
+    {
+      title: "Hunting zones",
+      tags: ["Hunting", "Food"],
+      bullets: [
+        "Rotate zones—don’t camp one area forever.",
+        "If your server is busy, hunt off-peak or deeper routes."
+      ],
+      links: [
+        { label: "DeadPoly Wiki — Main Page", url: "https://deadpoly.wiki/Main_Page" }
+      ]
+    }
+  ];
+  // ----------------------------------------
+
+  // Build tag filters
+  const tags = [...new Set(tipsData.flatMap(t => t.tags))].sort();
+  const filtersEl = document.getElementById("filters");
+  let activeTag = "All";
+  const pills = ["All", ...tags].map(t => {
+    const b = document.createElement("button");
+    b.className = "pill" + (t === activeTag ? " active" : "");
+    b.textContent = t;
+    b.onclick = () => {
+      activeTag = t;
+      [...filtersEl.children].forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      render();
+    };
+    return b;
+  });
+  pills.forEach(p => filtersEl.appendChild(p));
+
+  const qEl = document.getElementById("q");
+  qEl.addEventListener("input", render);
+
+  function matches(item, q) {
+    if (!q) return true;
+    const hay = (item.title + " " + item.bullets.join(" ") + " " + item.tags.join(" ")).toLowerCase();
+    return hay.includes(q.toLowerCase());
+  }
+
+  function render(){
+    const cards = document.getElementById("cards");
+    cards.innerHTML = "";
+    const q = qEl.value.trim();
+
+    tipsData
+      .filter(t => activeTag === "All" ? true : t.tags.includes(activeTag))
+      .filter(t => matches(t, q))
+      .forEach(t => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <h3>${escapeHtml(t.title)}</h3>
+          <div class="tagrow">${t.tags.map(x => `<span class="tag">${escapeHtml(x)}</span>`).join("")}</div>
+          <details open>
+            <summary>Show tips</summary>
+            ${t.bullets.map(b => `<div class="item">• ${escapeHtml(b)}</div>`).join("")}
+            ${(t.links && t.links.length) ? `
+              <div class="item muted" style="margin-top:10px">
+                ${t.links.map(l => `<a class="btn" style="padding:6px 8px;border-radius:10px" href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.label)} ↗</a>`).join(" ")}
+              </div>` : ""}
+          </details>
+        `;
+        cards.appendChild(div);
+      });
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  render();
+</script>
+</body>
+</html>
