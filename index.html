@@ -116,11 +116,8 @@ section.active{display:block}
   <div class="stage">
     <div class="layout">
 
-      <img
-        class="menuLogo"
-        src="https://github.com/Guthanger-123/Deadpoly-Map-Garden-City-/blob/main/logo_main.png?raw=true"
-        alt="DeadPoly"
-      >
+      <!-- Title text instead of logo -->
+      <div class="hubTitle">DeadPoly Hub</div>
 
       <button class="menuBtn btnMaps" onclick="openTab('maps')">Maps</button>
       <button class="menuBtn btnWiki" onclick="openTab('wiki')">Wiki</button>
@@ -128,11 +125,10 @@ section.active{display:block}
 
       <button class="creditsBtn" onclick="openTab('credits')">Credits</button>
 
-
-
     </div>
   </div>
 </section>
+
 
       <div class="menuLinks">
         <a class="iconLink" href="https://discord.gg/" target="_blank" rel="noopener" title="Discord">
@@ -493,9 +489,94 @@ openWikiPage("welcome");
   #home .btnWiki{ top: 44%; }
 }
 
+  /* --- HOME: NO LOGOS, BUTTONS LIKE YOUR SKETCH --- */
+#home.menuTab{ position:fixed; inset:0; display:none; background:#0b0b0b; z-index:9999; }
+#home.menuTab.active{ display:block; }
+
+#home .menuBg{ position:absolute; inset:0; background:#0b0b0b; }
+
+#home .stage{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+}
+
+#home .layout{
+  position:relative;
+  width:min(1100px, 92vw);
+  height:min(720px, 88vh);
+}
+
+#home .hubTitle{
+  position:absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  color:#fff;
+  font: 900 56px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  letter-spacing: .02em;
+  opacity: .95;
+}
+
+/* Button base */
+#home .menuBtn{
+  position:absolute;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(18,18,18,.70);
+  color:#fff;
+  border-radius: 999px;
+  padding: 16px 30px;
+  font: 900 22px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  cursor:pointer;
+  box-shadow: 0 16px 34px rgba(0,0,0,.42);
+}
+#home .menuBtn:hover{
+  background: rgba(28,28,28,.84);
+  border-color: rgba(255,255,255,.28);
+}
+
+/* MATCH YOUR SKETCH POSITIONS */
+#home .btnWiki{
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+#home .btnMaps{
+  top: 52%;
+  left: 12%;
+  transform: translateY(-50%);
+}
+#home .btnTips{
+  top: 52%;
+  right: 12%;
+  transform: translateY(-50%);
+}
+
+/* Credits bottom-left */
+#home .creditsBtn{
+  position:absolute;
+  left: 18px;
+  bottom: 18px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(18,18,18,.55);
+  color:#fff;
+  border-radius: 10px;
+  padding: 7px 10px;
+  font: 800 12px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  cursor:pointer;
+}
+
+/* Mobile: stack instead of drifting */
+@media (max-width: 820px){
+  #home .hubTitle{ font-size: 42px; top: 50px; }
+  #home .btnWiki{ top: 40%; }
+  #home .btnMaps{ left:50%; top:52%; transform: translate(-50%,-50%); }
+  #home .btnTips{ right:auto; left:50%; top:62%; transform: translate(-50%,-50%); }
+}
+
 
 initMaps()
 </script>
 
 </body>
 </html>
+
