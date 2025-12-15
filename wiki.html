@@ -1,442 +1,553 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>DeadPoly Wiki</title>
+  <meta charset="utf-8" />
+  <title>DeadPoly Wiki</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<style>
-  :root{
-    --bg:#0b0d10;
-    --panel:rgba(255,255,255,.06);
-    --panel2:rgba(255,255,255,.04);
-    --line:rgba(255,255,255,.10);
-    --text:#e9e9e9;
-    --muted:#b6b6b6;
-    --accent:#5fb3ff;
-    --shadow: 0 18px 40px rgba(0,0,0,.45);
-    --radius: 16px;
-  }
+  <style>
+    :root{
+      --bg:#0b0d10;
+      --panel:#11141a;
+      --panel2:#0f1217;
+      --text:#e9eef7;
+      --muted:#a6b0c3;
+      --line:rgba(255,255,255,.08);
+      --btn:#1a1f28;
+      --btnH:#242b37;
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,.08), transparent 60%),
+                  radial-gradient(900px 500px at 10% 10%, rgba(90,140,255,.10), transparent 50%),
+                  var(--bg);
+      color:var(--text);
+    }
 
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    color:var(--text);
-    background:
-      radial-gradient(900px 500px at 20% 0%, rgba(95,179,255,.12), transparent 55%),
-      radial-gradient(900px 600px at 80% 0%, rgba(255,255,255,.06), transparent 60%),
-      var(--bg);
-  }
+    /* Top bar */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      background:linear-gradient(to bottom, rgba(10,12,15,.95), rgba(10,12,15,.70));
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--line);
+      padding:10px 16px;
+      display:flex; align-items:center; gap:12px;
+    }
+    .brand{font-weight:800; letter-spacing:.2px}
+    .spacer{flex:1}
+    .nav{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--btn);
+      color:var(--text);
+      text-decoration:none;
+      font-weight:600;
+      font-size:13px;
+      transition: transform .08s ease, background .12s ease;
+      transform: translateY(0);
+    }
+    .btn:hover{background:var(--btnH)}
+    .btn:active{transform: translateY(1px)}
+    .btn.small{padding:7px 10px; font-weight:700}
 
-  /* ===== Top Bar (shared style) ===== */
-  .topbar{
-    position: sticky; top:0; z-index:1000;
-    display:grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items:center;
-    gap:12px;
-    padding:12px 16px;
-    background: rgba(10,10,10,.72);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,.08);
-  }
-  .topbar-title{
-    justify-self:center;
-    color:#cfcfcf;
-    font: 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    letter-spacing:.4px;
-  }
-  .topbar-right{
-    justify-self:end;
-    display:flex;
-    gap:10px;
-    align-items:center;
-  }
-  .btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    padding:7px 12px;
-    border-radius:10px;
-    text-decoration:none;
-    color:#e9e9e9;
-    background: rgba(255,255,255,.06);
-    border: 1px solid rgba(255,255,255,.10);
-    font: 12px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    transition: transform .12s ease, background .12s ease, border-color .12s ease;
-    user-select:none;
-  }
-  .btn:hover{ background: rgba(255,255,255,.10); transform: translateY(-1px); border-color: rgba(255,255,255,.14); }
+    /* Layout */
+    .wrap{max-width:1200px; margin:0 auto; padding:18px 16px 32px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:16px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr; }
+    }
 
-  /* ===== Layout ===== */
-  .wrap{
-    max-width: 1120px;
-    margin: 0 auto;
-    padding: 18px 16px 36px;
-  }
+    .card{
+      background: linear-gradient(to bottom, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      padding:14px;
+      box-shadow: 0 16px 30px rgba(0,0,0,.25);
+    }
+    .card h2{margin:2px 0 10px; font-size:18px}
+    .sub{color:var(--muted); font-size:13px; margin:-6px 0 12px}
 
-  .hero{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    margin-top: 8px;
-    padding: 18px;
-    border:1px solid var(--line);
-    border-radius: var(--radius);
-    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-    box-shadow: var(--shadow);
-  }
-  .hero h1{
-    margin:0;
-    font-size: 26px;
-    letter-spacing:.2px;
-  }
-  .hero p{
-    margin:0;
-    color:var(--muted);
-    font-size: 13px;
-    line-height: 1.4;
-  }
+    /* Wiki list */
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .search{
+      flex:1;
+      min-width:200px;
+      background:rgba(0,0,0,.25);
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      color:var(--text);
+      outline:none;
+    }
+    .pill{
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.18);
+      font-size:12px;
+      color:var(--text);
+      cursor:pointer;
+      user-select:none;
+    }
+    .pill.active{background:rgba(120,170,255,.18); border-color: rgba(120,170,255,.35);}
 
-  .controls{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-top: 10px;
-    align-items:center;
-  }
+    .wikiGrid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+    @media (max-width: 700px){
+      .wikiGrid{grid-template-columns:1fr;}
+    }
+    .itemCard{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(0,0,0,.18);
+      padding:12px;
+    }
+    .itemCard h3{margin:0 0 6px; font-size:15px}
+    .itemCard p{margin:0 0 10px; color:var(--muted); font-size:13px; line-height:1.35}
+    .viewer{
+      width:100%;
+      height:220px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: radial-gradient(400px 200px at 50% 0%, rgba(255,255,255,.06), transparent 55%),
+                  rgba(0,0,0,.30);
+      overflow:hidden;
+      position:relative;
+    }
+    .hint{
+      position:absolute; bottom:8px; right:10px;
+      font-size:11px; color:rgba(233,238,247,.65);
+      background:rgba(0,0,0,.35);
+      border:1px solid var(--line);
+      padding:4px 8px;
+      border-radius:999px;
+      pointer-events:none;
+    }
 
-  .search{
-    flex: 1 1 260px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding: 10px 12px;
-    border-radius: 14px;
-    border: 1px solid var(--line);
-    background: rgba(0,0,0,.25);
-  }
-  .search input{
-    width:100%;
-    border:none;
-    outline:none;
-    background:transparent;
-    color:var(--text);
-    font-size: 13px;
-  }
-  .pillrow{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-  }
-  .pill{
-    cursor:pointer;
-    padding: 7px 10px;
-    border-radius: 999px;
-    border: 1px solid var(--line);
-    background: rgba(255,255,255,.04);
-    color: var(--text);
-    font-size: 12px;
-    transition: .12s ease;
-    user-select:none;
-  }
-  .pill:hover{ background: rgba(255,255,255,.08); }
-  .pill.active{ border-color: rgba(95,179,255,.55); box-shadow: 0 0 0 3px rgba(95,179,255,.12); }
-
-  .grid{
-    margin-top: 16px;
-    display:grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 14px;
-  }
-
-  .card{
-    grid-column: span 6;
-    border:1px solid var(--line);
-    border-radius: var(--radius);
-    background: rgba(255,255,255,.04);
-    box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    overflow:hidden;
-  }
-
-  @media (max-width: 860px){
-    .card{ grid-column: span 12; }
-  }
-
-  /* ===== Spin image box ===== */
-  .media{
-    position:relative;
-    background: radial-gradient(500px 240px at 50% 0%, rgba(95,179,255,.10), transparent 55%),
-                rgba(0,0,0,.30);
-    border-bottom:1px solid var(--line);
-    padding: 14px;
-  }
-
-  .spinbox{
-    width: 100%;
-    max-width: 360px;
-    margin: 0 auto;
-    perspective: 900px; /* gives the spin a little depth */
-  }
-  .spinbox img{
-    width:100%;
-    height:auto;
-    display:block;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,.12);
-    box-shadow: 0 14px 30px rgba(0,0,0,.35);
-    cursor:pointer;
-    user-select:none;
-    -webkit-user-drag:none;
-    transform: translateZ(0);
-    will-change: transform;
-  }
-
-  /* The 360 spin animation */
-  @keyframes spin360 {
-    from { transform: rotateY(0deg); }
-    to   { transform: rotateY(360deg); }
-  }
-
-  /* applied when clicked */
-  .spinning{
-    animation: spin360 700ms ease-in-out 1;
-  }
-
-  .hint{
-    text-align:center;
-    color: var(--muted);
-    font-size: 12px;
-    margin-top: 10px;
-  }
-
-  .content{
-    padding: 14px 14px 16px;
-  }
-  .titleRow{
-    display:flex;
-    gap:10px;
-    align-items:flex-start;
-    justify-content:space-between;
-  }
-  .content h3{
-    margin:0;
-    font-size: 16px;
-  }
-  .tags{
-    display:flex;
-    gap:6px;
-    flex-wrap:wrap;
-    justify-content:flex-end;
-  }
-  .tag{
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,.10);
-    background: rgba(255,255,255,.04);
-    color: #d7d7d7;
-  }
-  .content p{
-    margin: 10px 0 0;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.45;
-  }
-
-  .actions{
-    margin-top: 12px;
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .linkbtn{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding: 9px 12px;
-    border-radius: 12px;
-    border:1px solid rgba(255,255,255,.12);
-    background: rgba(255,255,255,.05);
-    color: var(--text);
-    text-decoration:none;
-    font-size: 12px;
-    transition:.12s ease;
-  }
-  .linkbtn:hover{ background: rgba(255,255,255,.09); transform: translateY(-1px); }
-  .dot{
-    width:7px;height:7px;border-radius:999px;background:var(--accent);display:inline-block;
-  }
-
-  .footerNote{
-    margin-top: 18px;
-    color: rgba(255,255,255,.45);
-    font-size: 12px;
-  }
-</style>
+    /* Customizer */
+    .canvasBig{
+      width:100%;
+      height:420px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: radial-gradient(600px 260px at 50% 0%, rgba(255,255,255,.06), transparent 60%),
+                  rgba(0,0,0,.30);
+      overflow:hidden;
+      position:relative;
+    }
+    .form{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+    @media (max-width: 980px){ .form{grid-template-columns:1fr;} }
+    label{font-size:12px; color:var(--muted); display:block; margin:0 0 6px}
+    select{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      background:rgba(0,0,0,.25);
+      color:var(--text);
+      border:1px solid var(--line);
+      outline:none;
+    }
+    .note{font-size:12px; color:rgba(233,238,247,.70); line-height:1.35; margin-top:10px}
+    .warn{color:#ffd28a}
+  </style>
 </head>
 
 <body>
   <div class="topbar">
-    <a class="btn" href="index.html">← Menu</a>
-    <div class="topbar-title">Wiki</div>
-    <div class="topbar-right">
-      <a class="btn" href="maps.html">Maps</a>
-      <a class="btn" href="tips.html">Tips</a>
+    <div class="brand">DeadPoly Community Hub</div>
+    <div class="spacer"></div>
+    <div class="nav">
+      <a class="btn small" href="index.html">← Menu</a>
+      <a class="btn small" href="maps.html">Maps</a>
+      <a class="btn small" href="tips.html">Tips</a>
+      <a class="btn small" href="wiki.html" aria-current="page">Wiki</a>
     </div>
   </div>
 
   <div class="wrap">
-    <div class="hero">
-      <h1>DeadPoly Wiki</h1>
-      <p>Community pages for items, places, mechanics, and progression. Click an image to spin it 360°.</p>
+    <div class="grid">
+      <!-- LEFT: Wiki -->
+      <div class="card">
+        <h2>Wiki Items</h2>
+        <div class="sub">Click/drag to rotate • scroll/pinch to zoom (mobile supported)</div>
 
-      <div class="controls">
-        <div class="search" title="Search wiki entries">
-          <span style="opacity:.7">🔎</span>
-          <input id="searchInput" placeholder="Search (ex: bunker key, ammo, trader, vehicle)..." />
+        <div class="row">
+          <input id="search" class="search" placeholder="Search items (ex: mask, gun, med, bunker)..." />
+          <div id="filters" class="row" style="gap:8px"></div>
         </div>
 
-        <div class="pillrow" id="pillRow">
-          <div class="pill active" data-tag="All">All</div>
-          <div class="pill" data-tag="Items">Items</div>
-          <div class="pill" data-tag="Weapons">Weapons</div>
-          <div class="pill" data-tag="Armor">Armor</div>
-          <div class="pill" data-tag="Vehicles">Vehicles</div>
-          <div class="pill" data-tag="Bunkers">Bunkers</div>
+        <div id="wikiGrid" class="wikiGrid"></div>
+      </div>
+
+      <!-- RIGHT: Character Customizer -->
+      <div class="card">
+        <h2>Character Customizer</h2>
+        <div class="sub">FBX preview + equip slots (mask/hat/backpack)</div>
+
+        <div class="canvasBig">
+          <canvas id="charCanvas" style="width:100%;height:100%"></canvas>
+          <div class="hint">Drag to rotate • pinch/scroll to zoom</div>
+        </div>
+
+        <div class="form">
+          <div>
+            <label>Base Character (FBX)</label>
+            <select id="baseSel"></select>
+          </div>
+          <div>
+            <label>Mask (attaches to Head bone)</label>
+            <select id="maskSel"></select>
+          </div>
+          <div>
+            <label>Hat (attaches to Head bone)</label>
+            <select id="hatSel"></select>
+          </div>
+          <div>
+            <label>Backpack (attaches to Spine/Chest bone)</label>
+            <select id="bagSel"></select>
+          </div>
+        </div>
+
+        <div class="note">
+          <div><b>Easy stuff:</b> masks/hats/backpacks work great because they can be parented to a bone.</div>
+          <div class="warn"><b>Hard stuff:</b> shirts/pants/armor only “fit” properly if exported as <b>skinned/rigged</b> to the same skeleton.</div>
         </div>
       </div>
     </div>
-
-    <div class="grid" id="grid"></div>
-
-    <div class="footerNote">
-      Want to add entries? Scroll to the bottom of this file and edit the <b>wikiData</b> array.
-      Put images in <b>assets/wiki/</b> and reference them like <b>assets/wiki/yourimage.png</b>.
-    </div>
   </div>
 
-<script>
-  // ========= DATA: add your wiki entries here =========
-  const wikiData = [
-    {
-      title: "Example Item — Medkit",
-      tags: ["Items"],
-      img: "assets/wiki/medkit.png",
-      text: "Short description. Where it spawns, why it matters, and any tips.",
-      links: [
-        { label: "Related: Tips page", href: "tips.html" }
-      ]
-    },
-    {
-      title: "Example Weapon — Rifle",
-      tags: ["Weapons","Items"],
-      img: "assets/wiki/rifle.png",
-      text: "Damage notes, where to find ammo, and what it’s best used for.",
-      links: [
-        { label: "Open Maps", href: "maps.html" }
-      ]
-    },
-    {
-      title: "Example Vehicle — Car",
-      tags: ["Vehicles"],
-      img: "assets/wiki/car.png",
-      text: "Spawn behavior, common locations, and what to carry for repairs.",
-      links: [
-        { label: "Garden City map", href: "garden-city.html" }
-      ]
-    }
-  ];
+  <!-- THREE (modules) -->
+  <script type="module">
+    import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+    import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+    import { FBXLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/FBXLoader.js";
 
-  // ========= RENDER + FILTER =========
-  const grid = document.getElementById("grid");
-  const searchInput = document.getElementById("searchInput");
-  const pillRow = document.getElementById("pillRow");
+    /* =========================
+       CONFIG: Put your FBX here
+       ========================= */
 
-  let activeTag = "All";
-  let query = "";
+    // Wiki item previews (FBX)
+    const wikiItems = [
+      { title:"Gas Mask", tags:["Gear","Mask"], src:"assets/fbx/gasmask.fbx", desc:"Protects vs. nasty air. (example)" },
+      { title:"Backpack", tags:["Gear"], src:"assets/fbx/backpack.fbx", desc:"Extra storage. (example)" },
+      { title:"Melee Weapon", tags:["Combat"], src:"assets/fbx/melee.fbx", desc:"Close-range. (example)" },
+    ];
 
-  function matches(entry){
-    const q = query.trim().toLowerCase();
-    const inText = (entry.title + " " + entry.text + " " + entry.tags.join(" ")).toLowerCase().includes(q);
-    const tagOk = (activeTag === "All") || entry.tags.includes(activeTag);
-    return inText && tagOk;
-  }
+    // Character customizer options (FBX)
+    const baseCharacters = [
+      { name:"Base Survivor", src:"assets/fbx/character_base.fbx" },
+    ];
+    const masks = [
+      { name:"None", src:null },
+      { name:"Gas Mask", src:"assets/fbx/gasmask.fbx" },
+    ];
+    const hats = [
+      { name:"None", src:null },
+      { name:"Cap", src:"assets/fbx/cap.fbx" },
+    ];
+    const backpacks = [
+      { name:"None", src:null },
+      { name:"Backpack", src:"assets/fbx/backpack.fbx" },
+    ];
 
-  function render(){
-    const items = wikiData.filter(matches);
-    grid.innerHTML = items.map((e, idx) => cardHtml(e, idx)).join("");
+    /* =========================
+       Shared helpers
+       ========================= */
 
-    // attach spin handlers
-    document.querySelectorAll("[data-spin]").forEach(img => {
-      img.addEventListener("click", () => {
-        // restart animation cleanly every click
-        img.classList.remove("spinning");
-        void img.offsetWidth; // force reflow
-        img.classList.add("spinning");
+    const loader = new FBXLoader();
+
+    function loadFBX(url){
+      return new Promise((resolve, reject) => {
+        loader.load(url, obj => resolve(obj), undefined, reject);
       });
+    }
 
-      // prevent drag ghost image on some browsers
-      img.addEventListener("dragstart", (ev) => ev.preventDefault());
+    // ✅ CENTER & SCALE: for item preview only
+    function centerAndScaleToUnit(modelRoot){
+      const box = new THREE.Box3().setFromObject(modelRoot);
+      const size = new THREE.Vector3();
+      const center = new THREE.Vector3();
+      box.getSize(size);
+      box.getCenter(center);
+
+      modelRoot.position.sub(center);
+      const maxAxis = Math.max(size.x, size.y, size.z) || 1;
+      modelRoot.scale.setScalar(1 / maxAxis);
+    }
+
+    function setRendererSize(renderer, camera, canvas){
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+
+    function makeSceneBase(){
+      const scene = new THREE.Scene();
+
+      // Soft lights that make most FBX look OK
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x1c2333, 1.1));
+      const key = new THREE.DirectionalLight(0xffffff, 1.2);
+      key.position.set(2.5, 4, 2.2);
+      scene.add(key);
+
+      const rim = new THREE.DirectionalLight(0xffffff, 0.55);
+      rim.position.set(-3, 2.2, -2.5);
+      scene.add(rim);
+
+      return scene;
+    }
+
+    /* =========================
+       WIKI RENDER
+       ========================= */
+
+    const wikiGridEl = document.getElementById("wikiGrid");
+    const filtersEl = document.getElementById("filters");
+    const searchEl  = document.getElementById("search");
+
+    const allTags = Array.from(new Set(wikiItems.flatMap(i => i.tags))).sort();
+    let activeTag = "All";
+
+    function renderFilterPills(){
+      const tags = ["All", ...allTags];
+      filtersEl.innerHTML = "";
+      tags.forEach(t => {
+        const p = document.createElement("div");
+        p.className = "pill" + (t===activeTag ? " active" : "");
+        p.textContent = t;
+        p.onclick = () => { activeTag = t; renderFilterPills(); renderWikiCards(); };
+        filtersEl.appendChild(p);
+      });
+    }
+
+    function matches(item){
+      const q = (searchEl.value || "").trim().toLowerCase();
+      const tagOK = (activeTag==="All") || item.tags.includes(activeTag);
+      const qOK = !q || (item.title.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q) || item.tags.join(" ").toLowerCase().includes(q));
+      return tagOK && qOK;
+    }
+
+    function renderWikiCards(){
+      wikiGridEl.innerHTML = "";
+      wikiItems.filter(matches).forEach(item => {
+        const card = document.createElement("div");
+        card.className = "itemCard";
+        card.innerHTML = `
+          <h3>${item.title}</h3>
+          <p>${item.desc}</p>
+          <div class="viewer">
+            <canvas style="width:100%;height:100%" data-src="${item.src}"></canvas>
+            <div class="hint">FBX preview</div>
+          </div>
+        `;
+        wikiGridEl.appendChild(card);
+        initItemViewer(card.querySelector("canvas"));
+      });
+    }
+
+    async function initItemViewer(canvas){
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      const scene = makeSceneBase();
+      const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 50);
+      camera.position.set(1.4, 1.0, 1.4);
+
+      const controls = new OrbitControls(camera, canvas);
+      controls.enableDamping = true;
+      controls.enablePan = false;
+
+      setRendererSize(renderer, camera, canvas);
+
+      let root;
+      try{
+        root = await loadFBX(canvas.dataset.src);
+        centerAndScaleToUnit(root);         // ✅ center/scale for consistent preview
+        scene.add(root);
+      }catch(e){
+        console.error("FBX load failed:", e);
+      }
+
+      function onResize(){ setRendererSize(renderer, camera, canvas); }
+      window.addEventListener("resize", onResize);
+
+      (function animate(){
+        requestAnimationFrame(animate);
+        if (root) root.rotation.y += 0.008; // gentle auto-spin
+        controls.update();
+        renderer.render(scene, camera);
+      })();
+    }
+
+    renderFilterPills();
+    renderWikiCards();
+    searchEl.addEventListener("input", renderWikiCards);
+
+    /* =========================
+       CHARACTER CUSTOMIZER
+       ========================= */
+
+    const charCanvas = document.getElementById("charCanvas");
+    const rendererC  = new THREE.WebGLRenderer({ canvas: charCanvas, antialias:true, alpha:true });
+    rendererC.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const sceneC = makeSceneBase();
+    const cameraC = new THREE.PerspectiveCamera(45, 1, 0.01, 200);
+    cameraC.position.set(2.2, 1.6, 2.2);
+
+    const controlsC = new OrbitControls(cameraC, charCanvas);
+    controlsC.enableDamping = true;
+    controlsC.target.set(0, 1.1, 0);
+
+    function resizeChar(){
+      setRendererSize(rendererC, cameraC, charCanvas);
+    }
+    window.addEventListener("resize", resizeChar);
+    resizeChar();
+
+    // Keep references for equipped objects
+    let baseRoot = null;
+    let equipped = { mask:null, hat:null, bag:null };
+    let baseScale = 1;
+
+    function findBone(root, boneNameCandidates){
+      let found = null;
+      root.traverse(o => {
+        if (found) return;
+        if (o.isBone && boneNameCandidates.some(n => o.name.toLowerCase().includes(n))) found = o;
+      });
+      return found;
+    }
+
+    async function setBaseCharacter(url){
+      // clear previous
+      if (baseRoot) sceneC.remove(baseRoot);
+      Object.keys(equipped).forEach(k => { equipped[k] = null; });
+
+      baseRoot = await loadFBX(url);
+
+      // Optional: normalize character size slightly (you can remove if your base is already perfect)
+      // We compute a scale and apply it to EVERYTHING (base + attachments).
+      const box = new THREE.Box3().setFromObject(baseRoot);
+      const size = new THREE.Vector3();
+      const center = new THREE.Vector3();
+      box.getSize(size);
+      box.getCenter(center);
+
+      // Place character so feet-ish are near ground and centered
+      baseRoot.position.sub(center);
+      const maxAxis = Math.max(size.x, size.y, size.z) || 1;
+      baseScale = 1.6 / maxAxis; // character appears nice sized
+      baseRoot.scale.setScalar(baseScale);
+
+      // Lift up a bit so it's not below view
+      baseRoot.position.y += 0.9;
+
+      sceneC.add(baseRoot);
+      controlsC.target.set(0, 1.1, 0);
+    }
+
+    function removeEquipped(slot){
+      if (equipped[slot]) {
+        equipped[slot].parent?.remove(equipped[slot]);
+        equipped[slot] = null;
+      }
+    }
+
+    async function equipToBone(slot, url, bone){
+      removeEquipped(slot);
+      if (!url || !bone) return;
+
+      const obj = await loadFBX(url);
+
+      // IMPORTANT: scale attachments to match base
+      obj.scale.setScalar(baseScale);
+
+      // Position tweak defaults (you will likely adjust per-item)
+      obj.position.set(0, 0, 0);
+      obj.rotation.set(0, 0, 0);
+
+      bone.add(obj);
+      equipped[slot] = obj;
+    }
+
+    async function equipMask(url){
+      const head = findBone(baseRoot, ["head", "neck"]);
+      await equipToBone("mask", url, head);
+    }
+    async function equipHat(url){
+      const head = findBone(baseRoot, ["head", "neck"]);
+      await equipToBone("hat", url, head);
+    }
+    async function equipBag(url){
+      const spine = findBone(baseRoot, ["spine", "chest", "upperchest"]);
+      await equipToBone("bag", url, spine);
+    }
+
+    // UI wiring
+    const baseSel = document.getElementById("baseSel");
+    const maskSel = document.getElementById("maskSel");
+    const hatSel  = document.getElementById("hatSel");
+    const bagSel  = document.getElementById("bagSel");
+
+    function fillSelect(sel, arr){
+      sel.innerHTML = "";
+      arr.forEach((o,i) => {
+        const opt = document.createElement("option");
+        opt.value = o.src ?? "";
+        opt.textContent = o.name;
+        sel.appendChild(opt);
+      });
+    }
+
+    fillSelect(baseSel, baseCharacters);
+    fillSelect(maskSel, masks);
+    fillSelect(hatSel, hats);
+    fillSelect(bagSel, backpacks);
+
+    baseSel.addEventListener("change", async () => {
+      await setBaseCharacter(baseSel.value);
+      // re-equip currently selected items (if any)
+      if (maskSel.value) await equipMask(maskSel.value);
+      if (hatSel.value)  await equipHat(hatSel.value);
+      if (bagSel.value)  await equipBag(bagSel.value);
     });
-  }
+    maskSel.addEventListener("change", async () => { if (baseRoot) await equipMask(maskSel.value || null); });
+    hatSel.addEventListener("change",  async () => { if (baseRoot) await equipHat(hatSel.value || null); });
+    bagSel.addEventListener("change",  async () => { if (baseRoot) await equipBag(bagSel.value || null); });
 
-  function cardHtml(e, idx){
-    const tagHtml = e.tags.map(t => `<span class="tag">${t}</span>`).join("");
-    const linksHtml = (e.links || []).map(l => `
-      <a class="linkbtn" href="${l.href}">
-        <span class="dot"></span>${l.label}
-      </a>
-    `).join("");
+    // initial load
+    await setBaseCharacter(baseCharacters[0].src);
 
-    return `
-      <article class="card">
-        <div class="media">
-          <div class="spinbox">
-            <img data-spin src="${e.img}" alt="${escapeHtml(e.title)}" loading="lazy">
-          </div>
-          <div class="hint">Click image to spin 360°</div>
-        </div>
-        <div class="content">
-          <div class="titleRow">
-            <h3>${escapeHtml(e.title)}</h3>
-            <div class="tags">${tagHtml}</div>
-          </div>
-          <p>${escapeHtml(e.text)}</p>
-          ${linksHtml ? `<div class="actions">${linksHtml}</div>` : ``}
-        </div>
-      </article>
-    `;
-  }
+    // render loop
+    (function animateChar(){
+      requestAnimationFrame(animateChar);
+      controlsC.update();
+      rendererC.render(sceneC, cameraC);
+    })();
 
-  function escapeHtml(str){
-    return String(str)
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  // search
-  searchInput.addEventListener("input", (e) => {
-    query = e.target.value || "";
-    render();
-  });
-
-  // pills
-  pillRow.addEventListener("click", (e) => {
-    const pill = e.target.closest(".pill");
-    if(!pill) return;
-    activeTag = pill.dataset.tag;
-    pillRow.querySelectorAll(".pill").forEach(p => p.classList.toggle("active", p === pill));
-    render();
-  });
-
-  render();
-</script>
+  </script>
 </body>
 </html>
-
