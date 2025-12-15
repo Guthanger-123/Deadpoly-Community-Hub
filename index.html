@@ -101,6 +101,17 @@
     }
     .menuBtn:active{transform:translateY(1px);}
 
+    .menuBtn{ transition: top .08s ease, background .15s ease, border-color .15s ease, filter .15s ease; }
+
+    .btnMaps:hover{ top: calc(52% - 2px); }
+.btnTips:hover{ top: calc(52% - 2px); }
+.btnWiki:hover{ top: calc(44% - 2px); }
+
+.btnMaps:active{ top: calc(52% + 1px); }
+.btnTips:active{ top: calc(52% + 1px); }
+.btnWiki:active{ top: calc(44% + 1px); }
+
+
     /* Button positions like your drawing */
     .btnMaps{
       top:52%;
@@ -352,3 +363,4 @@
 
 </body>
 </html>
+
