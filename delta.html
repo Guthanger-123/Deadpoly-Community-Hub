@@ -7,43 +7,42 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD7LNZHQMM"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GD7LNZHQMM"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-GD7LNZHQMM');
+  </script>
 
-  gtag('config', 'G-GD7LNZHQMM');
-</script>
-  
   <style>
     html, body { height:100%; margin:0; }
-    <a href="maps.html" style="
-position:absolute; top:10px; left:10px; z-index:5000;
-background:#222; color:#fff; text-decoration:none;
-padding:8px 10px; border-radius:8px; border:1px solid #555;">
-← Maps
-</a>
     #map { height:100vh; }
 
     .panel { position:absolute; z-index:1000; background:rgba(30,30,30,.9); color:#fff; border-radius:8px; }
     .filters { top:10px; right:10px; padding:8px 10px; font:13px/1.3 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
     .filters h4 { margin:.2rem 0 .4rem; font-size:13px; }
-    .legend  { bottom:10px; right:10px; padding:6px 8px; font:12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
     .filters label { display:block; margin:6px 0 0; cursor:pointer; }
-    .leaflet-control.custom-btn { background:#222; color:#fff; border:1px solid #555; border-radius:4px; padding:6px 8px; font:12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
-    .leaflet-control.custom-btn a { color:#fff; text-decoration:none; display:block; }
-    .coords { top:10px; left:10px; padding:6px 8px; }
-    .coords code { background:rgba(0,0,0,.12); padding:2px 4px; border-radius:4px; }
+    .legend  { bottom:10px; right:10px; padding:6px 8px; font:12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
 
-    /* Top-center banner that stays during pan/zoom */
+    .leaflet-control.custom-btn {
+      background:#222; color:#fff; border:1px solid #555; border-radius:8px;
+      padding:6px 10px; font:12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
+    .leaflet-control.custom-btn a { color:#fff; text-decoration:none; display:block; }
+
+    .mode-row { display:flex; gap:10px; flex-wrap:wrap; margin:0 0 8px; }
+    .mode-row label { display:flex; gap:6px; align-items:center; margin:0; }
+
     .map-banner {
-      position:absolute; top:8px; left:80%; transform:translateX(-50%);
+      position:absolute; top:8px; left:50%; transform:translateX(-50%);
       z-index:1100; pointer-events:none;
     }
     .map-banner img { max-width:320px; width:28vw; height:auto; filter:drop-shadow(0 2px 6px rgba(0,0,0,.5)); }
 
-    /* --- WIP modal --- */
+    .coords { top:10px; left:10px; padding:6px 8px; }
+    .coords code { background:rgba(0,0,0,.12); padding:2px 4px; border-radius:4px; }
+
     .modal-backdrop {
       position:fixed; inset:0; background:rgba(0,0,0,.55);
       display:flex; align-items:center; justify-content:center;
@@ -69,10 +68,10 @@ padding:8px 10px; border-radius:8px; border:1px solid #555;">
     .modal .close-x:hover { color:#fff; }
   </style>
 </head>
-<body>
-  <div id="map" aria-label="Garden City interactive map"></div>
 
-  <!-- Sticks to the middle top -->
+<body>
+  <div id="map" aria-label="Delta interactive map"></div>
+
   <div class="map-banner">
     <img alt="DeadPoly" src="assets/deadpoly_hor-wht.png">
   </div>
@@ -84,7 +83,6 @@ padding:8px 10px; border-radius:8px; border:1px solid #555;">
     Click map → coords: <code id="coordsOut">—</code>
   </div>
 
-  <!-- WIP modal (shown on load) -->
   <div class="modal-backdrop" id="wipModal">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wipTitle">
       <button class="close-x" aria-label="Close">×</button>
@@ -92,94 +90,83 @@ padding:8px 10px; border-radius:8px; border:1px solid #555;">
       <p>This map is a <b>Work In Progress</b>. To see different markers, use the checkboxes in the <b>Key</b> panel.</p>
       <p class="byline">Created by <b>Guthanger123</b>.</p>
       <p class="byline">Contributors: <b>Deadpoly Community</b>.</p>
-      <div class="actions">
-        <button id="wipOk">OK</button>
-      </div>
+      <div class="actions"><button id="wipOk">OK</button></div>
     </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-  /* ==================== CONFIG (EDIT) ==================== */
+  /* ==================== CONFIG ==================== */
 
-  /* SURFACE image (1264×1264) */
-  const SURFACE_IMAGE_URL =
-    'assets/delta.png';
+  // IMPORTANT: your repo shows assets/delta.png exists. Use that exact name.
+  const SURFACE_IMAGE_URL     = 'assets/delta.png';
+  const UNDERGROUND_IMAGE_URL = 'assets/delta.png';   // swap later if you have an underground image
+  const QUESTS_IMAGE_URL      = 'assets/delta.png';   // swap later if you have a quests image
 
-
-  /* UNDERGROUND image (same pixel size as surface) */
-  const UNDERGROUND_IMAGE_URL =
-    'assets/delta.png';
-
-  /* EXACT pixel size of both images */
+  // Set these to your real delta image pixel size.
+  // If the image is NOT 1264x1264, update these or clicks/markers will be off.
   const IMAGE_WIDTH  = 1264;
   const IMAGE_HEIGHT = 1264;
 
+  // Start view center + desired start zoom
   const START = { x: IMAGE_WIDTH/2, y: IMAGE_HEIGHT/2, zoom: 2 };
 
-  /* Icons per category */
   const categoryIconMap = {
     'Point Of Interest': { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',   iconSize: [25,41], iconAnchor: [12,41] },
     'Hunting Zones':     { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png', iconSize: [25,41], iconAnchor: [12,41] },
     'Spoilers':          { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',    iconSize: [25,41], iconAnchor: [12,41] },
     'Trader':            { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',   iconSize: [25,41], iconAnchor: [12,41] },
-    'Secret Stashes':            { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png',   iconSize: [25,41], iconAnchor: [12,41] },
+    'Secret Stashes':    { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png',   iconSize: [25,41], iconAnchor: [12,41] },
     'Bunker Layouts':    { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png', iconSize: [25,41], iconAnchor: [12,41] }
   };
 
-  /* -------- Markers (SURFACE) -------- */
+  /* ======== MARKERS (DELTA) ======== */
+  // Paste your full original Delta marker list here if you want it identical.
+  // These are the ones you previously posted for Delta.
   const markersSurface = [
-    /*Bunkers Spoilers*/
     { name:'Bunker Delta', x:850, y:565, category:'Spoilers', desc:'Unopenable For Now?.' },
 
-    /* Hunting zones with links */
-    { name:'Hunting Zone (North)', x:380, y:356, category:'Hunting Zones',
-      desc: 'Deer, Bears.' },
-    { name:'Hunting Zone (East)', x:902, y:368, category:'Hunting Zones',
-      desc: 'Deer, Bears.' },
-    { name:'Hunting Zone (South)', x:650, y:950, category:'Hunting Zones',
-      desc: 'Deer, Bears.' },
+    { name:'Hunting Zone (North)', x:380, y:356, category:'Hunting Zones', desc:'Deer, Bears.' },
+    { name:'Hunting Zone (East)',  x:902, y:368, category:'Hunting Zones', desc:'Deer, Bears.' },
+    { name:'Hunting Zone (South)', x:650, y:950, category:'Hunting Zones', desc:'Deer, Bears.' },
 
+    { name:'Swanson',    x:645, y:381, category:'Trader', desc:'Materials.' },
+    { name:'Tallehase',  x:800, y:272, category:'Trader', desc:'Arms Dealer.' },
+    { name:'Elizabeth',  x:791, y:193, category:'Trader', desc:'Arms Dealer.' },
 
-    /* Traders*/
-    { name:'Swanson', x:645, y:381, category:'Trader', desc:'Materials.' },
-    { name:'Tallehase', x:800, y:272, category:'Trader', desc:'Arms Dealer.' },
-    { name:'Elizabeth', x:791, y:193, category:'Trader', desc:'Arms Dealer.' },
+    { name:'Junkyard',    x:792, y:293, category:'Point Of Interest', desc:'This location is where tallahase is.' },
+    { name:'City',        x:191, y:807, category:'Point Of Interest', desc:'The only city in Delta.' },
+    { name:'Farm',        x:486, y:213, category:'Point Of Interest', desc:'Its Farm!.' },
+    { name:'Dock',        x:622, y:42,  category:'Point Of Interest', desc:'Great fishing location.' },
+    { name:'Radio Tower', x:777, y:966, category:'Point Of Interest', desc:'Radio tower in middle of nowhere.' },
 
+    { name:'Teddybear Spawn', x:477, y:197, category:'Spoilers', desc:'Check the loft of the barn.' },
+    { name:'Birb',            x:640, y:384, category:'Spoilers', desc:'Look under swansons bed you can see Birb.' },
 
-    /* POIs */
-    { name:'Junkyard', x:792, y:293, category:'Point Of Interest', desc:'This location is where tallahase is.',},
-    { name:'City', x:191, y:807, category:'Point Of Interest', desc:'The only city in Delta.',},
-    { name:'Farm', x:486, y:213, category:'Point Of Interest', desc:'Its Farm!.',},
-    { name:'Dock', x:622, y:42, category:'Point Of Interest', desc:'Great fishing location.',},
-    { name:'Radio Tower', x:777, y:966, category:'Point Of Interest', desc:'Radio tower in middle of nowhere.',},
-
-    /*Spoiler*/
-    { name:'Teddybear Spawn', x:477, y:197, category:'Spoilers', desc:'Check the loft of the barn.',},
-    { name:'Birb', x:640, y:384, category:'Spoilers', desc:'Look under swansons bed you can see Birb.',},
-
-    /*Secret Stashes*/
-    { name:'Secret Stash', x:526, y:253, category:'Secret Stashes', desc:'Look behind the farm house.',},
-    { name:'Secret Stash', x:550, y:139, category:'Secret Stashes', desc:'Located right next to a tree.',},
-    { name:'Secret Stash', x:791, y:186, category:'Secret Stashes', desc:'Look behind Elizabeths.',},
-    { name:'Secret Stash', x:541, y:298, category:'Secret Stashes', desc:'Located right next to a tree.',},
-    { name:'Secret Stash', x:783, y:387, category:'Secret Stashes', desc:'Located right next to the sandbags.',},
-    { name:'Secret Stash', x:946, y:554, category:'Secret Stashes', desc:'Located right next to a tree.',},
-    { name:'Secret Stash', x:864, y:475, category:'Secret Stashes', desc:'Located right next to a tree.',},
-    { name:'Secret Stash', x:600, y:580, category:'Secret Stashes', desc:'Located right next to a tree.',},
+    { name:'Secret Stash', x:526, y:253, category:'Secret Stashes', desc:'Look behind the farm house.' },
+    { name:'Secret Stash', x:550, y:139, category:'Secret Stashes', desc:'Located right next to a tree.' },
+    { name:'Secret Stash', x:791, y:186, category:'Secret Stashes', desc:'Look behind Elizabeths.' },
+    { name:'Secret Stash', x:541, y:298, category:'Secret Stashes', desc:'Located right next to a tree.' },
+    { name:'Secret Stash', x:783, y:387, category:'Secret Stashes', desc:'Located right next to the sandbags.' },
+    { name:'Secret Stash', x:946, y:554, category:'Secret Stashes', desc:'Located right next to a tree.' },
+    { name:'Secret Stash', x:864, y:475, category:'Secret Stashes', desc:'Located right next to a tree.' },
+    { name:'Secret Stash', x:600, y:580, category:'Secret Stashes', desc:'Located right next to a tree.' }
   ];
 
-  /* -------- Markers (UNDERGROUND) -------- */
   const markersUnderground = [
-    { name:'Bunker Delta Layout', x:850, y:565, category:'Bunker Layouts', desc:'Unopenable For Now?.',},
+    { name:'Bunker Delta Layout', x:850, y:565, category:'Bunker Layouts', desc:'Unopenable For Now?.' }
   ];
 
-  /* ==================== END CONFIG ==================== */
+  // Example quest pins — edit/add your real ones
+  const markersQuests = [
+    { name:'Quest: Example', x:622, y:42, category:'Quest', desc:'Write quest steps here.' }
+  ];
 
-  /* Map setup with clamped bounds/zoom */
+  /* ==================== MAP CORE ==================== */
+
   const map = L.map('map', {
     crs: L.CRS.Simple,
-    minZoom: -6,  /* will be raised to the min that shows whole image */
+    minZoom: -6,
     maxZoom: 6,
     zoomSnap: 0.25,
     zoomDelta: 0.25,
@@ -193,54 +180,48 @@ padding:8px 10px; border-radius:8px; border:1px solid #555;">
 
   const overlaySurface     = L.imageOverlay(SURFACE_IMAGE_URL, bounds);
   const overlayUnderground = L.imageOverlay(UNDERGROUND_IMAGE_URL, bounds);
+  const overlayQuests      = L.imageOverlay(QUESTS_IMAGE_URL, bounds);
+
   overlaySurface.addTo(map);
 
-  /* Keep users on the image; no panning outside */
   map.setMaxBounds(bounds);
   map.options.maxBoundsViscosity = 1.0;
 
-  /* Fit & lock the minimum zoom so you can’t zoom out past the image */
   map.fitBounds(bounds, { padding: [90, 90] });
   const startLatLng = map.unproject([START.x, START.y], 0);
   const minZoomToShowAll = map.getBoundsZoom(bounds, true);
   map.options.minZoom = minZoomToShowAll;
-  map.setView(startLatLng, Math.max(START.zoom, minZoomToShowAll));
-  map.on('zoomend', () => { if (map.getZoom() < minZoomToShowAll) map.setZoom(minZoomToShowAll); });
 
   L.control.scale({ metric:true, imperial:false }).addTo(map);
 
-  /* Helpers */
   const xyToLatLng = (x,y) => map.unproject([x,y], 0);
-
   const filterPanel = document.getElementById('filterPanel');
   const legendPanel = document.getElementById('legendPanel');
 
   let currentMode = 'surface';
   let byCat = {};
-  let allMarkers = [];
 
   function clearMarkers() {
     Object.values(byCat).forEach(g => g.clearLayers());
     byCat = {};
-    allMarkers = [];
   }
 
-  // Build filters with checkboxes OFF by default
   function buildFilters(categories) {
     filterPanel.innerHTML =
       `<h4>Key</h4>
-       <label style="margin-bottom:6px;display:block">
-         <input type="checkbox" id="toggle-underground"> Underground mode
-       </label>`;
-    const cb = document.getElementById('toggle-underground');
-    cb.checked = (currentMode === 'underground');
-    cb.addEventListener('change', e => setMode(e.target.checked ? 'underground' : 'surface'));
+       <div class="mode-row">
+         <label><input type="radio" name="mapMode" value="surface" ${currentMode==='surface'?'checked':''}> Surface</label>
+         <label><input type="radio" name="mapMode" value="underground" ${currentMode==='underground'?'checked':''}> Underground</label>
+         <label><input type="radio" name="mapMode" value="quests" ${currentMode==='quests'?'checked':''}> Quests</label>
+       </div>`;
+
+    filterPanel.querySelectorAll('input[name="mapMode"]').forEach(r => {
+      r.addEventListener('change', e => setMode(e.target.value));
+    });
 
     categories.sort().forEach(cat => {
-      const id = 'cat-' + cat.replace(/\s+/g,'-');
       const label = document.createElement('label');
-      // start UNCHECKED:
-      label.innerHTML = `<input type="checkbox" id="${id}"> ${cat}`;
+      label.innerHTML = `<input type="checkbox"> ${cat}`;
       const input = label.querySelector('input');
       input.addEventListener('change', e => {
         if (e.target.checked) byCat[cat].addTo(map);
@@ -257,36 +238,26 @@ padding:8px 10px; border-radius:8px; border:1px solid #555;">
     }).join('');
   }
 
-  // Render markers but DO NOT add category layer groups to map yet (checkboxes start off)
   function renderMarkers(markerData) {
     clearMarkers();
     const categoriesPresent = new Set();
 
     markerData.forEach(m => {
       categoriesPresent.add(m.category);
-      if (!byCat[m.category]) byCat[m.category] = L.layerGroup(); // not added yet
+      if (!byCat[m.category]) byCat[m.category] = L.layerGroup();
 
       const html =
         `<b>${m.name || 'Point'}</b>` +
-        (m.descHtml ? `<br>${m.descHtml}` : (m.desc ? `<br>${m.desc}` : '')) +
-        (m.link ? `<br><a href="${m.link}" target="_blank" rel="noopener">Details »</a>` : '') +
-        (m.image ? `<br><img src="${m.image}" style="max-width:200px;max-height:150px;border-radius:4px;margin-top:4px">` : '');
+        (m.descHtml ? `<br>${m.descHtml}` : (m.desc ? `<br>${m.desc}` : ''));
 
       const latlng = xyToLatLng(m.x, m.y);
 
-      let iconOpts = null;
-      if (m.icon) {
-        iconOpts = { iconUrl: m.icon, iconSize: m.iconSize || [25,41], iconAnchor: m.iconAnchor || [12,41] };
-      } else if (categoryIconMap[m.category]) {
-        iconOpts = categoryIconMap[m.category];
-      }
-
-      const mk = iconOpts
-        ? L.marker(latlng, { icon: L.icon(iconOpts) }).bindPopup(html)
+      const iconDef = categoryIconMap[m.category];
+      const mk = iconDef
+        ? L.marker(latlng, { icon: L.icon(iconDef) }).bindPopup(html)
         : L.marker(latlng).bindPopup(html);
 
       byCat[m.category].addLayer(mk);
-      allMarkers.push(mk);
     });
 
     buildFilters([...categoriesPresent]);
@@ -297,25 +268,24 @@ padding:8px 10px; border-radius:8px; border:1px solid #555;">
     if (mode === currentMode) return;
     currentMode = mode;
 
+    map.removeLayer(overlaySurface);
+    map.removeLayer(overlayUnderground);
+    map.removeLayer(overlayQuests);
+
     if (mode === 'surface') {
-      map.removeLayer(overlayUnderground);
       overlaySurface.addTo(map);
       renderMarkers(markersSurface);
-    } else {
-      map.removeLayer(overlaySurface);
+    } else if (mode === 'underground') {
       overlayUnderground.addTo(map);
       renderMarkers(markersUnderground);
+    } else {
+      overlayQuests.addTo(map);
+      renderMarkers(markersQuests);
     }
 
-    map.setMaxBounds(bounds);
-    const z = Math.max(map.getZoom(), minZoomToShowAll);
-    map.setView(startLatLng, z);
+    map.setView(startLatLng, Math.max(map.getZoom(), minZoomToShowAll));
   }
 
-  /* Initial render */
-  renderMarkers(markersSurface);
-
-  /* Buttons */
   function controlButton(text, title, onClick) {
     return L.Control.extend({
       options: { position: 'topleft' },
@@ -329,15 +299,29 @@ padding:8px 10px; border-radius:8px; border:1px solid #555;">
       }
     });
   }
-  map.addControl(new (controlButton('Home','Reset view', () => map.setView(startLatLng, Math.max(START.zoom, minZoomToShowAll))))());
+
+  map.addControl(new (controlButton('← Maps','Back to maps', () => { window.location.href = 'maps.html'; }))());
+  map.addControl(new (controlButton('Home','Reset view', () => map.setView(startLatLng, minZoomToShowAll)))());
   map.addControl(new (controlButton('Fullscreen','Toggle fullscreen', () => {
     const el = document.getElementById('map');
     if (!document.fullscreenElement) el.requestFullscreen?.(); else document.exitFullscreen?.();
   }))());
 
+  // Click-to-copy coords (pixel coords)
+  const coordsOut = document.getElementById('coordsOut');
+  map.on('click', e => {
+    const p = map.project(e.latlng, 0);
+    const x = Math.round(p.x), y = Math.round(p.y);
+    const text = `${x}, ${y}`;
+    coordsOut.textContent = text;
+    try { navigator.clipboard?.writeText?.(text); } catch {}
+    L.popup().setLatLng(e.latlng).setContent(`x,y = <b>${x}, ${y}</b><br>(copied)`).openOn(map);
+  });
 
+  // Initial
+  renderMarkers(markersSurface);
 
-  /* --- WIP modal logic --- */
+  // WIP modal
   (function setupWipModal(){
     const modal = document.getElementById('wipModal');
     const btnOk = document.getElementById('wipOk');
@@ -345,11 +329,9 @@ padding:8px 10px; border-radius:8px; border:1px solid #555;">
     function close() { modal.style.display = 'none'; }
     btnOk.addEventListener('click', close);
     btnX.addEventListener('click', close);
-    // If you want “remember my choice”, uncomment the next 3 lines:
-    // if (localStorage.getItem('gcmap_wip_ack') === '1') modal.style.display = 'none';
-    // [btnOk, btnX].forEach(b => b.addEventListener('click', () => localStorage.setItem('gcmap_wip_ack','1')));
   })();
   </script>
 </body>
 </html>
+
 
