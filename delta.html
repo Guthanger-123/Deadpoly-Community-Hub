@@ -191,6 +191,8 @@
   const startLatLng = map.unproject([START.x, START.y], 0);
   const minZoomToShowAll = map.getBoundsZoom(bounds, true);
   map.options.minZoom = minZoomToShowAll;
+  map.setView(startLatLng, minZoomToShowAll);
+
 
   L.control.scale({ metric:true, imperial:false }).addTo(map);
 
