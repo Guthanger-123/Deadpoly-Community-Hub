@@ -1,656 +1,230 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>DeadPoly Wiki</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<title>DeadPoly Wiki – 3D Preview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    :root{
-      --bg:#0b0c10;
-      --panel:#10121a;
-      --panel2:#0f1118;
-      --line:rgba(255,255,255,.08);
-      --text:#e8e8ef;
-      --muted:#aeb3c2;
-      --btn:#171a23;
-      --btn2:#1d2230;
-      --accent:#2f78ff;
-      --shadow: 0 14px 40px rgba(0,0,0,.45);
-      --radius:14px;
-    }
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; margin:0; background:radial-gradient(1200px 600px at 50% -200px, rgba(47,120,255,.20), transparent 55%), var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+<!-- ================= THREE.JS CORE ================= -->
+<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://unpkg.com/three@0.158.0/examples/js/loaders/FBXLoader.js"></script>
 
-    .topbar{
-      position:sticky; top:0; z-index:50;
-      display:flex; align-items:center; gap:10px;
-      padding:10px 14px;
-      background:linear-gradient(to bottom, rgba(10,10,14,.92), rgba(10,10,14,.72));
-      backdrop-filter: blur(10px);
-      border-bottom:1px solid var(--line);
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px; min-width:190px;
-      font-weight:800; letter-spacing:.2px;
-    }
-    .brand .dot{ width:10px; height:10px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px rgba(47,120,255,.18); }
-    .nav{
-      display:flex; gap:8px; flex-wrap:wrap;
-    }
-    .spacer{ flex:1; }
-    .btn{
-      appearance:none; border:1px solid var(--line);
-      background:linear-gradient(to bottom, var(--btn2), var(--btn));
-      color:var(--text);
-      padding:8px 12px; border-radius:12px;
-      cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
-      font-size:13px; line-height:1;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      user-select:none;
-    }
-    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.16); }
-    .btn:active{ transform: translateY(0px); }
-    .btn.primary{ border-color: rgba(47,120,255,.45); }
-    .btn.primary:hover{ border-color: rgba(47,120,255,.70); }
-    .btn.small{ padding:7px 10px; border-radius:999px; font-size:12px; }
+<style>
+body {
+  margin:0;
+  background:#0e0f13;
+  color:#eaeaea;
+  font-family:system-ui;
+}
 
-    .wrap{
-      max-width:1200px;
-      margin:18px auto;
-      padding:0 14px 24px;
-      display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap:14px;
-    }
-    @media (max-width: 980px){
-      .wrap{ grid-template-columns: 1fr; }
-      .brand{ min-width:auto; }
-    }
+.topbar {
+  height:54px;
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  border-bottom:1px solid #222;
+}
 
-    .card{
-      background:linear-gradient(to bottom, rgba(16,18,26,.86), rgba(12,13,18,.86));
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .card-head{
-      padding:14px 14px 10px;
-      border-bottom:1px solid var(--line);
-      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-    }
-    .title{
-      margin:0;
-      font-size:18px;
-      letter-spacing:.2px;
-    }
-    .subtitle{
-      margin:4px 0 0;
-      color:var(--muted);
-      font-size:13px;
-    }
+.topbar a {
+  color:#ccc;
+  text-decoration:none;
+  margin-right:16px;
+}
 
-    .viewer{
-      position:relative;
-      height: 70vh;
-      min-height: 520px;
-      background: radial-gradient(900px 700px at 60% 30%, rgba(255,255,255,.06), transparent 55%), #07080c;
-    }
-    @media (max-width: 980px){
-      .viewer{ height: 62vh; min-height: 460px; }
-    }
-    .viewer canvas{ display:block; width:100%; height:100%; }
-    .viewer-overlay{
-      position:absolute; left:12px; right:12px; top:12px;
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      pointer-events:none;
-    }
-    .pill{
-      pointer-events:auto;
-      display:inline-flex; align-items:center; gap:8px;
-      background:rgba(16,18,26,.78);
-      border:1px solid var(--line);
-      border-radius: 999px;
-      padding:8px 10px;
-      color:var(--muted);
-      font-size:12px;
-    }
-    .pill b{ color:var(--text); font-weight:700; }
-    .small-actions{ pointer-events:auto; display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+.layout {
+  display:grid;
+  grid-template-columns: 1fr 360px;
+  height: calc(100vh - 54px);
+}
 
-    .section{
-      padding:12px 14px 14px;
-      border-top:1px solid var(--line);
-    }
-    .section:first-child{ border-top:none; }
-    .section h3{
-      margin:0 0 8px;
-      font-size:14px;
-      letter-spacing:.2px;
-    }
-    .muted{ color:var(--muted); font-size:12px; line-height:1.35; }
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
-    @media (max-width: 520px){
-      .grid{ grid-template-columns:1fr; }
-    }
+#viewer {
+  position:relative;
+}
 
-    .item{
-      background:rgba(255,255,255,.03);
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px;
-      display:flex; flex-direction:column; gap:8px;
-    }
-    .item .row{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-    .item .name{ font-weight:700; font-size:13px; }
-    .item .tag{ color:var(--muted); font-size:11px; }
-    .item .desc{ color:var(--muted); font-size:12px; line-height:1.35; margin-top:-2px; }
-    .item .actions{ display:flex; gap:8px; flex-wrap:wrap; }
-    .item .actions .btn{ flex:1; justify-content:center; padding:8px 10px; border-radius:10px; }
+canvas {
+  display:block;
+}
 
-    .toast{
-      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
-      background:rgba(16,18,26,.92);
-      border:1px solid var(--line);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      box-shadow: var(--shadow);
-      font-size:12px;
-      opacity:0; pointer-events:none;
-      transition:opacity .18s ease;
-      z-index:999;
-      max-width:min(560px, 92vw);
-    }
-    .toast.show{ opacity:1; }
-    .kbd{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:rgba(255,255,255,.08); padding:2px 6px; border-radius:6px; border:1px solid rgba(255,255,255,.10); }
-  </style>
+.sidebar {
+  border-left:1px solid #222;
+  padding:16px;
+  overflow:auto;
+}
+
+h2 { margin-top:0; }
+
+button {
+  background:#1a1d24;
+  color:#fff;
+  border:1px solid #333;
+  padding:8px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  margin:4px 0;
+}
+
+button:hover { background:#232733; }
+
+.part-group {
+  margin-bottom:16px;
+}
+
+.part-group h4 {
+  margin:8px 0;
+  color:#9aa3ff;
+}
+
+.small {
+  color:#888;
+  font-size:12px;
+}
+</style>
 </head>
 
 <body>
 
-  <header class="topbar">
-    <div class="brand">
-      <span class="dot"></span>
-      <span>DeadPoly Community Hub</span>
-    </div>
-
-    <nav class="nav">
-      <a class="btn" href="index.html">← Menu</a>
-      <a class="btn" href="maps.html">Maps</a>
-      <a class="btn" href="tips.html">Tips</a>
-      <a class="btn primary" href="wiki.html">Wiki</a>
-    </nav>
-
-    <div class="spacer"></div>
-
-    <a class="btn small" href="index.html#credits" title="Credits">Credits</a>
-  </header>
-
-  <main class="wrap">
-
-    <!-- LEFT: Viewer -->
-    <section class="card">
-      <div class="card-head">
-        <div>
-          <h1 class="title">Wiki • 3D Preview & Character Customizer</h1>
-          <p class="subtitle">Drag to rotate • Scroll to zoom • Right-drag to pan</p>
-        </div>
-      </div>
-
-      <div class="viewer" id="viewer">
-        <div class="viewer-overlay">
-          <div class="pill">
-            Loaded: <b id="loadedLabel">Nothing</b>
-          </div>
-          <div class="small-actions">
-            <button class="btn small" id="btnReset">Reset View</button>
-            <button class="btn small" id="btnClear">Clear Parts</button>
-            <button class="btn small primary" id="btnBase">Load Base</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="muted">
-          Dev note: This equips parts by simply adding FBX objects into the scene.
-          If some parts don’t line up, they may need the same skeleton/origin as the base.
-        </div>
-      </div>
-    </section>
-
-    <!-- RIGHT: Lists -->
-    <aside class="card">
-      <div class="card-head">
-        <div>
-          <h2 class="title" style="font-size:16px;">Character Parts</h2>
-          <p class="subtitle">Loads FBX files from <b>/assets/models/</b></p>
-        </div>
-      </div>
-
-      <div class="section">
-        <h3>Base</h3>
-        <div class="grid" id="baseList"></div>
-      </div>
-
-      <div class="section">
-        <h3>Head</h3>
-        <div class="grid" id="headList"></div>
-      </div>
-
-      <div class="section">
-        <h3>Hair</h3>
-        <div class="grid" id="hairList"></div>
-      </div>
-
-      <div class="section">
-        <h3>Face / Mask</h3>
-        <div class="grid" id="faceList"></div>
-      </div>
-
-      <div class="section">
-        <h3>Torso</h3>
-        <div class="grid" id="torsoList"></div>
-      </div>
-
-      <div class="section">
-        <h3>Arms (Upper / Lower)</h3>
-        <div class="grid" id="armsList"></div>
-      </div>
-
-      <div class="section">
-        <h3>Hands</h3>
-        <div class="grid" id="handsList"></div>
-      </div>
-
-      <div class="section">
-        <h3>Hips</h3>
-        <div class="grid" id="hipsList"></div>
-      </div>
-
-      <div class="section">
-        <h3>Legs / Knees</h3>
-        <div class="grid" id="legsList"></div>
-      </div>
-
-      <div class="section">
-        <h3>Feet</h3>
-        <div class="grid" id="feetList"></div>
-      </div>
-
-      <div class="section">
-        <h3>Extras / Other</h3>
-        <div class="grid" id="otherList"></div>
-      </div>
-
-      <div class="section">
-        <h3>Add / Remove Parts (quick guide)</h3>
-        <div class="muted">
-          • Upload your FBX to <b>assets/models/</b><br>
-          • Add an entry in the correct list (Head/Hair/etc) in the script below.<br>
-          • To remove: delete that entry line from the list.<br><br>
-          Each entry looks like:<br>
-          <span class="kbd">{ id:'x', name:'Display Name', file:'assets/models/FILENAME.fbx', desc:'...' }</span>
-        </div>
-      </div>
-
-    </aside>
-
-  </main>
-
-  <div class="toast" id="toast"></div>
-
-  <!-- Three.js -->
-  <script type="module">
-    import * as THREE from 'https://unpkg.com/three@0.158.0/build/three.module.js';
-    import { OrbitControls } from 'https://unpkg.com/three@0.158.0/examples/jsm/controls/OrbitControls.js';
-    import { FBXLoader } from 'https://unpkg.com/three@0.158.0/examples/jsm/loaders/FBXLoader.js';
-
-    /* =========================
-       DATA LISTS (YOUR PARTS ADDED)
-       Put the FBX files in /assets/models/
-       ========================= */
-
-    // IMPORTANT: This must match your actual base model filename in assets/models/
-    const BASE_MODELS = [
-      { id:'base', name:'Base Character', file:'assets/models/SK_BaseModel.fbx', desc:'Main body / skeleton.' },
-    ];
-
-    // HEAD (AHED)
-    const HEAD_ITEMS = [
-      { id:'hor_viln_head', name:'Horror Villain Head', file:'assets/models/SK_HORR_VILN_01_22AHED_HU01.fbx', desc:'Head (AHED).' },
-
-      { id:'fant_kngt_head', name:'Fantasy Knight Head', file:'assets/models/SK_FANT_KNGT_17_22AHED_HU01.fbx', desc:'Head (AHED).' },
-
-      { id:'scfi_civl09_head', name:'Sci-Fi Civilian 09 Head', file:'assets/models/SK_SCFI_CIVL_09_22AHED_HU01.fbx', desc:'Head (AHED).' },
-      { id:'scfi_civl10_head', name:'Sci-Fi Civilian 10 Head', file:'assets/models/SK_SCFI_CIVL_10_22AHED_HU01.fbx', desc:'Head (AHED).' },
-    ];
-
-    // HAIR
-    const HAIR_ITEMS = [
-      { id:'scfi_civl09_hair', name:'Sci-Fi Civilian 09 Hair', file:'assets/models/SK_SCFI_CIVL_09_02HAIR_HU01.fbx', desc:'Hair (HAIR).' },
-    ];
-
-    // FACE / MASK (AFAC)
-    const FACE_ITEMS = [
-      { id:'scfi_civl09_face', name:'Sci-Fi Civilian 09 Face', file:'assets/models/SK_SCFI_CIVL_09_23AFAC_HU01.fbx', desc:'Face/mask (AFAC).' },
-      { id:'fant_kngt_face', name:'Fantasy Knight Face', file:'assets/models/SK_FANT_KNGT_17_23AFAC_HU01.fbx', desc:'Face/mask (AFAC).' },
-    ];
-
-    // TORSO (TORS)
-    const TORSO_ITEMS = [
-      { id:'fant_kngt_torso', name:'Fantasy Knight Torso', file:'assets/models/SK_FANT_KNGT_17_10TORS_HU01.fbx', desc:'Torso (TORS).' },
-      { id:'scfi_civl09_torso', name:'Sci-Fi Civilian 09 Torso', file:'assets/models/SK_SCFI_CIVL_09_10TORS_HU01.fbx', desc:'Torso (TORS).' },
-    ];
-
-    // ARMS: Upper (AUPL/AUPR), Lower (ALWL/ALWR)
-    const ARMS_ITEMS = [
-      // Fantasy Knight
-      { id:'fk_aupl', name:'FK Upper Arm Left', file:'assets/models/SK_FANT_KNGT_17_11AUPL_HU01.fbx', desc:'Upper arm L (AUPL).' },
-      { id:'fk_aupr', name:'FK Upper Arm Right', file:'assets/models/SK_FANT_KNGT_17_12AUPR_HU01.fbx', desc:'Upper arm R (AUPR).' },
-      { id:'fk_alwl', name:'FK Lower Arm Left', file:'assets/models/SK_FANT_KNGT_17_13ALWL_HU01.fbx', desc:'Lower arm L (ALWL).' },
-      { id:'fk_alwr', name:'FK Lower Arm Right', file:'assets/models/SK_FANT_KNGT_17_14ALWR_HU01.fbx', desc:'Lower arm R (ALWR).' },
-
-      // Sci-Fi Civilian 09
-      { id:'c09_aupl', name:'C09 Upper Arm Left', file:'assets/models/SK_SCFI_CIVL_09_11AUPL_HU01.fbx', desc:'Upper arm L (AUPL).' },
-      { id:'c09_aupr', name:'C09 Upper Arm Right', file:'assets/models/SK_SCFI_CIVL_09_12AUPR_HU01.fbx', desc:'Upper arm R (AUPR).' },
-      { id:'c09_alwl', name:'C09 Lower Arm Left', file:'assets/models/SK_SCFI_CIVL_09_13ALWL_HU01.fbx', desc:'Lower arm L (ALWL).' },
-      { id:'c09_alwr', name:'C09 Lower Arm Right', file:'assets/models/SK_SCFI_CIVL_09_14ALWR_HU01.fbx', desc:'Lower arm R (ALWR).' },
-    ];
-
-    // HANDS (HNDL/HNDR)
-    const HANDS_ITEMS = [
-      { id:'fk_hndl', name:'FK Hand Left', file:'assets/models/SK_FANT_KNGT_17_15HNDL_HU01.fbx', desc:'Hand L (HNDL).' },
-      { id:'fk_hndr', name:'FK Hand Right', file:'assets/models/SK_FANT_KNGT_17_16HNDR_HU01.fbx', desc:'Hand R (HNDR).' },
-
-      { id:'c09_hndl', name:'C09 Hand Left', file:'assets/models/SK_SCFI_CIVL_09_15HNDL_HU01.fbx', desc:'Hand L (HNDL).' },
-      { id:'c09_hndr', name:'C09 Hand Right', file:'assets/models/SK_SCFI_CIVL_09_16HNDR_HU01.fbx', desc:'Hand R (HNDR).' },
-    ];
-
-    // HIPS (HIPS)
-    const HIPS_ITEMS = [
-      { id:'fk_hips', name:'FK Hips', file:'assets/models/SK_FANT_KNGT_17_17HIPS_HU01.fbx', desc:'Hips (HIPS).' },
-      { id:'c09_hips', name:'C09 Hips', file:'assets/models/SK_SCFI_CIVL_09_17HIPS_HU01.fbx', desc:'Hips (HIPS).' },
-    ];
-
-    // LEGS / KNEES (LEGL/LEGR, KNL/KNR)
-    const LEGS_ITEMS = [
-      // Fantasy Knight
-      { id:'fk_legl', name:'FK Leg Left', file:'assets/models/SK_FANT_KNGT_17_18LEGL_HU01.fbx', desc:'Leg L (LEGL).' },
-      { id:'fk_legr', name:'FK Leg Right', file:'assets/models/SK_FANT_KNGT_17_19LEGR_HU01.fbx', desc:'Leg R (LEGR).' },
-      { id:'fk_knl',  name:'FK Knee Left', file:'assets/models/SK_FANT_KNGT_17_33AKNL_HU01.fbx', desc:'Knee L (AKNL).' },
-      { id:'fk_knr',  name:'FK Knee Right', file:'assets/models/SK_FANT_KNGT_17_34AKNR_HU01.fbx', desc:'Knee R (AKNR).' },
-
-      // Sci-Fi Civilian 09
-      { id:'c09_legl', name:'C09 Leg Left', file:'assets/models/SK_SCFI_CIVL_09_18LEGL_HU01.fbx', desc:'Leg L (LEGL).' },
-      { id:'c09_legr', name:'C09 Leg Right', file:'assets/models/SK_SCFI_CIVL_09_19LEGR_HU01.fbx', desc:'Leg R (LEGR).' },
-      { id:'c09_knl',  name:'C09 Knee Left', file:'assets/models/SK_SCFI_CIVL_09_33AKNL_HU01.fbx', desc:'Knee L (AKNL).' },
-      { id:'c09_knr',  name:'C09 Knee Right', file:'assets/models/SK_SCFI_CIVL_09_34AKNR_HU01.fbx', desc:'Knee R (AKNR).' },
-    ];
-
-    // FEET (FOTL/FOTR)
-    const FEET_ITEMS = [
-      { id:'fk_fotl', name:'FK Foot Left', file:'assets/models/SK_FANT_KNGT_17_20FOTL_HU01.fbx', desc:'Foot L (FOTL).' },
-      { id:'fk_fotr', name:'FK Foot Right', file:'assets/models/SK_FANT_KNGT_17_21FOTR_HU01.fbx', desc:'Foot R (FOTR).' },
-
-      { id:'c09_fotl', name:'C09 Foot Left', file:'assets/models/SK_SCFI_CIVL_09_20FOTL_HU01.fbx', desc:'Foot L (FOTL).' },
-      { id:'c09_fotr', name:'C09 Foot Right', file:'assets/models/SK_SCFI_CIVL_09_21FOTR_HU01.fbx', desc:'Foot R (FOTR).' },
-    ];
-
-    // EXTRAS / OTHER (ABAC, AHP*, ASH*, AEB*)
-    const OTHER_ITEMS = [
-      // Fantasy Knight
-      { id:'fk_abac', name:'FK Back Accessory', file:'assets/models/SK_FANT_KNGT_17_24ABAC_HU01.fbx', desc:'Back (ABAC).' },
-      { id:'fk_ahpf', name:'FK Hip Front', file:'assets/models/SK_FANT_KNGT_17_25AHPF_HU01.fbx', desc:'Hip front (AHPF).' },
-      { id:'fk_ahpb', name:'FK Hip Back', file:'assets/models/SK_FANT_KNGT_17_26AHPB_HU01.fbx', desc:'Hip back (AHPB).' },
-      { id:'fk_ahpl', name:'FK Hip Left', file:'assets/models/SK_FANT_KNGT_17_27AHPL_HU01.fbx', desc:'Hip left (AHPL).' },
-      { id:'fk_ahpr', name:'FK Hip Right', file:'assets/models/SK_FANT_KNGT_17_28AHPR_HU01.fbx', desc:'Hip right (AHPR).' },
-      { id:'fk_ashl', name:'FK Shoulder Left', file:'assets/models/SK_FANT_KNGT_17_29ASHL_HU01.fbx', desc:'Shoulder L (ASHL).' },
-      { id:'fk_ashr', name:'FK Shoulder Right', file:'assets/models/SK_FANT_KNGT_17_30ASHR_HU01.fbx', desc:'Shoulder R (ASHR).' },
-      { id:'fk_aebl', name:'FK Elbow Left', file:'assets/models/SK_FANT_KNGT_17_31AEBL_HU01.fbx', desc:'Elbow L (AEBL).' },
-      { id:'fk_aebr', name:'FK Elbow Right', file:'assets/models/SK_FANT_KNGT_17_32AEBR_HU01.fbx', desc:'Elbow R (AEBR).' },
-
-      // Sci-Fi Civilian 09
-      { id:'c09_abac', name:'C09 Back Accessory', file:'assets/models/SK_SCFI_CIVL_09_24ABAC_HU01.fbx', desc:'Back (ABAC).' },
-      { id:'c09_ahpf', name:'C09 Hip Front', file:'assets/models/SK_SCFI_CIVL_09_25AHPF_HU01.fbx', desc:'Hip front (AHPF).' },
-      { id:'c09_ahpb', name:'C09 Hip Back', file:'assets/models/SK_SCFI_CIVL_09_26AHPB_HU01.fbx', desc:'Hip back (AHPB).' },
-      { id:'c09_ahpl', name:'C09 Hip Left', file:'assets/models/SK_SCFI_CIVL_09_27AHPL_HU01.fbx', desc:'Hip left (AHPL).' },
-      { id:'c09_ahpr', name:'C09 Hip Right', file:'assets/models/SK_SCFI_CIVL_09_28AHPR_HU01.fbx', desc:'Hip right (AHPR).' },
-      { id:'c09_ashl', name:'C09 Shoulder Left', file:'assets/models/SK_SCFI_CIVL_09_29ASHL_HU01.fbx', desc:'Shoulder L (ASHL).' },
-      { id:'c09_ashr', name:'C09 Shoulder Right', file:'assets/models/SK_SCFI_CIVL_09_30ASHR_HU01.fbx', desc:'Shoulder R (ASHR).' },
-      { id:'c09_aebl', name:'C09 Elbow Left', file:'assets/models/SK_SCFI_CIVL_09_31AEBL_HU01.fbx', desc:'Elbow L (AEBL).' },
-      { id:'c09_aebr', name:'C09 Elbow Right', file:'assets/models/SK_SCFI_CIVL_09_32AEBR_HU01.fbx', desc:'Elbow R (AEBR).' },
-
-      // Sci-Fi Civilian 10 (only items you listed)
-      { id:'c10_ashl', name:'C10 Shoulder Left', file:'assets/models/SK_SCFI_CIVL_10_29ASHL_HU01.fbx', desc:'Shoulder L (ASHL).' },
-      { id:'c10_ashr', name:'C10 Shoulder Right', file:'assets/models/SK_SCFI_CIVL_10_30ASHR_HU01.fbx', desc:'Shoulder R (ASHR).' },
-      { id:'c10_ahpb', name:'C10 Hip Back', file:'assets/models/SK_SCFI_CIVL_10_26AHPB_HU01.fbx', desc:'Hip back (AHPB).' },
-      { id:'c10_ahpl', name:'C10 Hip Left', file:'assets/models/SK_SCFI_CIVL_10_27AHPL_HU01.fbx', desc:'Hip left (AHPL).' },
-      { id:'c10_ahpr', name:'C10 Hip Right', file:'assets/models/SK_SCFI_CIVL_10_28AHPR_HU01.fbx', desc:'Hip right (AHPR).' },
-    ];
-
-    /* =========================
-       CORE VIEWER
-       ========================= */
-
-    const viewer = document.getElementById('viewer');
-    const toastEl = document.getElementById('toast');
-    const loadedLabel = document.getElementById('loadedLabel');
-
-    const scene = new (await import('https://unpkg.com/three@0.158.0/build/three.module.js')).Scene();
-    scene.background = new (await import('https://unpkg.com/three@0.158.0/build/three.module.js')).Color(0x07080c);
-
-    // (Re-imported objects for strict module environments)
-    const THREE_NS = await import('https://unpkg.com/three@0.158.0/build/three.module.js');
-    const renderer = new THREE_NS.WebGLRenderer({ antialias:true, alpha:false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setSize(viewer.clientWidth, viewer.clientHeight);
-    renderer.outputColorSpace = THREE_NS.SRGBColorSpace;
-    viewer.appendChild(renderer.domElement);
-
-    const camera = new THREE_NS.PerspectiveCamera(45, viewer.clientWidth / viewer.clientHeight, 0.01, 2000);
-    camera.position.set(0, 1.6, 3.1);
-
-    const { OrbitControls: OrbitControlsNS } = await import('https://unpkg.com/three@0.158.0/examples/jsm/controls/OrbitControls.js');
-    const controls = new OrbitControlsNS(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.08;
-    controls.target.set(0, 1.35, 0);
-
-    scene.add(new THREE_NS.HemisphereLight(0xffffff, 0x303040, 1.1));
-    const key = new THREE_NS.DirectionalLight(0xffffff, 1.05);
-    key.position.set(3, 6, 2);
-    scene.add(key);
-    const rim = new THREE_NS.DirectionalLight(0x9db7ff, 0.55);
-    rim.position.set(-4, 2, -3);
-    scene.add(rim);
-
-    const baseGroup = new THREE_NS.Group();
-    const equipGroup = new THREE_NS.Group();
-    scene.add(baseGroup);
-    scene.add(equipGroup);
-
-    const { FBXLoader: FBXLoaderNS } = await import('https://unpkg.com/three@0.158.0/examples/jsm/loaders/FBXLoader.js');
-    const fbxLoader = new FBXLoaderNS();
-
-    const fallbackMat = new THREE_NS.MeshStandardMaterial({
-      color: 0xffffff,
-      roughness: 0.85,
-      metalness: 0.0
-    });
-
-    function toast(msg){
-      toastEl.textContent = msg;
-      toastEl.classList.add('show');
-      clearTimeout(toastEl._t);
-      toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 1600);
-    }
-
-    function clearGroup(g){
-      while(g.children.length){
-        const obj = g.children.pop();
-        obj.traverse?.(c=>{
-          if (c.isMesh){
-            c.geometry?.dispose?.();
-          }
-        });
-      }
-    }
-
-    function applyMaterialIfMissing(root){
-      root.traverse((child)=>{
-        if (child.isMesh){
-          if (!child.material) child.material = fallbackMat;
-        }
-      });
-    }
-
-    function fitCameraToObject(obj, offset = 1.25){
-      const box = new THREE_NS.Box3().setFromObject(obj);
-      const size = box.getSize(new THREE_NS.Vector3());
-      const center = box.getCenter(new THREE_NS.Vector3());
-
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const fov = camera.fov * (Math.PI / 180);
-      let camZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
-      camZ *= offset;
-
-      camera.position.set(center.x, center.y + maxDim * 0.15, center.z + camZ);
-      camera.near = Math.max(camZ / 100, 0.01);
-      camera.far = camZ * 100;
-      camera.updateProjectionMatrix();
-
-      controls.target.copy(center);
-      controls.update();
-    }
-
-    function normalizeScale(root){
-      root.scale.setScalar(0.01);
-    }
-
-    async function loadFBXIntoGroup(file, group, label){
-      return new Promise((resolve, reject)=>{
-        toast(`Loading: ${label}...`);
-        fbxLoader.load(file, (fbx)=>{
-          normalizeScale(fbx);
-          applyMaterialIfMissing(fbx);
-          group.add(fbx);
-          loadedLabel.textContent = label;
-          resolve(fbx);
-        }, undefined, (err)=>{
-          console.error(err);
-          toast(`Failed to load: ${label}`);
-          reject(err);
-        });
-      });
-    }
-
-    async function loadBase(){
-      clearGroup(baseGroup);
-      clearGroup(equipGroup);
-
-      const item = BASE_MODELS[0];
-      await loadFBXIntoGroup(item.file, baseGroup, item.name);
-
-      fitCameraToObject(baseGroup, 1.28);
-      toast('Base loaded');
-    }
-
-    async function equipPart(item){
-      await loadFBXIntoGroup(item.file, equipGroup, item.name);
-      toast(`Equipped: ${item.name}`);
-    }
-
-    function clearParts(){
-      clearGroup(equipGroup);
-      toast('Cleared equipped parts');
-    }
-
-    function resetView(){
-      if (baseGroup.children.length){
-        fitCameraToObject(baseGroup, 1.28);
-        toast('View reset');
-      } else {
-        camera.position.set(0, 1.6, 3.1);
-        controls.target.set(0, 1.35, 0);
-        controls.update();
-        toast('View reset');
-      }
-    }
-
-    document.getElementById('btnBase').addEventListener('click', loadBase);
-    document.getElementById('btnClear').addEventListener('click', clearParts);
-    document.getElementById('btnReset').addEventListener('click', resetView);
-
-    function makeCard(item, onEquip){
-      const el = document.createElement('div');
-      el.className = 'item';
-      el.innerHTML = `
-        <div class="row">
-          <div>
-            <div class="name">${item.name}</div>
-            <div class="tag">${item.id}</div>
-          </div>
-        </div>
-        <div class="desc">${item.desc || ''}</div>
-        <div class="actions">
-          <button class="btn primary">Equip</button>
-        </div>
-      `;
-      el.querySelector('button').addEventListener('click', ()=>onEquip(item));
-      return el;
-    }
-
-    function mountList(containerId, items, onEquip){
-      const host = document.getElementById(containerId);
-      host.innerHTML = '';
-      if (!items.length){
-        const empty = document.createElement('div');
-        empty.className = 'muted';
-        empty.textContent = 'No items yet.';
-        host.appendChild(empty);
-        return;
-      }
-      items.forEach(it => host.appendChild(makeCard(it, onEquip)));
-    }
-
-    mountList('baseList', BASE_MODELS, async ()=>loadBase());
-    mountList('headList', HEAD_ITEMS, equipPart);
-    mountList('hairList', HAIR_ITEMS, equipPart);
-    mountList('faceList', FACE_ITEMS, equipPart);
-    mountList('torsoList', TORSO_ITEMS, equipPart);
-    mountList('armsList', ARMS_ITEMS, equipPart);
-    mountList('handsList', HANDS_ITEMS, equipPart);
-    mountList('hipsList', HIPS_ITEMS, equipPart);
-    mountList('legsList', LEGS_ITEMS, equipPart);
-    mountList('feetList', FEET_ITEMS, equipPart);
-    mountList('otherList', OTHER_ITEMS, equipPart);
-
-    function onResize(){
-      const w = viewer.clientWidth;
-      const h = viewer.clientHeight;
-      renderer.setSize(w, h);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-    }
-    window.addEventListener('resize', onResize);
-
-    function animate(){
-      requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    // Auto-load base
-    loadBase();
-  </script>
+<!-- ================= TOP BAR ================= -->
+<div class="topbar">
+  <a href="index.html">← Menu</a>
+  <strong>Wiki – 3D Preview & Character Builder</strong>
+</div>
+
+<!-- ================= PAGE LAYOUT ================= -->
+<div class="layout">
+
+<!-- ================= 3D VIEWPORT ================= -->
+<div id="viewer"></div>
+
+<!-- ================= SIDEBAR ================= -->
+<div class="sidebar">
+  <h2>Character Parts</h2>
+
+  <button onclick="loadBase()">Load Base</button>
+  <button onclick="clearParts()">Clear Parts</button>
+
+  <div class="part-group">
+    <h4>Head</h4>
+    <button onclick="loadPart('head','SK_SCFI_CIVL_09_22AHED_HU01.fbx')">Sci-Fi Head</button>
+    <button onclick="loadPart('head','SK_FANT_KNGT_17_22AHED_HU01.fbx')">Knight Head</button>
+  </div>
+
+  <div class="part-group">
+    <h4>Torso</h4>
+    <button onclick="loadPart('torso','SK_FANT_KNGT_17_10TORS_HU01.fbx')">Knight Torso</button>
+  </div>
+
+  <div class="part-group">
+    <h4>Arms</h4>
+    <button onclick="loadPart('arms','SK_FANT_KNGT_17_11AUPL_HU01.fbx')">Upper L</button>
+    <button onclick="loadPart('arms','SK_FANT_KNGT_17_12AUPR_HU01.fbx')">Upper R</button>
+  </div>
+
+  <p class="small">
+    FBX files load from <code>assets/models/</code><br>
+    Parts must share the same skeleton/origin as the base.
+  </p>
+</div>
+
+</div>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+/* ===================================================
+   SCENE SETUP
+=================================================== */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0e0f13);
+
+const camera = new THREE.PerspectiveCamera(
+  60,
+  window.innerWidth / (window.innerHeight - 54),
+  0.1,
+  5000
+);
+camera.position.set(0, 140, 260);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(window.innerWidth, window.innerHeight - 54);
+document.getElementById('viewer').appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 110, 0);
+
+/* ===================================================
+   LIGHTING
+=================================================== */
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+
+const dir = new THREE.DirectionalLight(0xffffff, 1);
+dir.position.set(200,300,200);
+scene.add(dir);
+
+/* ===================================================
+   FBX LOADER
+=================================================== */
+const loader = new THREE.FBXLoader();
+
+let baseModel = null;
+const equipped = {};
+
+/* ===================================================
+   LOAD BASE
+=================================================== */
+function loadBase() {
+  clearParts();
+  loader.load('assets/models/SK_BaseModel.fbx', fbx => {
+    fbx.scale.set(0.1,0.1,0.1);
+    baseModel = fbx;
+    scene.add(fbx);
+  });
+}
+
+/* ===================================================
+   LOAD PART
+=================================================== */
+function loadPart(slot, file) {
+  if (equipped[slot]) {
+    scene.remove(equipped[slot]);
+  }
+
+  loader.load('assets/models/' + file, fbx => {
+    fbx.scale.set(0.1,0.1,0.1);
+    equipped[slot] = fbx;
+    scene.add(fbx);
+  });
+}
+
+/* ===================================================
+   CLEAR
+=================================================== */
+function clearParts() {
+  if (baseModel) scene.remove(baseModel);
+  for (let k in equipped) scene.remove(equipped[k]);
+  baseModel = null;
+  for (let k in equipped) delete equipped[k];
+}
+
+/* ===================================================
+   RENDER LOOP
+=================================================== */
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+/* ===================================================
+   RESIZE
+=================================================== */
+window.addEventListener('resize', () => {
+  const h = window.innerHeight - 54;
+  camera.aspect = window.innerWidth / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, h);
+});
+</script>
+
 </body>
 </html>
