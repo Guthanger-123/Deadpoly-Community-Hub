@@ -1,0 +1,483 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Garden City Interactive Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD7LNZHQMM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GD7LNZHQMM');
+</script>
+  
+  <style>
+    html, body { height:100%; margin:0; }
+    <a href="maps.html" style="
+position:absolute; top:10px; left:10px; z-index:5000;
+background:#222; color:#fff; text-decoration:none;
+padding:8px 10px; border-radius:8px; border:1px solid #555;">
+← Maps
+</a>
+    #map { height:100vh; }
+
+    .panel { position:absolute; z-index:1000; background:rgba(30,30,30,.9); color:#fff; border-radius:8px; }
+    .filters { top:10px; right:10px; padding:8px 10px; font:13px/1.3 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .filters h4 { margin:.2rem 0 .4rem; font-size:13px; }
+    .legend  { bottom:10px; right:10px; padding:6px 8px; font:12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .filters label { display:block; margin:6px 0 0; cursor:pointer; }
+    .leaflet-control.custom-btn { background:#222; color:#fff; border:1px solid #555; border-radius:4px; padding:6px 8px; font:12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .leaflet-control.custom-btn a { color:#fff; text-decoration:none; display:block; }
+    .coords { top:10px; left:10px; padding:6px 8px; }
+    .coords code { background:rgba(0,0,0,.12); padding:2px 4px; border-radius:4px; }
+
+    /* Top-center banner that stays during pan/zoom */
+    .map-banner {
+      position:absolute; top:8px; left:50%; transform:translateX(-50%);
+      z-index:1100; pointer-events:none;
+    }
+    .map-banner img { max-width:320px; width:28vw; height:auto; filter:drop-shadow(0 2px 6px rgba(0,0,0,.5)); }
+
+    /* --- WIP modal --- */
+    .modal-backdrop {
+      position:fixed; inset:0; background:rgba(0,0,0,.55);
+      display:flex; align-items:center; justify-content:center;
+      z-index:2000;
+    }
+    .modal {
+      background:#1e1e1e; color:#fff; border:1px solid #444; border-radius:10px;
+      width:min(420px, 92vw); padding:14px 16px; box-shadow:0 12px 30px rgba(0,0,0,.45);
+      font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      position:relative;
+    }
+    .modal h3 { margin:0 0 8px; font-size:16px; }
+    .modal p  { margin:4px 0; }
+    .modal .byline { opacity:.8; font-size:12px; margin-top:6px; }
+    .modal .actions { display:flex; gap:8px; margin-top:12px; justify-content:flex-end; }
+    .modal button {
+      background:#2b2b2b; color:#fff; border:1px solid #555; border-radius:8px; padding:6px 10px; cursor:pointer;
+    }
+    .modal button:hover { background:#343434; }
+    .modal .close-x {
+      position:absolute; top:6px; right:8px; background:transparent; border:none; color:#bbb; font-size:18px; cursor:pointer;
+    }
+    .modal .close-x:hover { color:#fff; }
+  </style>
+</head>
+<body>
+  <div id="map" aria-label="Garden City interactive map"></div>
+
+  <!-- Sticks to the middle top -->
+  <div class="map-banner">
+    <img alt="DeadPoly" src="https://github.com/Guthanger-123/Deadpoly-Map-Garden-City-/blob/main/logo_main.png?raw=true">
+  </div>
+
+  <div class="panel filters" id="filterPanel"><h4>Key</h4></div>
+  <div class="panel legend" id="legendPanel"></div>
+
+  <!-- WIP modal (shown on load) -->
+  <div class="modal-backdrop" id="wipModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wipTitle">
+      <button class="close-x" aria-label="Close">×</button>
+      <h3 id="wipTitle">Work In Progress</h3>
+      <p>This map is a <b>Work In Progress</b>. To see different markers, use the checkboxes in the <b>Key</b> panel.</p>
+      <p class="byline">Created by <b>Guthanger123</b>.</p>
+      <p class="byline">Contributors: <b>Deadpoly Community</b>.</p>
+      <div class="actions">
+        <button id="wipOk">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+  /* ==================== CONFIG (EDIT) ==================== */
+
+  /* SURFACE image (1264×1264) */
+const SURFACE_IMAGE_URL =
+    'https://github.com/Guthanger-123/Deadpoly-Map-Garden-City-/blob/main/GCMap_.png?raw=true';
+
+  /* UNDERGROUND image (same pixel size as surface) */
+  const UNDERGROUND_IMAGE_URL = 
+    'https://github.com/Guthanger-123/Deadpoly-Map-Garden-City-/blob/main/GCMap_.png?raw=true';
+
+    /* Quests image (same pixel size as surface) */
+  const Quests_IMAGE_URL = 
+    'https://github.com/Guthanger-123/Deadpoly-Map-Garden-City-/blob/main/GCMap_.png?raw=true';
+
+  
+  /* EXACT pixel size of both images */
+  const IMAGE_WIDTH  = 1264;
+  const IMAGE_HEIGHT = 1264;
+
+  const START = { x: IMAGE_WIDTH/2, y: IMAGE_HEIGHT/2, zoom: 2 };
+
+  /* Icons per category */
+  const categoryIconMap = {
+    'Point Of Interest': { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',   iconSize: [25,41], iconAnchor: [12,41] },
+    'Car Spawn':         { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',  iconSize: [25,41], iconAnchor: [12,41] },
+    'Hunting Zones':     { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png', iconSize: [25,41], iconAnchor: [12,41] },
+    'Spoilers':          { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',    iconSize: [25,41], iconAnchor: [12,41] },
+    'Bunkers':          { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',    iconSize: [25,41], iconAnchor: [12,41] },
+    'Trader':            { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',   iconSize: [25,41], iconAnchor: [12,41] },
+    'Secret Stashes':            { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png',   iconSize: [25,41], iconAnchor: [12,41] },
+    'Bunker Layouts':    { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png', iconSize: [25,41], iconAnchor: [12,41] }
+  };
+
+  /* -------- Markers (SURFACE) -------- */
+  const markersSurface = [
+    /*Bunkers Spoilers*/
+    { name:'Bunker 16', x:572, y:503, category:'Bunkers', desc:'No Key Needed.' },
+    { name:'Bunker 15', x:558, y:552, category:'Bunkers', desc:'Keycard Needed.' },
+    { name:'Bunker 19', x:588, y:573, category:'Bunkers', desc:'Keycard Needed.' },
+    { name:'Bunker 24', x:838, y:506, category:'Bunkers', desc:'No Key Needed.' },
+    { name:'Bunker 11', x:857, y:542, category:'Bunkers', desc:'Keycard Needed.' },
+    { name:'B11', x:887, y:359, category:'Bunkers', desc:'Key Needed.',},
+    { name:'Missle Silo', x:663, y:476, category:'Spoilers', desc:'No Key Needed.' },
+    { name:'Missle Silo', x:813, y:452, category:'Spoilers', desc:'No Key Needed.' },
+    { name:'Missle Silo', x:789, y:689, category:'Spoilers', desc:'No Key Needed.' },
+    { name:'Hidden Basing Location', x:808, y:547, category:'Spoilers', desc:'In the tunnel behind a bus you can find a door.' },
+    { name:'Hidden Basing Location', x:845, y:513, category:'Spoilers', desc:'Go past the broken sewer grate.' },
+
+
+    /* Hunting zones with links */
+    { name:'Hunting Zone (North)', x:744, y:385, category:'Hunting Zones',
+      desc: 'Deer, Bears.' },
+    { name:'Hunting Zone (East)', x:903, y:757, category:'Hunting Zones',
+      desc: 'Deer, Bears.' },
+    { name:'Hunting Zone (West)', x:338, y:629, category:'Hunting Zones',
+      desc: 'Deer, Bears.' },
+    { name:'Hunting Zone (Center)', x:631, y:660, category:'Hunting Zones',
+      desc: 'Deer, Bears.' },
+
+
+    /* Traders*/
+    { name:'Fiona', x:906, y:659, category:'Trader', desc:'Nothing really.' },
+    { name:'Ghost', x:884, y:411, category:'Trader', desc:'Big Medical trader.' },
+    { name:'Gunner', x:874, y:534, category:'Trader', desc:'Mechanic Trader.' },
+    { name:'Walter', x:913, y:593, category:'Trader', desc:'Nothing really.' },
+    { name:'Shay', x:738, y:658, category:'Trader', desc:'Arms Dealer.' },
+
+
+
+    /* Car Spawns*/
+    /*Airfield*/
+    { name:'Car Spawn', x:577, y:505, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:581, y:505, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:576, y:573, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:579, y:573, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:583, y:573, category:'Car Spawn', desc:'Cars' },
+    /*Tiny Town South*/
+    { name:'Car Spawn', x:907, y:661, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:902, y:675, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:885, y:676, category:'Car Spawn', desc:'Cars' },
+    /*Original GC*/
+    { name:'Car Spawn', x:847, y:520, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:892, y:561, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:902, y:550, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:938, y:553, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:946, y:521, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:849, y:503, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:885, y:527, category:'Car Spawn', desc:'Cars' },
+    /*North GC*/
+    { name:'Car Spawn', x:853, y:436, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:837, y:411, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:945, y:369, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:886, y:397, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:872, y:387, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:871, y:376, category:'Car Spawn', desc:'Cars' },
+    { name:'Parking Garage Car Spawn', x:903, y:384, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:782, y:402, category:'Car Spawn', desc:'Cars' },
+    /*Middle Town*/
+    { name:'Car Spawn', x:732, y:487, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:727, y:524, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:727, y:522, category:'Car Spawn', desc:'Cars' },
+    { name:'Underground Car Spawn', x:717, y:524, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:715, y:498, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:732, y:560, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:753, y:509, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:752, y:407, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:719, y:445, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:726, y:448, category:'Car Spawn', desc:'Cars' },
+    /*Others*/
+    { name:'Car Spawn', x:709, y:819, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:732, y:822, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:753, y:509, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:929, y:856, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:401, y:272, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:415, y:323, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:430, y:900, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:448, y:900, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:461, y:875, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:857, y:1036, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:869, y:1017, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:870, y:1000, category:'Car Spawn', desc:'Cars' },
+    { name:'Car Spawn', x:876, y:988, category:'Car Spawn', desc:'Cars' },
+
+    /* POIs */
+    { name:'Allen Airfield', x:598, y:542, category:'Point Of Interest', desc:'Airstrip & hangars.',},
+    { name:'Nuke', x:896, y:516, category:'Point Of Interest', desc:'This POI has been standing since Day 1 of DeadPoly.',},
+    { name:'Movie Theater', x:940, y:530, category:'Point Of Interest', desc:'One of the most popular building locations.',},
+    { name:'Prison', x:936, y:861, category:'Point Of Interest', desc:'Careful not to become an inmate.',},
+    { name:'Redwoods', x:335, y:633, category:'Point Of Interest', desc:'This POI has been standing since Day 1 of DeadPoly.',},
+    { name:'Blue Lion Hotel', x:940, y:530, category:'Point Of Interest', desc:'One of the most popular building locations.',},
+    { name:'Storage Units', x:888, y:360, category:'Point Of Interest', desc:'A bunch of stoage units.',},
+    { name:'Football Field', x:819, y:393, category:'Point Of Interest', desc:'One of the most popular building loactions.',},
+    { name:'The Empty Lands', x:655, y:988, category:'Point Of Interest', desc:'One of the most popular building locations.',},
+    { name:'The Middle of The Map', x:632, y:632, category:'Point Of Interest', desc:'The exact middle of the map for those interested.',},
+
+    /*Gnomes*/
+    { name:'Viking Gnome', x:782, y:464, category:'Spoilers', desc:'Climb ontop of the arch.',},
+    { name:'Beach Gnome', x:887, y:359, category:'Spoilers', desc:'Look inside Bunker 13.',},
+    { name:'Zombie Gnome', x:888, y:539, category:'Spoilers', desc:'Ontop of grocery store roof.',},
+    { name:'Box Gnome', x:873, y:533, category:'Spoilers', desc:'Look by Gunner.',},
+    { name:'Wizard Gnome', x:893, y:664, category:'Spoilers', desc:'Look inside the Donut by Fiona.',},
+    { name:'Military Gnome', x:840, y:425, category:'Spoilers', desc:'Look inside the crashed planes cockpit.',},
+    { name:'Alien Gnome', x:748, y:534, category:'Spoilers', desc:'Look inside the flower box.',},
+
+    /*Secret Stashes*/
+    { name:'Secret Stash', x:889, y:526, category:'Secret Stashes', desc:'Careful not to become an inmate.',},
+    { name:'Secret Stash', x:843, y:519, category:'Secret Stashes', desc:'Secret Stash.',},
+    { name:'Secret Stash', x:842, y:500, category:'Secret Stashes', desc:'Secret Stash.',},
+    { name:'Secret Stash', x:875, y:527, category:'Secret Stashes', desc:'Secret Stash.',},
+  ];
+
+  /* -------- Markers (UNDERGROUND) -------- */
+  const markersUnderground = [
+    { name:'Bunker 16 Layout', x:572, y:503, category:'Bunker Layouts', desc:'No Key Needed.',},
+    { name:'Bunker 11 Layout', x:586, y:542, category:'Bunker Layouts', desc:'Requires keycard.',}
+  ];
+
+
+    /* -------- Markers (Quests) -------- */
+  const markersQuests = [
+    { name:'Bunker 16 Layout', x:572, y:503, category:'Ghost', desc:'No Key Needed.',},
+    { name:'Bunker 11 Layout', x:586, y:542, category:'Gunner', desc:'Requires keycard.',},
+    { name:'Bunker 11 Layout', x:586, y:542, category:'Fiona', desc:'Requires keycard.',},
+    { name:'Bunker 11 Layout', x:586, y:542, category:'Walter', desc:'Requires keycard.',},
+    { name:'Bunker 11 Layout', x:586, y:542, category:'Shay', desc:'Requires keycard.',}
+  
+  ];
+
+  /* ==================== END CONFIG ==================== */
+
+  /* Map setup with clamped bounds/zoom */
+  const map = L.map('map', {
+    crs: L.CRS.Simple,
+    minZoom: -6,  /* will be raised to the min that shows whole image */
+    maxZoom: 6,
+    zoomSnap: 0.25,
+    zoomDelta: 0.25,
+    zoomControl: true
+  });
+
+  const bounds = new L.LatLngBounds(
+    map.unproject([0, IMAGE_HEIGHT], 0),
+    map.unproject([IMAGE_WIDTH, 0], 0)
+  );
+
+  const overlaySurface     = L.imageOverlay(SURFACE_IMAGE_URL, bounds);
+  const overlayUnderground = L.imageOverlay(UNDERGROUND_IMAGE_URL, bounds);
+  const overlayQuests = L.imageOverlay(Quests_IMAGE_URL, bounds);
+  overlaySurface.addTo(map);
+
+  /* Keep users on the image; no panning outside */
+  map.setMaxBounds(bounds);
+  map.options.maxBoundsViscosity = 1.0;
+
+  /* Fit & lock the minimum zoom so you can’t zoom out past the image */
+  map.fitBounds(bounds);
+  const startLatLng = map.unproject([START.x, START.y], 0);
+  const minZoomToShowAll = map.getBoundsZoom(bounds, true);
+  map.options.minZoom = minZoomToShowAll;
+  map.setView(startLatLng, Math.max(START.zoom, minZoomToShowAll));
+  map.on('zoomend', () => { if (map.getZoom() < minZoomToShowAll) map.setZoom(minZoomToShowAll); });
+
+  L.control.scale({ metric:true, imperial:false }).addTo(map);
+
+  /* Helpers */
+  const xyToLatLng = (x,y) => map.unproject([x,y], 0);
+
+  const filterPanel = document.getElementById('filterPanel');
+  const legendPanel = document.getElementById('legendPanel');
+
+  let currentMode = 'surface';
+  let byCat = {};
+  let allMarkers = [];
+
+  function clearMarkers() {
+    Object.values(byCat).forEach(g => g.clearLayers());
+    byCat = {};
+    allMarkers = [];
+  }
+
+// Build filters with a mode selector (Surface / Underground / Quests)
+// and category checkboxes OFF by default
+function buildFilters(categories) {
+  filterPanel.innerHTML =
+    `<h4>Key</h4>
+     <div class="mode-row" role="group" aria-label="Map mode">
+       <label><input type="radio" name="mapMode" value="surface" ${currentMode === 'surface' ? 'checked' : ''}> Surface</label>
+       <label><input type="radio" name="mapMode" value="underground" ${currentMode === 'underground' ? 'checked' : ''}> Underground</label>
+       <label><input type="radio" name="mapMode" value="quests" ${currentMode === 'quests' ? 'checked' : ''}> Quests</label>
+     </div>`;
+
+  // hook up the radios
+  [...filterPanel.querySelectorAll('input[name="mapMode"]')].forEach(r => {
+    r.addEventListener('change', e => setMode(e.target.value));
+  });
+
+  // category checkboxes (start UNCHECKED)
+  categories.sort().forEach(cat => {
+    const id = 'cat-' + cat.replace(/\s+/g,'-');
+    const label = document.createElement('label');
+    label.innerHTML = `<input type="checkbox" id="${id}"> ${cat}`;
+    const input = label.querySelector('input');
+    input.addEventListener('change', e => {
+      if (e.target.checked) byCat[cat].addTo(map);
+      else map.removeLayer(byCat[cat]);
+    });
+    filterPanel.appendChild(label);
+  });
+}
+
+  function buildLegend(categories) {
+    legendPanel.innerHTML = categories.map(cat => {
+      const ico = (categoryIconMap[cat] || {}).iconUrl;
+      return `<div>${ico ? `<img src="${ico}" style="width:14px;height:22px;vertical-align:middle;margin-right:6px">` : ''}${cat}</div>`;
+    }).join('');
+  }
+
+  // Render markers but DO NOT add category layer groups to map yet (checkboxes start off)
+  function renderMarkers(markerData) {
+    clearMarkers();
+    const categoriesPresent = new Set();
+
+    markerData.forEach(m => {
+      categoriesPresent.add(m.category);
+      if (!byCat[m.category]) byCat[m.category] = L.layerGroup(); // not added yet
+
+      const html =
+        `<b>${m.name || 'Point'}</b>` +
+        (m.descHtml ? `<br>${m.descHtml}` : (m.desc ? `<br>${m.desc}` : '')) +
+        (m.link ? `<br><a href="${m.link}" target="_blank" rel="noopener">Details »</a>` : '') +
+        (m.image ? `<br><img src="${m.image}" style="max-width:200px;max-height:150px;border-radius:4px;margin-top:4px">` : '');
+
+      const latlng = xyToLatLng(m.x, m.y);
+
+      let iconOpts = null;
+      if (m.icon) {
+        iconOpts = { iconUrl: m.icon, iconSize: m.iconSize || [25,41], iconAnchor: m.iconAnchor || [12,41] };
+      } else if (categoryIconMap[m.category]) {
+        iconOpts = categoryIconMap[m.category];
+      }
+
+      const mk = iconOpts
+        ? L.marker(latlng, { icon: L.icon(iconOpts) }).bindPopup(html)
+        : L.marker(latlng).bindPopup(html);
+
+      byCat[m.category].addLayer(mk);
+      allMarkers.push(mk);
+    });
+
+    buildFilters([...categoriesPresent]);
+    buildLegend([...categoriesPresent]);
+  }
+
+ function setMode(mode) {
+  if (mode === currentMode) return;
+  currentMode = mode;
+
+  // remove all overlays first
+  map.removeLayer(overlaySurface);
+  map.removeLayer(overlayUnderground);
+  map.removeLayer(overlayQuests);
+
+  // add the chosen overlay + markers
+  if (mode === 'surface') {
+    overlaySurface.addTo(map);
+    renderMarkers(markersSurface);
+  } else if (mode === 'underground') {
+    overlayUnderground.addTo(map);
+    renderMarkers(markersUnderground);
+  } else if (mode === 'quests') {
+    overlayQuests.addTo(map);
+    renderMarkers(markersQuests);
+  }
+
+  // keep bounds/zoom behavior consistent
+  map.setMaxBounds(bounds);
+  const z = Math.max(map.getZoom(), minZoomToShowAll);
+  const startLatLng = map.unproject([START.x, START.y], 0);
+  map.setView(startLatLng, z);
+
+  // refresh the mode radios’ checked state (in case changed programmatically)
+  const r = filterPanel.querySelector(`input[name="mapMode"][value="${mode}"]`);
+  if (r) r.checked = true;
+}
+
+  /* Initial render */
+  renderMarkers(markersSurface);
+
+  /* Buttons */
+  function controlButton(text, title, onClick) {
+    return L.Control.extend({
+      options: { position: 'topleft' },
+      onAdd: function () {
+        const div = L.DomUtil.create('div', 'leaflet-control custom-btn');
+        const a = L.DomUtil.create('a', '', div);
+        a.href = '#'; a.title = title || text; a.textContent = text;
+        L.DomEvent.disableClickPropagation(div);
+        L.DomEvent.on(a, 'click', e => { L.DomEvent.preventDefault(e); onClick(); });
+        return div;
+      }
+    });
+  }
+  map.addControl(new (controlButton('Home','Reset view', () => map.setView(startLatLng, Math.max(START.zoom, minZoomToShowAll))))());
+  map.addControl(new (controlButton('Fullscreen','Toggle fullscreen', () => {
+    const el = document.getElementById('map');
+    if (!document.fullscreenElement) el.requestFullscreen?.(); else document.exitFullscreen?.();
+  }))());
+
+
+
+  /* --- WIP modal logic --- */
+  (function setupWipModal(){
+    const modal = document.getElementById('wipModal');
+    const btnOk = document.getElementById('wipOk');
+    const btnX  = modal.querySelector('.close-x');
+    function close() { modal.style.display = 'none'; }
+    btnOk.addEventListener('click', close);
+    btnX.addEventListener('click', close);
+    // If you want “remember my choice”, uncomment the next 3 lines:
+    // if (localStorage.getItem('gcmap_wip_ack') === '1') modal.style.display = 'none';
+    // [btnOk, btnX].forEach(b => b.addEventListener('click', () => localStorage.setItem('gcmap_wip_ack','1')));
+  })();
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
