@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DeadPoly Community Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+:root {
+  --bg:#0e0e0e;
+  --panel:#1a1a1a;
+  --border:#2b2b2b;
+  --text:#ffffff;
+  --muted:#bbbbbb;
+  --accent:#5da9ff;
+  --radius:12px;
+  --font:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:var(--font)}
+button{cursor:pointer}
+
+header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  background:#111;
+}
+header h1{font-size:16px;margin:0}
+
+nav button{
+  background:#1c1c1c;
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:8px 12px;
+  border-radius:10px;
+}
+nav button.active{border-color:var(--accent)}
+
+main{height:calc(100vh - 58px)}
+section{display:none;height:100%}
+section.active{display:block}
+
+/* Home */
+.home{
+  max-width:900px;
+  margin:0 auto;
+  padding:24px;
+}
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+}
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+}
+.card h3{margin-top:0}
+
+/* Maps */
+.map-shell{height:100%;display:flex}
+.map-nav{
+  width:220px;
+  background:#111;
+  border-right:1px solid var(--border);
+  padding:10px;
+}
+.map-nav button{
+  width:100%;
+  margin-bottom:8px;
+  background:#1a1a1a;
+  border:1px solid var(--border);
+  color:#fff;
+  padding:8px;
+  border-radius:8px;
+}
+.map-nav button.active{border-color:var(--accent)}
+.map-area{flex:1;position:relative}
+.map{height:100%}
+
+/* Tips & Wiki */
+.content{
+  max-width:900px;
+  margin:0 auto;
+  padding:24px;
+}
+.anchor{scroll-margin-top:70px}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>DeadPoly Community Hub</h1>
+  <nav>
+    <button data-tab="home" class="active">Home</button>
+    <button data-tab="maps">Maps</button>
+    <button data-tab="tips">Tips & Tricks</button>
+    <button data-tab="wiki">Mini Wiki</button>
+  </nav>
+</header>
+
+<main>
+
+
+<!-- HOME -->
+<section id="home" class="tab menuTab active">
+  <div class="menuBg"></div>
+
+  <div class="stage">
+    <div class="layout">
+
+      <img
+        class="menuLogo"
+        src="https://github.com/Guthanger-123/Deadpoly-Map-Garden-City-/blob/main/logo_main.png?raw=true"
+        alt="DeadPoly"
+      >
+
+      <button class="menuBtn btnMaps" onclick="openTab('maps')">Maps</button>
+      <button class="menuBtn btnWiki" onclick="openTab('wiki')">Wiki</button>
+      <button class="menuBtn btnTips" onclick="openTab('tips')">Tips n Tricks</button>
+
+      <button class="creditsBtn" onclick="openTab('credits')">Credits</button>
+
+
+
+    </div>
+  </div>
+</section>
+
+      <div class="menuLinks">
+        <a class="iconLink" href="https://discord.gg/" target="_blank" rel="noopener" title="Discord">
+          <img src="https://cdn.simpleicons.org/discord/ffffff" alt="Discord">
+        </a>
+        <a class="iconLink" href="https://www.youtube.com/" target="_blank" rel="noopener" title="YouTube">
+          <img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube">
+        </a>
+        <a class="iconLink" href="https://deadpoly.wiki/" target="_blank" rel="noopener" title="Official Site">
+          <img src="https://cdn.simpleicons.org/googlechrome/ffffff" alt="Official Site">
+        </a>
+        <a class="iconLink" href="https://store.steampowered.com/" target="_blank" rel="noopener" title="Steam">
+          <img src="https://cdn.simpleicons.org/steam/ffffff" alt="Steam">
+        </a>
+        <a class="iconLink" href="https://store.epicgames.com/" target="_blank" rel="noopener" title="Epic Games">
+          <img src="https://cdn.simpleicons.org/epicgames/ffffff" alt="Epic Games">
+        </a>
+      </div>
+
+
+<!-- WIKI -->
+<section id="wiki">
+  <h1>Wiki</h1>
+  <p class="muted">Quick articles for DeadPoly community info. Add pages by editing the list on the left.</p>
+
+  <div class="wikiLayout">
+    <aside class="wikiSide">
+      <div class="wikiBlockTitle">Pages</div>
+
+      <button class="wikiLink active" data-page="welcome">Welcome</button>
+      <button class="wikiLink" data-page="animals">Animals</button>
+      <button class="wikiLink" data-page="bunkers">Bunkers</button>
+      <button class="wikiLink" data-page="loot">Loot</button>
+      <button class="wikiLink" data-page="traders">Traders</button>
+
+      <div class="wikiBlockTitle" style="margin-top:14px;">Official</div>
+      <a class="wikiExternal" href="https://deadpoly.wiki/Main_Page" target="_blank" rel="noopener">Open Official Wiki ↗</a>
+    </aside>
+
+    <article class="wikiArticle" id="wikiArticle">
+      <!-- injected by JS -->
+    </article>
+  </div>
+</section>
+
+.muted { opacity:.75; }
+
+.wikiLayout{
+  display:grid;
+  grid-template-columns: 260px 1fr;
+  gap:14px;
+  margin-top:12px;
+}
+.wikiSide{
+  background: rgba(30,30,30,.9);
+  border:1px solid #444;
+  border-radius:10px;
+  padding:10px;
+}
+.wikiBlockTitle{
+  font-weight:700;
+  font-size:12px;
+  opacity:.85;
+  margin:6px 0 8px;
+}
+.wikiLink{
+  width:100%;
+  text-align:left;
+  padding:8px 10px;
+  margin:4px 0;
+  border-radius:8px;
+  border:1px solid #555;
+  background:#222;
+  color:#fff;
+  cursor:pointer;
+}
+.wikiLink:hover{ background:#2b2b2b; }
+.wikiLink.active{ border-color:#8aa; background:#2a2a2a; }
+
+.wikiExternal{
+  display:block;
+  margin-top:6px;
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid #555;
+  background:#222;
+  color:#fff;
+  text-decoration:none;
+}
+.wikiExternal:hover{ background:#2b2b2b; }
+
+.wikiArticle{
+  background: rgba(18,18,18,.9);
+  border:1px solid #444;
+  border-radius:10px;
+  padding:14px 16px;
+  line-height:1.5;
+}
+.wikiArticle h2{ margin:0 0 10px; }
+.wikiArticle ul{ margin:8px 0 8px 18px; }
+
+
+
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* TAB CONTROL */
+function openTab(name){
+  document.querySelectorAll("nav button").forEach(b =>
+    b.classList.toggle("active", b.dataset.tab === name)
+  );
+  document.querySelectorAll("main section").forEach(s =>
+    s.classList.toggle("active", s.id === name)
+  );
+
+  // When opening Maps, force Leaflet to resize properly
+  if (name === "maps") {
+    setTimeout(() => {
+      if (currentMap === "delta") deltaMap.invalidateSize();
+      if (currentMap === "gc") gcMap.invalidateSize();
+    }, 50);
+  }
+}
+
+/* MAPS */
+let deltaMap, gcMap, currentMap="delta"
+
+function initMaps(){
+  deltaMap = L.map("map-delta",{crs:L.CRS.Simple,minZoom:-5})
+  const bounds=[[0,0],[1264,1264]]
+  L.imageOverlay("YOUR_DELTA_IMAGE.png",bounds).addTo(deltaMap)
+  deltaMap.fitBounds(bounds)
+
+  gcMap = L.map("map-gc",{crs:L.CRS.Simple,minZoom:-5})
+  L.imageOverlay("YOUR_GC_IMAGE.png",bounds).addTo(gcMap)
+  gcMap.fitBounds(bounds)
+}
+
+function openMap(which){
+  document.getElementById("map-delta").style.display=which==="delta"?"block":"none"
+  document.getElementById("map-gc").style.display=which==="gc"?"block":"none"
+  currentMap=which
+  setTimeout(()=>{(which==="delta"?deltaMap:gcMap).invalidateSize()},50)
+}
+
+
+
+// Hook up the top nav buttons
+document.querySelectorAll("nav button").forEach(btn => {
+  btn.addEventListener("click", () => openTab(btn.dataset.tab));
+});
+
+const wikiPages = {
+  welcome: `
+    <h2>Welcome</h2>
+    <p>This is the community mini-wiki hub for map-related info.</p>
+    <ul>
+      <li>Use <b>Maps</b> to switch between Delta and Garden City.</li>
+      <li>Use <b>Tips & Tricks</b> for quick gameplay help.</li>
+      <li>Use <b>Wiki</b> for short reference pages.</li>
+    </ul>
+  `,
+  animals: `
+    <h2>Animals</h2>
+    <p>Common hunt targets:</p>
+    <ul>
+      <li><a href="https://deadpoly.wiki/Animals#Deer" target="_blank" rel="noopener">Deer</a></li>
+      <li><a href="https://deadpoly.wiki/Animals#Bears" target="_blank" rel="noopener">Bears</a></li>
+    </ul>
+  `,
+  bunkers: `
+    <h2>Bunkers</h2>
+    <p>Template section. Add bunker info here.</p>
+    <p><b>Example:</b> “Bunker 16 requires no keycard.”</p>
+  `,
+  loot: `
+    <h2>Loot</h2>
+    <p>Template section. Add loot tiers, spawn logic, or community notes.</p>
+  `,
+  traders: `
+    <h2>Traders</h2>
+    <p>Template section. Add trader locations + what they sell.</p>
+  `
+};
+
+function openWikiPage(pageId){
+  const article = document.getElementById("wikiArticle");
+  article.innerHTML = wikiPages[pageId] || `<h2>Not Found</h2><p>No content for "${pageId}".</p>`;
+
+  document.querySelectorAll(".wikiLink").forEach(b =>
+    b.classList.toggle("active", b.dataset.page === pageId)
+  );
+}
+
+document.querySelectorAll(".wikiLink").forEach(btn => {
+  btn.addEventListener("click", () => openWikiPage(btn.dataset.page));
+});
+
+// default wiki page
+openWikiPage("welcome");
+
+/* ===== HOME MENU (CONSISTENT ON ALL SCREENS) ===== */
+#home.menuTab{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  background: #0b0b0b;
+  z-index: 9999;
+  overflow: hidden;
+}
+#home.menuTab.active{ display:block; }
+
+#home .menuBg{
+  position:absolute; inset:0;
+  background:
+    radial-gradient(900px 520px at 50% 18%, rgba(255,255,255,.05), rgba(0,0,0,0)),
+    radial-gradient(900px 700px at 50% 100%, rgba(0,255,140,.04), rgba(0,0,0,0)),
+    #0b0b0b;
+}
+
+/* Stage keeps layout from drifting on ultrawide screens */
+#home .stage{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* This is the “canvas” your sketch lives in */
+#home .layout{
+  position:relative;
+  width: min(1100px, 92vw);
+  height: min(720px, 86vh);
+}
+
+/* SMALLER LOGO TOP CENTER */
+#home .menuLogo{
+  position:absolute;
+  top: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(520px, 70%);
+  height: auto;
+  max-height: 170px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 22px rgba(0,0,0,.55));
+  user-select:none;
+  pointer-events:none;
+}
+
+/* Button base */
+#home .menuBtn{
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(18,18,18,.70);
+  color:#fff;
+  border-radius: 999px;
+  padding: 14px 26px;
+  font: 800 20px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  letter-spacing: .02em;
+  cursor:pointer;
+  box-shadow: 0 16px 34px rgba(0,0,0,.42);
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+}
+#home .menuBtn:hover{
+  transform: translateY(-2px);
+  background: rgba(28,28,28,.84);
+  border-color: rgba(0,255,140,.35);
+}
+
+/* Button positions (match sketch) */
+#home .btnWiki{
+  position:absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+#home .btnMaps{
+  position:absolute;
+  top: 52%;
+  left: 12%;
+  transform: translateY(-50%);
+}
+#home .btnTips{
+  position:absolute;
+  top: 52%;
+  right: 12%;
+  transform: translateY(-50%);
+}
+
+/* Bottom-left Credits (tiny) */
+#home .creditsBtn{
+  position:absolute;
+  left: 18px;
+  bottom: 18px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(18,18,18,.55);
+  color:#fff;
+  border-radius: 10px;
+  padding: 7px 10px;
+  font: 700 12px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  cursor:pointer;
+  opacity:.92;
+}
+#home .creditsBtn:hover{
+  opacity:1;
+  border-color: rgba(255,255,255,.22);
+}
+
+/* Bottom-right icon links (small) */
+#home .menuLinks{
+  position:absolute;
+  right: 18px;
+  bottom: 18px;
+  display:flex;
+  gap: 10px;
+}
+#home .iconLink{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display:grid;
+  place-items:center;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(18,18,18,.55);
+  text-decoration:none;
+  box-shadow: 0 12px 26px rgba(0,0,0,.32);
+  transition: transform .12s ease, border-color .12s ease, background .12s ease;
+}
+#home .iconLink:hover{
+  transform: translateY(-2px);
+  border-color: rgba(0,255,140,.35);
+  background: rgba(28,28,28,.80);
+}
+#home .iconLink img{
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* Mobile: stack buttons */
+@media (max-width: 820px){
+  #home .layout{ height: min(780px, 92vh); }
+  #home .btnMaps{
+    left:50%;
+    top: 54%;
+    transform: translate(-50%, -50%);
+  }
+  #home .btnTips{
+    right:auto;
+    left:50%;
+    top: 64%;
+    transform: translate(-50%, -50%);
+  }
+  #home .btnWiki{ top: 44%; }
+}
+
+
+initMaps()
+</script>
+
+</body>
+</html>
