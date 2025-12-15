@@ -1,0 +1,344 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Delta Interactive Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    html, body { height:100%; margin:0; }
+    <a href="maps.html" style="
+position:absolute; top:10px; left:10px; z-index:5000;
+background:#222; color:#fff; text-decoration:none;
+padding:8px 10px; border-radius:8px; border:1px solid #555;">
+← Maps
+</a>
+    #map { height:100vh; }
+
+    .panel { position:absolute; z-index:1000; background:rgba(30,30,30,.9); color:#fff; border-radius:8px; }
+    .filters { top:10px; right:10px; padding:8px 10px; font:13px/1.3 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .filters h4 { margin:.2rem 0 .4rem; font-size:13px; }
+    .legend  { bottom:10px; right:10px; padding:6px 8px; font:12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .filters label { display:block; margin:6px 0 0; cursor:pointer; }
+    .leaflet-control.custom-btn { background:#222; color:#fff; border:1px solid #555; border-radius:4px; padding:6px 8px; font:12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .leaflet-control.custom-btn a { color:#fff; text-decoration:none; display:block; }
+    .coords { top:10px; left:10px; padding:6px 8px; }
+    .coords code { background:rgba(0,0,0,.12); padding:2px 4px; border-radius:4px; }
+
+    /* Top-center banner that stays during pan/zoom */
+    .map-banner {
+      position:absolute; top:8px; left:80%; transform:translateX(-50%);
+      z-index:1100; pointer-events:none;
+    }
+    .map-banner img { max-width:320px; width:28vw; height:auto; filter:drop-shadow(0 2px 6px rgba(0,0,0,.5)); }
+
+    /* --- WIP modal --- */
+    .modal-backdrop {
+      position:fixed; inset:0; background:rgba(0,0,0,.55);
+      display:flex; align-items:center; justify-content:center;
+      z-index:2000;
+    }
+    .modal {
+      background:#1e1e1e; color:#fff; border:1px solid #444; border-radius:10px;
+      width:min(420px, 92vw); padding:14px 16px; box-shadow:0 12px 30px rgba(0,0,0,.45);
+      font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      position:relative;
+    }
+    .modal h3 { margin:0 0 8px; font-size:16px; }
+    .modal p  { margin:4px 0; }
+    .modal .byline { opacity:.8; font-size:12px; margin-top:6px; }
+    .modal .actions { display:flex; gap:8px; margin-top:12px; justify-content:flex-end; }
+    .modal button {
+      background:#2b2b2b; color:#fff; border:1px solid #555; border-radius:8px; padding:6px 10px; cursor:pointer;
+    }
+    .modal button:hover { background:#343434; }
+    .modal .close-x {
+      position:absolute; top:6px; right:8px; background:transparent; border:none; color:#bbb; font-size:18px; cursor:pointer;
+    }
+    .modal .close-x:hover { color:#fff; }
+  </style>
+</head>
+<body>
+  <div id="map" aria-label="Garden City interactive map"></div>
+
+  <!-- Sticks to the middle top -->
+  <div class="map-banner">
+    <img alt="DeadPoly" src="https://media.discordapp.net/attachments/987368741736181820/1168764966501879838/deadpoly_hor-wht.png?ex=68ff9a72&is=68fe48f2&hm=61ff011c0fdc185843652f45c8b2683e4e5ff7ac05c8231b4c149e53b205642b&=&format=webp&quality=lossless">
+  </div>
+
+  <div class="panel filters" id="filterPanel"><h4>Key</h4></div>
+  <div class="panel legend" id="legendPanel"></div>
+
+  <div class="panel coords" id="coordsPanel" title="Click anywhere on the map to copy coordinates">
+    Click map → coords: <code id="coordsOut">—</code>
+  </div>
+
+  <!-- WIP modal (shown on load) -->
+  <div class="modal-backdrop" id="wipModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wipTitle">
+      <button class="close-x" aria-label="Close">×</button>
+      <h3 id="wipTitle">Work In Progress</h3>
+      <p>This map is a <b>Work In Progress</b>. To see different markers, use the checkboxes in the <b>Key</b> panel.</p>
+      <p class="byline">Created by <b>Guthanger123</b>.</p>
+      <p class="byline">Contributors: <b>Deadpoly Community</b>.</p>
+      <div class="actions">
+        <button id="wipOk">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+  /* ==================== CONFIG (EDIT) ==================== */
+
+  /* SURFACE image (1264×1264) */
+  const SURFACE_IMAGE_URL =
+    'https://github.com/Guthanger-123/DeadPoly-Map-Delta/blob/main/Screenshot%202025-08-31%20221504.png?raw=true';
+
+
+  /* UNDERGROUND image (same pixel size as surface) */
+  const UNDERGROUND_IMAGE_URL =
+    'https://github.com/Guthanger-123/DeadPoly-Map-Delta/blob/main/Screenshot%202025-08-31%20221504.png?raw=true';
+
+  /* EXACT pixel size of both images */
+  const IMAGE_WIDTH  = 1264;
+  const IMAGE_HEIGHT = 1264;
+
+  const START = { x: IMAGE_WIDTH/2, y: IMAGE_HEIGHT/2, zoom: 2 };
+
+  /* Icons per category */
+  const categoryIconMap = {
+    'Point Of Interest': { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',   iconSize: [25,41], iconAnchor: [12,41] },
+    'Hunting Zones':     { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png', iconSize: [25,41], iconAnchor: [12,41] },
+    'Spoilers':          { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',    iconSize: [25,41], iconAnchor: [12,41] },
+    'Trader':            { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',   iconSize: [25,41], iconAnchor: [12,41] },
+    'Secret Stashes':            { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png',   iconSize: [25,41], iconAnchor: [12,41] },
+    'Bunker Layouts':    { iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png', iconSize: [25,41], iconAnchor: [12,41] }
+  };
+
+  /* -------- Markers (SURFACE) -------- */
+  const markersSurface = [
+    /*Bunkers Spoilers*/
+    { name:'Bunker Delta', x:850, y:565, category:'Spoilers', desc:'Unopenable For Now?.' },
+
+    /* Hunting zones with links */
+    { name:'Hunting Zone (North)', x:380, y:356, category:'Hunting Zones',
+      desc: 'Deer, Bears.' },
+    { name:'Hunting Zone (East)', x:902, y:368, category:'Hunting Zones',
+      desc: 'Deer, Bears.' },
+    { name:'Hunting Zone (South)', x:650, y:950, category:'Hunting Zones',
+      desc: 'Deer, Bears.' },
+
+
+    /* Traders*/
+    { name:'Swanson', x:645, y:381, category:'Trader', desc:'Materials.' },
+    { name:'Tallehase', x:800, y:272, category:'Trader', desc:'Arms Dealer.' },
+    { name:'Elizabeth', x:791, y:193, category:'Trader', desc:'Arms Dealer.' },
+
+
+    /* POIs */
+    { name:'Junkyard', x:792, y:293, category:'Point Of Interest', desc:'This location is where tallahase is.',},
+    { name:'City', x:191, y:807, category:'Point Of Interest', desc:'The only city in Delta.',},
+    { name:'Farm', x:486, y:213, category:'Point Of Interest', desc:'Its Farm!.',},
+    { name:'Dock', x:622, y:42, category:'Point Of Interest', desc:'Great fishing location.',},
+    { name:'Radio Tower', x:777, y:966, category:'Point Of Interest', desc:'Radio tower in middle of nowhere.',},
+
+    /*Spoiler*/
+    { name:'Teddybear Spawn', x:477, y:197, category:'Spoilers', desc:'Check the loft of the barn.',},
+    { name:'Birb', x:640, y:384, category:'Spoilers', desc:'Look under swansons bed you can see Birb.',},
+
+    /*Secret Stashes*/
+    { name:'Secret Stash', x:526, y:253, category:'Secret Stashes', desc:'Look behind the farm house.',},
+    { name:'Secret Stash', x:550, y:139, category:'Secret Stashes', desc:'Located right next to a tree.',},
+    { name:'Secret Stash', x:791, y:186, category:'Secret Stashes', desc:'Look behind Elizabeths.',},
+    { name:'Secret Stash', x:541, y:298, category:'Secret Stashes', desc:'Located right next to a tree.',},
+    { name:'Secret Stash', x:783, y:387, category:'Secret Stashes', desc:'Located right next to the sandbags.',},
+    { name:'Secret Stash', x:946, y:554, category:'Secret Stashes', desc:'Located right next to a tree.',},
+    { name:'Secret Stash', x:864, y:475, category:'Secret Stashes', desc:'Located right next to a tree.',},
+    { name:'Secret Stash', x:600, y:580, category:'Secret Stashes', desc:'Located right next to a tree.',},
+  ];
+
+  /* -------- Markers (UNDERGROUND) -------- */
+  const markersUnderground = [
+    { name:'Bunker Delta Layout', x:850, y:565, category:'Bunker Layouts', desc:'Unopenable For Now?.',},
+  ];
+
+  /* ==================== END CONFIG ==================== */
+
+  /* Map setup with clamped bounds/zoom */
+  const map = L.map('map', {
+    crs: L.CRS.Simple,
+    minZoom: -6,  /* will be raised to the min that shows whole image */
+    maxZoom: 6,
+    zoomSnap: 0.25,
+    zoomDelta: 0.25,
+    zoomControl: true
+  });
+
+  const bounds = new L.LatLngBounds(
+    map.unproject([0, IMAGE_HEIGHT], 0),
+    map.unproject([IMAGE_WIDTH, 0], 0)
+  );
+
+  const overlaySurface     = L.imageOverlay(SURFACE_IMAGE_URL, bounds);
+  const overlayUnderground = L.imageOverlay(UNDERGROUND_IMAGE_URL, bounds);
+  overlaySurface.addTo(map);
+
+  /* Keep users on the image; no panning outside */
+  map.setMaxBounds(bounds);
+  map.options.maxBoundsViscosity = 1.0;
+
+  /* Fit & lock the minimum zoom so you can’t zoom out past the image */
+  map.fitBounds(bounds, { padding: [90, 90] });
+  const startLatLng = map.unproject([START.x, START.y], 0);
+  const minZoomToShowAll = map.getBoundsZoom(bounds, true);
+  map.options.minZoom = minZoomToShowAll;
+  map.setView(startLatLng, Math.max(START.zoom, minZoomToShowAll));
+  map.on('zoomend', () => { if (map.getZoom() < minZoomToShowAll) map.setZoom(minZoomToShowAll); });
+
+  L.control.scale({ metric:true, imperial:false }).addTo(map);
+
+  /* Helpers */
+  const xyToLatLng = (x,y) => map.unproject([x,y], 0);
+
+  const filterPanel = document.getElementById('filterPanel');
+  const legendPanel = document.getElementById('legendPanel');
+
+  let currentMode = 'surface';
+  let byCat = {};
+  let allMarkers = [];
+
+  function clearMarkers() {
+    Object.values(byCat).forEach(g => g.clearLayers());
+    byCat = {};
+    allMarkers = [];
+  }
+
+  // Build filters with checkboxes OFF by default
+  function buildFilters(categories) {
+    filterPanel.innerHTML =
+      `<h4>Key</h4>
+       <label style="margin-bottom:6px;display:block">
+         <input type="checkbox" id="toggle-underground"> Underground mode
+       </label>`;
+    const cb = document.getElementById('toggle-underground');
+    cb.checked = (currentMode === 'underground');
+    cb.addEventListener('change', e => setMode(e.target.checked ? 'underground' : 'surface'));
+
+    categories.sort().forEach(cat => {
+      const id = 'cat-' + cat.replace(/\s+/g,'-');
+      const label = document.createElement('label');
+      // start UNCHECKED:
+      label.innerHTML = `<input type="checkbox" id="${id}"> ${cat}`;
+      const input = label.querySelector('input');
+      input.addEventListener('change', e => {
+        if (e.target.checked) byCat[cat].addTo(map);
+        else map.removeLayer(byCat[cat]);
+      });
+      filterPanel.appendChild(label);
+    });
+  }
+
+  function buildLegend(categories) {
+    legendPanel.innerHTML = categories.map(cat => {
+      const ico = (categoryIconMap[cat] || {}).iconUrl;
+      return `<div>${ico ? `<img src="${ico}" style="width:14px;height:22px;vertical-align:middle;margin-right:6px">` : ''}${cat}</div>`;
+    }).join('');
+  }
+
+  // Render markers but DO NOT add category layer groups to map yet (checkboxes start off)
+  function renderMarkers(markerData) {
+    clearMarkers();
+    const categoriesPresent = new Set();
+
+    markerData.forEach(m => {
+      categoriesPresent.add(m.category);
+      if (!byCat[m.category]) byCat[m.category] = L.layerGroup(); // not added yet
+
+      const html =
+        `<b>${m.name || 'Point'}</b>` +
+        (m.descHtml ? `<br>${m.descHtml}` : (m.desc ? `<br>${m.desc}` : '')) +
+        (m.link ? `<br><a href="${m.link}" target="_blank" rel="noopener">Details »</a>` : '') +
+        (m.image ? `<br><img src="${m.image}" style="max-width:200px;max-height:150px;border-radius:4px;margin-top:4px">` : '');
+
+      const latlng = xyToLatLng(m.x, m.y);
+
+      let iconOpts = null;
+      if (m.icon) {
+        iconOpts = { iconUrl: m.icon, iconSize: m.iconSize || [25,41], iconAnchor: m.iconAnchor || [12,41] };
+      } else if (categoryIconMap[m.category]) {
+        iconOpts = categoryIconMap[m.category];
+      }
+
+      const mk = iconOpts
+        ? L.marker(latlng, { icon: L.icon(iconOpts) }).bindPopup(html)
+        : L.marker(latlng).bindPopup(html);
+
+      byCat[m.category].addLayer(mk);
+      allMarkers.push(mk);
+    });
+
+    buildFilters([...categoriesPresent]);
+    buildLegend([...categoriesPresent]);
+  }
+
+  function setMode(mode) {
+    if (mode === currentMode) return;
+    currentMode = mode;
+
+    if (mode === 'surface') {
+      map.removeLayer(overlayUnderground);
+      overlaySurface.addTo(map);
+      renderMarkers(markersSurface);
+    } else {
+      map.removeLayer(overlaySurface);
+      overlayUnderground.addTo(map);
+      renderMarkers(markersUnderground);
+    }
+
+    map.setMaxBounds(bounds);
+    const z = Math.max(map.getZoom(), minZoomToShowAll);
+    map.setView(startLatLng, z);
+  }
+
+  /* Initial render */
+  renderMarkers(markersSurface);
+
+  /* Buttons */
+  function controlButton(text, title, onClick) {
+    return L.Control.extend({
+      options: { position: 'topleft' },
+      onAdd: function () {
+        const div = L.DomUtil.create('div', 'leaflet-control custom-btn');
+        const a = L.DomUtil.create('a', '', div);
+        a.href = '#'; a.title = title || text; a.textContent = text;
+        L.DomEvent.disableClickPropagation(div);
+        L.DomEvent.on(a, 'click', e => { L.DomEvent.preventDefault(e); onClick(); });
+        return div;
+      }
+    });
+  }
+  map.addControl(new (controlButton('Home','Reset view', () => map.setView(startLatLng, Math.max(START.zoom, minZoomToShowAll))))());
+  map.addControl(new (controlButton('Fullscreen','Toggle fullscreen', () => {
+    const el = document.getElementById('map');
+    if (!document.fullscreenElement) el.requestFullscreen?.(); else document.exitFullscreen?.();
+  }))());
+
+
+
+  /* --- WIP modal logic --- */
+  (function setupWipModal(){
+    const modal = document.getElementById('wipModal');
+    const btnOk = document.getElementById('wipOk');
+    const btnX  = modal.querySelector('.close-x');
+    function close() { modal.style.display = 'none'; }
+    btnOk.addEventListener('click', close);
+    btnX.addEventListener('click', close);
+    // If you want “remember my choice”, uncomment the next 3 lines:
+    // if (localStorage.getItem('gcmap_wip_ack') === '1') modal.style.display = 'none';
+    // [btnOk, btnX].forEach(b => b.addEventListener('click', () => localStorage.setItem('gcmap_wip_ack','1')));
+  })();
+  </script>
+</body>
+</html>
+
