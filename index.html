@@ -94,22 +94,15 @@
       box-shadow:var(--shadow);
       transition:transform .08s ease, background .15s ease, border-color .15s ease;
     }
-    .menuBtn:hover{
-      background:rgba(28,28,28,.86);
-      border-color:rgba(255,255,255,.28);
-      transform:translateY(-1px);
-    }
-    .menuBtn:active{transform:translateY(1px);}
+.menuBtn:hover{
+  background:rgba(28,28,28,.86);
+  border-color:rgba(255,255,255,.28);
+  filter: brightness(1.06);
+}
+.menuBtn:active{
+  filter: brightness(.98);
+}
 
-    .menuBtn{ transition: top .08s ease, background .15s ease, border-color .15s ease, filter .15s ease; }
-
-    .btnMaps:hover{ top: calc(52% - 2px); }
-.btnTips:hover{ top: calc(52% - 2px); }
-.btnWiki:hover{ top: calc(44% - 2px); }
-
-.btnMaps:active{ top: calc(52% + 1px); }
-.btnTips:active{ top: calc(52% + 1px); }
-.btnWiki:active{ top: calc(44% + 1px); }
 
 
     /* Button positions like your drawing */
@@ -363,4 +356,5 @@
 
 </body>
 </html>
+
 
