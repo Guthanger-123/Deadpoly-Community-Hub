@@ -1,178 +1,410 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>DeadPoly Wiki – 3D Preview</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <title>Wiki - 3D Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- THREE CORE -->
-<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
-<script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://unpkg.com/three@0.158.0/examples/js/loaders/FBXLoader.js"></script>
+  <style>
+    :root{
+      --bg:#0b0d12;
+      --panel:#0f1420cc;
+      --panel2:#0f1420f2;
+      --line:#1f2a3a;
+      --text:#e8eefc;
+      --muted:#a8b3cf;
+      --btn:#1b2433;
+      --btn2:#24314a;
+      --accent:#4aa3ff;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 14px;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    a{ color:inherit; text-decoration:none; }
 
-<style>
-html, body {
-  margin:0;
-  height:100%;
-  background:#0b0d12;
-  color:#fff;
-  font-family:system-ui;
-}
+    /* Top bar */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 14px;
+      background:linear-gradient(180deg, rgba(10,12,18,.92), rgba(10,12,18,.72));
+      border-bottom:1px solid rgba(255,255,255,.06);
+      backdrop-filter: blur(10px);
+    }
+    .topbar .left{ display:flex; align-items:center; gap:10px; }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px; border:1px solid rgba(255,255,255,.12);
+      border-radius:999px; background:rgba(15,20,32,.7);
+    }
+    .navbtn{
+      background:var(--btn);
+      border:1px solid rgba(255,255,255,.12);
+      color:var(--text);
+      padding:8px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      transition: transform .08s ease, background .15s ease;
+    }
+    .navbtn:hover{ background:var(--btn2); }
+    .navbtn:active{ transform: translateY(1px); }
+    .title{
+      font-weight:800; letter-spacing:.2px;
+    }
+    .muted{ color:var(--muted); font-size:12px; }
 
-.topbar {
-  height:50px;
-  display:flex;
-  align-items:center;
-  padding:0 16px;
-  border-bottom:1px solid #222;
-}
+    /* Layout */
+    .wrap{
+      height:calc(100% - 56px);
+      display:grid;
+      grid-template-columns: 1fr 340px;
+      gap:12px;
+      padding:12px;
+    }
+    @media (max-width: 960px){
+      .wrap{ grid-template-columns: 1fr; grid-template-rows: 58vh auto; }
+    }
 
-.topbar a {
-  color:#ccc;
-  text-decoration:none;
-  margin-right:16px;
-}
+    .viewer{
+      position:relative;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:var(--radius);
+      overflow:hidden;
+      background: radial-gradient(1200px 700px at 30% 10%, rgba(80,100,140,.10), transparent 60%),
+                  radial-gradient(900px 520px at 70% 30%, rgba(60,130,255,.10), transparent 55%),
+                  rgba(6,8,12,.65);
+      box-shadow: var(--shadow);
+      min-height: 420px;
+    }
+    #stage{
+      position:absolute; inset:0;
+    }
+    .hud{
+      position:absolute; left:10px; bottom:10px;
+      padding:8px 10px;
+      border-radius:12px;
+      background:rgba(15,20,32,.75);
+      border:1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(10px);
+      font-size:12px;
+      max-width:min(520px, 92%);
+    }
+    .hud b{ color:var(--text); }
+    .hud .row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; color:var(--muted); }
 
-#container {
-  display:grid;
-  grid-template-columns: 1fr 320px;
-  height: calc(100% - 50px);
-}
+    .side{
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:var(--radius);
+      background:rgba(15,20,32,.55);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .side .head{
+      padding:12px 12px 10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      background:rgba(15,20,32,.72);
+    }
+    .side .body{ padding:12px; }
 
-#viewer {
-  position:relative;
-  width:100%;
-  height:100%;
-}
+    .btn{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:var(--btn);
+      color:var(--text);
+      cursor:pointer;
+      transition: transform .08s ease, background .15s ease;
+      font-weight:600;
+    }
+    .btn:hover{ background:var(--btn2); }
+    .btn:active{ transform: translateY(1px); }
 
-.sidebar {
-  border-left:1px solid #222;
-  padding:12px;
-}
+    .btnRow{ display:grid; gap:10px; }
+    .hint{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+    }
+    .code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px;
+      padding:10px;
+      border-radius:12px;
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.08);
+      overflow:auto;
+    }
+    .ok{ color:#8fe38f; }
+    .bad{ color:#ff8a8a; }
+  </style>
 
-button {
-  width:100%;
-  padding:10px;
-  margin-bottom:8px;
-  background:#1b1f2a;
-  border:1px solid #333;
-  color:#fff;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-button:hover { background:#242a3a; }
-</style>
+  <!-- ✅ Non-module Three.js + examples (GitHub Pages safe) -->
+  <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://unpkg.com/three@0.158.0/examples/js/loaders/FBXLoader.js"></script>
 </head>
 
 <body>
-
-<div class="topbar">
-  <a href="index.html">← Menu</a>
-  <strong>Wiki – 3D Viewer</strong>
-</div>
-
-<div id="container">
-  <div id="viewer"></div>
-
-  <div class="sidebar">
-    <button onclick="loadBase()">Load Base Model</button>
-    <button onclick="clearScene()">Clear Scene</button>
-
-    <p style="font-size:12px;color:#aaa;">
-      If you see a grid + light, Three.js is working.<br>
-      If the FBX loads, your model path is correct.
-    </p>
+  <div class="topbar">
+    <div class="left">
+      <a class="pill" href="index.html" aria-label="Back to Menu">← Menu</a>
+      <div class="title">Wiki - 3D Viewer</div>
+      <div class="muted">Drag rotate • Scroll zoom • Right-drag pan</div>
+    </div>
+    <div class="right">
+      <a class="navbtn" href="tips.html">Tips</a>
+      <a class="navbtn" href="maps.html">Maps</a>
+    </div>
   </div>
-</div>
+
+  <div class="wrap">
+    <div class="viewer">
+      <div id="stage"></div>
+
+      <div class="hud" id="hud">
+        <div><b>Status:</b> <span id="status">Ready.</span></div>
+        <div class="row">
+          <span>Model: <b id="modelName">none</b></span>
+          <span>Progress: <b id="progress">0%</b></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="head">
+        <div style="font-weight:800;">Controls</div>
+        <div class="muted">Loads FBX from <b>assets/models/</b></div>
+      </div>
+      <div class="body">
+        <div class="btnRow">
+          <button class="btn" id="btnLoadBase">Load Base Model</button>
+          <button class="btn" id="btnReset">Reset View</button>
+          <button class="btn" id="btnClear">Clear Scene</button>
+        </div>
+
+        <div class="hint">
+          If you see a <span class="ok">grid + axes</span>, Three.js is working.<br/>
+          If the FBX loads and still looks blank, it was likely <b>off-camera</b> or <b>unlit</b> — this page auto-frames it.
+        </div>
+
+        <div class="hint" style="margin-top:12px;">
+          <b>File path rules (GitHub Pages):</b><br/>
+          Names are <b>case-sensitive</b>. Spaces matter. Keep them simple.
+        </div>
+
+        <div class="code" style="margin-top:10px;">
+          Base FBX path used:<br/>
+          <b>assets/models/SK_BaseModel.fbx</b>
+        </div>
+
+        <div class="hint" style="margin-top:12px;">
+          If it still won’t show, open DevTools → Console and check for:
+          <span class="bad">404</span> / <span class="bad">CORS</span> / <span class="bad">FBXLoader</span>.
+        </div>
+      </div>
+    </div>
+  </div>
 
 <script>
-/* ================= SCENE ================= */
+/* ==================== THREE CORE ==================== */
+
+const stage = document.getElementById('stage');
+const statusEl = document.getElementById('status');
+const progEl = document.getElementById('progress');
+const modelNameEl = document.getElementById('modelName');
+
+function setStatus(txt){ statusEl.textContent = txt; }
+
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0b0d12);
 
-/* ================= CAMERA ================= */
-const camera = new THREE.PerspectiveCamera(
-  60,
-  1,
-  0.1,
-  5000
-);
-camera.position.set(0, 150, 300);
+const camera = new THREE.PerspectiveCamera(55, 1, 0.01, 5000);
+camera.position.set(0, 120, 260);
 
-/* ================= RENDERER ================= */
-const renderer = new THREE.WebGLRenderer({ antialias:true });
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(100, 100); // temp
-document.getElementById('viewer').appendChild(renderer.domElement);
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.setSize(10,10); // resized immediately below
+stage.appendChild(renderer.domElement);
 
-/* ================= CONTROLS ================= */
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.target.set(0, 120, 0);
+/* Lights (models often look black without this) */
+const hemi = new THREE.HemisphereLight(0xffffff, 0x223355, 1.0);
+scene.add(hemi);
 
-/* ================= LIGHTS ================= */
-scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-
-const dir = new THREE.DirectionalLight(0xffffff, 1);
-dir.position.set(200, 300, 200);
+const dir = new THREE.DirectionalLight(0xffffff, 1.2);
+dir.position.set(120, 220, 120);
 scene.add(dir);
 
-/* ================= GRID (DEBUG – SHOULD ALWAYS SHOW) ================= */
-const grid = new THREE.GridHelper(500, 20, 0x444444, 0x222222);
+/* Always-visible helpers (so you know it's rendering) */
+const grid = new THREE.GridHelper(600, 60, 0x2a3550, 0x1b2236);
+grid.position.y = 0;
 scene.add(grid);
 
-/* ================= FBX ================= */
-const loader = new THREE.FBXLoader();
-let baseModel = null;
+const axes = new THREE.AxesHelper(80);
+scene.add(axes);
 
-function loadBase() {
-  loader.load(
-    'assets/models/SK_BaseModel.fbx',
-    fbx => {
-      if (baseModel) scene.remove(baseModel);
+/* Controls */
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.screenSpacePanning = true;
+controls.target.set(0, 80, 0);
+controls.update();
 
-      fbx.scale.setScalar(0.1);
-      fbx.position.set(0, 0, 0);
-      baseModel = fbx;
-      scene.add(fbx);
+/* Track loaded model root so we can clear/reset */
+let currentRoot = null;
 
-      console.log('FBX loaded');
-    },
-    xhr => {
-      console.log(`Loading FBX: ${(xhr.loaded / xhr.total * 100).toFixed(0)}%`);
-    },
-    err => {
-      console.error('FBX ERROR', err);
-      alert('FBX failed to load. Check path & filename.');
-    }
-  );
-}
-
-function clearScene() {
-  if (baseModel) scene.remove(baseModel);
-  baseModel = null;
-}
-
-/* ================= RESIZE FIX ================= */
-function resize() {
-  const viewer = document.getElementById('viewer');
-  const w = viewer.clientWidth;
-  const h = viewer.clientHeight;
+/* Resize */
+function resize(){
+  const w = stage.clientWidth;
+  const h = stage.clientHeight;
+  renderer.setSize(w, h, false);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
-  renderer.setSize(w, h);
 }
 window.addEventListener('resize', resize);
 resize();
 
-/* ================= LOOP ================= */
-function animate() {
-  requestAnimationFrame(animate);
+/* Render loop */
+function tick(){
+  requestAnimationFrame(tick);
   controls.update();
   renderer.render(scene, camera);
 }
-animate();
-</script>
+tick();
 
+/* ==================== LOADING + FRAMING ==================== */
+
+function clearScene(){
+  if(!currentRoot) return;
+  scene.remove(currentRoot);
+  // dispose geometry/materials to avoid memory leaks
+  currentRoot.traverse(obj=>{
+    if(obj.isMesh){
+      obj.geometry?.dispose?.();
+      if(Array.isArray(obj.material)){
+        obj.material.forEach(m=>m?.dispose?.());
+      } else {
+        obj.material?.dispose?.();
+      }
+    }
+  });
+  currentRoot = null;
+  modelNameEl.textContent = 'none';
+  progEl.textContent = '0%';
+  setStatus('Cleared.');
+}
+
+function applySimpleMaterials(root){
+  // Many game-export FBX files come with weird/unlit materials.
+  // This forces a visible standard material so you can see it.
+  root.traverse(obj=>{
+    if(!obj.isMesh) return;
+    obj.castShadow = false;
+    obj.receiveShadow = false;
+    obj.material = new THREE.MeshStandardMaterial({
+      color: 0xdfe7ff,
+      roughness: 0.85,
+      metalness: 0.05
+    });
+  });
+}
+
+function frameToObject(root){
+  const box = new THREE.Box3().setFromObject(root);
+  const size = new THREE.Vector3();
+  const center = new THREE.Vector3();
+  box.getSize(size);
+  box.getCenter(center);
+
+  // If size is zero, it's usually empty/invalid geometry
+  const maxDim = Math.max(size.x, size.y, size.z);
+  if(!isFinite(maxDim) || maxDim <= 0){
+    setStatus('Loaded, but model bounds are empty (no visible geometry).');
+    return;
+  }
+
+  // Move controls target to center
+  controls.target.copy(center);
+  controls.update();
+
+  // Place camera back enough to see the model
+  const dist = maxDim * 1.6;
+  const dirVec = new THREE.Vector3(1, 0.7, 1).normalize();
+  camera.position.copy(center.clone().add(dirVec.multiplyScalar(dist)));
+  camera.near = Math.max(0.01, dist / 500);
+  camera.far  = Math.max(2000, dist * 20);
+  camera.updateProjectionMatrix();
+}
+
+function loadFBX(path, displayName){
+  setStatus('Loading FBX…');
+  progEl.textContent = '0%';
+  modelNameEl.textContent = displayName || path;
+
+  // clear previous model
+  clearScene();
+
+  const loader = new THREE.FBXLoader();
+
+  loader.load(
+    path,
+    (root)=>{
+      currentRoot = root;
+
+      // Make sure it's not rotated weirdly
+      // (You can tweak these if your export is different)
+      root.position.set(0,0,0);
+
+      // Force visible materials (remove if you later want real textures)
+      applySimpleMaterials(root);
+
+      scene.add(root);
+      frameToObject(root);
+
+      setStatus('Loaded ✅');
+      progEl.textContent = '100%';
+    },
+    (xhr)=>{
+      if(xhr && xhr.total){
+        const p = Math.round((xhr.loaded / xhr.total) * 100);
+        progEl.textContent = p + '%';
+      } else {
+        // Some servers don't provide total size
+        progEl.textContent = '…';
+      }
+    },
+    (err)=>{
+      console.error('FBX load error:', err);
+      setStatus('Load failed ❌ (check Console for 404/path/CORS).');
+      progEl.textContent = '0%';
+    }
+  );
+}
+
+/* Buttons */
+document.getElementById('btnLoadBase').addEventListener('click', ()=>{
+  loadFBX('assets/models/SK_BaseModel.fbx', 'SK_BaseModel.fbx');
+});
+
+document.getElementById('btnClear').addEventListener('click', clearScene);
+
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  // Reset to a sane default view even if nothing loaded
+  controls.target.set(0, 80, 0);
+  camera.position.set(0, 120, 260);
+  camera.near = 0.01;
+  camera.far = 5000;
+  camera.updateProjectionMatrix();
+  controls.update();
+  setStatus('View reset.');
+});
+
+/* Initial status */
+setStatus('Ready. Grid + axes should be visible.');
+</script>
 </body>
 </html>
