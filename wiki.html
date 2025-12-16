@@ -2,409 +2,370 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Wiki - 3D Viewer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wiki - 3D Viewer</title>
 
   <style>
     :root{
       --bg:#0b0d12;
-      --panel:#0f1420cc;
-      --panel2:#0f1420f2;
-      --line:#1f2a3a;
-      --text:#e8eefc;
-      --muted:#a8b3cf;
-      --btn:#1b2433;
-      --btn2:#24314a;
+      --panel:#111522;
+      --panel2:#0f1220;
+      --text:#e8ecff;
+      --muted:#aeb7d9;
+      --line:rgba(255,255,255,.10);
+      --btn:#1b2336;
+      --btn2:#23304a;
       --accent:#4aa3ff;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 14px;
+      --top:56px;
     }
     *{ box-sizing:border-box; }
     html,body{ height:100%; margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
-    a{ color:inherit; text-decoration:none; }
 
     /* Top bar */
     .topbar{
       position:sticky; top:0; z-index:50;
+      height:var(--top);
       display:flex; align-items:center; justify-content:space-between;
-      padding:10px 14px;
-      background:linear-gradient(180deg, rgba(10,12,18,.92), rgba(10,12,18,.72));
-      border-bottom:1px solid rgba(255,255,255,.06);
+      padding:0 12px;
+      background:linear-gradient(to bottom, rgba(10,12,18,.98), rgba(10,12,18,.92));
+      border-bottom:1px solid var(--line);
       backdrop-filter: blur(10px);
     }
-    .topbar .left{ display:flex; align-items:center; gap:10px; }
+    .topbar .left, .topbar .right{ display:flex; gap:10px; align-items:center; }
     .pill{
       display:inline-flex; align-items:center; gap:8px;
-      padding:7px 10px; border:1px solid rgba(255,255,255,.12);
-      border-radius:999px; background:rgba(15,20,32,.7);
+      padding:8px 10px; border-radius:10px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      color:var(--text); text-decoration:none;
+      font-size:13px;
     }
-    .navbtn{
-      background:var(--btn);
-      border:1px solid rgba(255,255,255,.12);
-      color:var(--text);
-      padding:8px 12px;
-      border-radius:10px;
-      cursor:pointer;
-      transition: transform .08s ease, background .15s ease;
-    }
-    .navbtn:hover{ background:var(--btn2); }
-    .navbtn:active{ transform: translateY(1px); }
+    .pill:hover{ border-color:rgba(255,255,255,.22); }
     .title{
-      font-weight:800; letter-spacing:.2px;
+      font-weight:800; letter-spacing:.3px;
+      font-size:14px; opacity:.95;
     }
-    .muted{ color:var(--muted); font-size:12px; }
+    .hint{ font-size:12px; color:var(--muted); margin-left:10px; }
 
     /* Layout */
     .wrap{
-      height:calc(100% - 56px);
+      height: calc(100vh - var(--top)); /* CRITICAL: gives #stage real height via children */
       display:grid;
-      grid-template-columns: 1fr 340px;
+      grid-template-columns: 1fr 330px;
       gap:12px;
       padding:12px;
     }
-    @media (max-width: 960px){
-      .wrap{ grid-template-columns: 1fr; grid-template-rows: 58vh auto; }
+    @media (max-width: 980px){
+      .wrap{ grid-template-columns: 1fr; height:auto; min-height: calc(100vh - var(--top)); }
     }
 
-    .viewer{
+    /* Viewer */
+    .viewerCard{
       position:relative;
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:var(--radius);
+      background:radial-gradient(1200px 700px at 50% 15%, rgba(90,120,255,.15), rgba(0,0,0,0) 55%),
+                 linear-gradient(to bottom, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:14px;
       overflow:hidden;
-      background: radial-gradient(1200px 700px at 30% 10%, rgba(80,100,140,.10), transparent 60%),
-                  radial-gradient(900px 520px at 70% 30%, rgba(60,130,255,.10), transparent 55%),
-                  rgba(6,8,12,.65);
-      box-shadow: var(--shadow);
-      min-height: 420px;
+      min-height: 520px;
     }
+    /* CRITICAL: stage must fill card */
     #stage{
       position:absolute; inset:0;
+      width:100%;
+      height:100%;
     }
-    .hud{
-      position:absolute; left:10px; bottom:10px;
-      padding:8px 10px;
-      border-radius:12px;
-      background:rgba(15,20,32,.75);
-      border:1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(10px);
-      font-size:12px;
-      max-width:min(520px, 92%);
-    }
-    .hud b{ color:var(--text); }
-    .hud .row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; color:var(--muted); }
 
+    .hud{
+      position:absolute; left:12px; bottom:12px; z-index:5;
+      display:flex; gap:8px; flex-wrap:wrap;
+      pointer-events:none;
+    }
+    .hud .chip{
+      pointer-events:none;
+      padding:6px 9px; border-radius:999px;
+      background:rgba(0,0,0,.45);
+      border:1px solid rgba(255,255,255,.12);
+      color:var(--text);
+      font-size:12px;
+    }
+
+    /* Side panel */
     .side{
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:var(--radius);
-      background:rgba(15,20,32,.55);
-      box-shadow: var(--shadow);
-      overflow:hidden;
+      background:linear-gradient(to bottom, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      overflow:auto;
+      min-height: 520px;
     }
-    .side .head{
-      padding:12px 12px 10px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-      background:rgba(15,20,32,.72);
-    }
-    .side .body{ padding:12px; }
+    .side h3{ margin:0 0 6px; font-size:14px; }
+    .side p{ margin:6px 0; color:var(--muted); font-size:12.5px; line-height:1.4; }
 
     .btn{
       width:100%;
       padding:10px 12px;
       border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background:var(--btn);
+      border:1px solid var(--line);
+      background:linear-gradient(to bottom, var(--btn2), var(--btn));
       color:var(--text);
+      font-weight:700;
       cursor:pointer;
-      transition: transform .08s ease, background .15s ease;
-      font-weight:600;
-    }
-    .btn:hover{ background:var(--btn2); }
-    .btn:active{ transform: translateY(1px); }
-
-    .btnRow{ display:grid; gap:10px; }
-    .hint{
       margin-top:10px;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.4;
     }
-    .code{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size:12px;
+    .btn:hover{ border-color:rgba(255,255,255,.22); }
+    .btn.secondary{ font-weight:700; background:rgba(255,255,255,.05); }
+
+    .box{
+      margin-top:10px;
       padding:10px;
       border-radius:12px;
+      border:1px solid var(--line);
       background:rgba(0,0,0,.25);
-      border:1px solid rgba(255,255,255,.08);
+      font-size:12px;
+      color:var(--muted);
       overflow:auto;
     }
-    .ok{ color:#8fe38f; }
-    .bad{ color:#ff8a8a; }
+    code{ color:#d7e6ff; }
+    .status{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .status b{ color:var(--text); }
   </style>
 
-  <!-- ✅ Non-module Three.js + examples (GitHub Pages safe) -->
-  <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://unpkg.com/three@0.158.0/examples/js/loaders/FBXLoader.js"></script>
+  <!-- Import map: no downloads needed. Works on GitHub Pages. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
 
 <body>
   <div class="topbar">
     <div class="left">
-      <a class="pill" href="index.html" aria-label="Back to Menu">← Menu</a>
+      <a class="pill" href="index.html">← Menu</a>
       <div class="title">Wiki - 3D Viewer</div>
-      <div class="muted">Drag rotate • Scroll zoom • Right-drag pan</div>
+      <div class="hint">Drag rotate • Scroll zoom • Right-drag pan</div>
     </div>
     <div class="right">
-      <a class="navbtn" href="tips.html">Tips</a>
-      <a class="navbtn" href="maps.html">Maps</a>
+      <a class="pill" href="tips.html">Tips</a>
+      <a class="pill" href="maps.html">Maps</a>
     </div>
   </div>
 
   <div class="wrap">
-    <div class="viewer">
-      <div id="stage"></div>
+    <div class="viewerCard">
+      <div id="stage" aria-label="3D viewer stage"></div>
 
-      <div class="hud" id="hud">
-        <div><b>Status:</b> <span id="status">Ready.</span></div>
-        <div class="row">
-          <span>Model: <b id="modelName">none</b></span>
-          <span>Progress: <b id="progress">0%</b></span>
-        </div>
+      <div class="hud">
+        <div class="chip" id="hudStatus">Status: Ready</div>
+        <div class="chip" id="hudLoaded">Loaded: none</div>
       </div>
     </div>
 
-    <div class="side">
-      <div class="head">
-        <div style="font-weight:800;">Controls</div>
-        <div class="muted">Loads FBX from <b>assets/models/</b></div>
+    <aside class="side">
+      <h3>Controls</h3>
+      <p>Loads FBX from <code>/assets/models/</code></p>
+
+      <button class="btn" id="btnLoadBase">Load Base Model</button>
+      <button class="btn secondary" id="btnReset">Reset View</button>
+      <button class="btn secondary" id="btnClear">Clear Scene</button>
+
+      <div class="box">
+        Base FBX path used:<br>
+        <code>assets/models/SK_BaseModel.fbx</code><br><br>
+        If you see a grid + axes, Three.js is working.
+        If FBX loads but looks blank, it’s usually camera framing or scale — this page auto-frames after load.
       </div>
-      <div class="body">
-        <div class="btnRow">
-          <button class="btn" id="btnLoadBase">Load Base Model</button>
-          <button class="btn" id="btnReset">Reset View</button>
-          <button class="btn" id="btnClear">Clear Scene</button>
-        </div>
 
-        <div class="hint">
-          If you see a <span class="ok">grid + axes</span>, Three.js is working.<br/>
-          If the FBX loads and still looks blank, it was likely <b>off-camera</b> or <b>unlit</b> — this page auto-frames it.
-        </div>
-
-        <div class="hint" style="margin-top:12px;">
-          <b>File path rules (GitHub Pages):</b><br/>
-          Names are <b>case-sensitive</b>. Spaces matter. Keep them simple.
-        </div>
-
-        <div class="code" style="margin-top:10px;">
-          Base FBX path used:<br/>
-          <b>assets/models/SK_BaseModel.fbx</b>
-        </div>
-
-        <div class="hint" style="margin-top:12px;">
-          If it still won’t show, open DevTools → Console and check for:
-          <span class="bad">404</span> / <span class="bad">CORS</span> / <span class="bad">FBXLoader</span>.
-        </div>
-      </div>
-    </div>
+      <div class="status" id="statusText"><b>Debug:</b> waiting…</div>
+    </aside>
   </div>
 
-<script>
-/* ==================== THREE CORE ==================== */
+  <script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+    import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
 
-const stage = document.getElementById('stage');
-const statusEl = document.getElementById('status');
-const progEl = document.getElementById('progress');
-const modelNameEl = document.getElementById('modelName');
+    const stage = document.getElementById("stage");
+    const hudStatus = document.getElementById("hudStatus");
+    const hudLoaded = document.getElementById("hudLoaded");
+    const statusText = document.getElementById("statusText");
 
-function setStatus(txt){ statusEl.textContent = txt; }
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0b0d12);
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0b0d12);
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 2000);
+    camera.position.set(0, 1.4, 3.2);
 
-const camera = new THREE.PerspectiveCamera(55, 1, 0.01, 5000);
-camera.position.set(0, 120, 260);
+    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    stage.appendChild(renderer.domElement);
 
-const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.setSize(10,10); // resized immediately below
-stage.appendChild(renderer.domElement);
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.target.set(0, 1.0, 0);
 
-/* Lights (models often look black without this) */
-const hemi = new THREE.HemisphereLight(0xffffff, 0x223355, 1.0);
-scene.add(hemi);
+    // Lights
+    scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+    const dir = new THREE.DirectionalLight(0xffffff, 0.9);
+    dir.position.set(3, 6, 4);
+    scene.add(dir);
 
-const dir = new THREE.DirectionalLight(0xffffff, 1.2);
-dir.position.set(120, 220, 120);
-scene.add(dir);
+    // Grid + axes (so you always see something)
+    const grid = new THREE.GridHelper(20, 20, 0x335577, 0x223344);
+    grid.position.y = 0;
+    scene.add(grid);
+    const axes = new THREE.AxesHelper(1.2);
+    scene.add(axes);
 
-/* Always-visible helpers (so you know it's rendering) */
-const grid = new THREE.GridHelper(600, 60, 0x2a3550, 0x1b2236);
-grid.position.y = 0;
-scene.add(grid);
+    // Keep loaded models in a group so we can clear easily
+    const modelRoot = new THREE.Group();
+    scene.add(modelRoot);
 
-const axes = new THREE.AxesHelper(80);
-scene.add(axes);
-
-/* Controls */
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.08;
-controls.screenSpacePanning = true;
-controls.target.set(0, 80, 0);
-controls.update();
-
-/* Track loaded model root so we can clear/reset */
-let currentRoot = null;
-
-/* Resize */
-function resize(){
-  const w = stage.clientWidth;
-  const h = stage.clientHeight;
-  renderer.setSize(w, h, false);
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
-}
-window.addEventListener('resize', resize);
-resize();
-
-/* Render loop */
-function tick(){
-  requestAnimationFrame(tick);
-  controls.update();
-  renderer.render(scene, camera);
-}
-tick();
-
-/* ==================== LOADING + FRAMING ==================== */
-
-function clearScene(){
-  if(!currentRoot) return;
-  scene.remove(currentRoot);
-  // dispose geometry/materials to avoid memory leaks
-  currentRoot.traverse(obj=>{
-    if(obj.isMesh){
-      obj.geometry?.dispose?.();
-      if(Array.isArray(obj.material)){
-        obj.material.forEach(m=>m?.dispose?.());
-      } else {
-        obj.material?.dispose?.();
-      }
+    function setHud(msg, loaded) {
+      hudStatus.textContent = "Status: " + msg;
+      statusText.innerHTML = "<b>Debug:</b> " + msg;
+      if (loaded !== undefined) hudLoaded.textContent = "Loaded: " + loaded;
     }
-  });
-  currentRoot = null;
-  modelNameEl.textContent = 'none';
-  progEl.textContent = '0%';
-  setStatus('Cleared.');
-}
 
-function applySimpleMaterials(root){
-  // Many game-export FBX files come with weird/unlit materials.
-  // This forces a visible standard material so you can see it.
-  root.traverse(obj=>{
-    if(!obj.isMesh) return;
-    obj.castShadow = false;
-    obj.receiveShadow = false;
-    obj.material = new THREE.MeshStandardMaterial({
-      color: 0xdfe7ff,
-      roughness: 0.85,
-      metalness: 0.05
+    // CRITICAL: size renderer from the real element size
+    function resize() {
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      if (!w || !h) return; // if hidden/collapsed momentarily
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+
+    // Use ResizeObserver so it works on mobile/desktop and when panels resize
+    const ro = new ResizeObserver(() => resize());
+    ro.observe(stage);
+    window.addEventListener("orientationchange", () => setTimeout(resize, 50));
+    window.addEventListener("resize", () => setTimeout(resize, 50));
+    resize();
+
+    function clearModel() {
+      while (modelRoot.children.length) {
+        const obj = modelRoot.children.pop();
+        obj.traverse?.(n => {
+          if (n.geometry) n.geometry.dispose?.();
+          if (n.material) {
+            const mats = Array.isArray(n.material) ? n.material : [n.material];
+            mats.forEach(m => {
+              for (const k in m) {
+                if (m[k] && m[k].isTexture) m[k].dispose?.();
+              }
+              m.dispose?.();
+            });
+          }
+        });
+      }
+      setHud("Cleared scene", "none");
+    }
+
+    function frameObject(object3D) {
+      // Compute bounding box
+      const box = new THREE.Box3().setFromObject(object3D);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+
+      // Recenter the model around origin-ish
+      object3D.position.sub(center);
+
+      // Fit camera to model
+      const maxDim = Math.max(size.x, size.y, size.z) || 1;
+      const fitDist = maxDim / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5)));
+      const dist = fitDist * 1.35;
+
+      camera.position.set(0, maxDim * 0.35 + 1.0, dist);
+      controls.target.set(0, maxDim * 0.35, 0);
+      controls.update();
+    }
+
+    async function loadFBX(path, label) {
+      setHud("Loading…", label);
+      const loader = new FBXLoader();
+
+      return new Promise((resolve, reject) => {
+        loader.load(
+          path,
+          (obj) => {
+            // Make sure it renders even if materials are weird
+            obj.traverse((n) => {
+              if (n.isMesh) {
+                n.castShadow = false;
+                n.receiveShadow = false;
+
+                // If FBX has no material, give it one
+                if (!n.material) {
+                  n.material = new THREE.MeshStandardMaterial({ color: 0xbfc7ff, roughness: 0.85, metalness: 0.0 });
+                } else {
+                  // If material exists but is too dark, bump emissive slightly
+                  const mats = Array.isArray(n.material) ? n.material : [n.material];
+                  mats.forEach(m => {
+                    if (m.color) m.color.convertSRGBToLinear?.();
+                    if ("emissive" in m) m.emissiveIntensity = Math.max(m.emissiveIntensity || 0, 0.15);
+                  });
+                }
+              }
+            });
+
+            modelRoot.add(obj);
+            frameObject(obj);
+            setHud("Loaded", label);
+            resolve(obj);
+          },
+          (evt) => {
+            if (evt.total) {
+              const pct = Math.round((evt.loaded / evt.total) * 100);
+              setHud(`Loading… ${pct}%`, label);
+            }
+          },
+          (err) => {
+            console.error(err);
+            setHud("Failed to load (check path / case / 404)", label);
+            reject(err);
+          }
+        );
+      });
+    }
+
+    // Buttons
+    document.getElementById("btnLoadBase").addEventListener("click", async () => {
+      clearModel();
+      try {
+        await loadFBX("assets/models/SK_BaseModel.fbx", "SK_BaseModel.fbx");
+      } catch {}
     });
-  });
-}
 
-function frameToObject(root){
-  const box = new THREE.Box3().setFromObject(root);
-  const size = new THREE.Vector3();
-  const center = new THREE.Vector3();
-  box.getSize(size);
-  box.getCenter(center);
+    document.getElementById("btnClear").addEventListener("click", () => clearModel());
 
-  // If size is zero, it's usually empty/invalid geometry
-  const maxDim = Math.max(size.x, size.y, size.z);
-  if(!isFinite(maxDim) || maxDim <= 0){
-    setStatus('Loaded, but model bounds are empty (no visible geometry).');
-    return;
-  }
+    document.getElementById("btnReset").addEventListener("click", () => {
+      camera.position.set(0, 1.4, 3.2);
+      controls.target.set(0, 1.0, 0);
+      controls.update();
+      setHud("Reset view", hudLoaded.textContent.replace("Loaded: ",""));
+    });
 
-  // Move controls target to center
-  controls.target.copy(center);
-  controls.update();
-
-  // Place camera back enough to see the model
-  const dist = maxDim * 1.6;
-  const dirVec = new THREE.Vector3(1, 0.7, 1).normalize();
-  camera.position.copy(center.clone().add(dirVec.multiplyScalar(dist)));
-  camera.near = Math.max(0.01, dist / 500);
-  camera.far  = Math.max(2000, dist * 20);
-  camera.updateProjectionMatrix();
-}
-
-function loadFBX(path, displayName){
-  setStatus('Loading FBX…');
-  progEl.textContent = '0%';
-  modelNameEl.textContent = displayName || path;
-
-  // clear previous model
-  clearScene();
-
-  const loader = new THREE.FBXLoader();
-
-  loader.load(
-    path,
-    (root)=>{
-      currentRoot = root;
-
-      // Make sure it's not rotated weirdly
-      // (You can tweak these if your export is different)
-      root.position.set(0,0,0);
-
-      // Force visible materials (remove if you later want real textures)
-      applySimpleMaterials(root);
-
-      scene.add(root);
-      frameToObject(root);
-
-      setStatus('Loaded ✅');
-      progEl.textContent = '100%';
-    },
-    (xhr)=>{
-      if(xhr && xhr.total){
-        const p = Math.round((xhr.loaded / xhr.total) * 100);
-        progEl.textContent = p + '%';
-      } else {
-        // Some servers don't provide total size
-        progEl.textContent = '…';
-      }
-    },
-    (err)=>{
-      console.error('FBX load error:', err);
-      setStatus('Load failed ❌ (check Console for 404/path/CORS).');
-      progEl.textContent = '0%';
+    // Render loop
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
     }
-  );
-}
+    animate();
 
-/* Buttons */
-document.getElementById('btnLoadBase').addEventListener('click', ()=>{
-  loadFBX('assets/models/SK_BaseModel.fbx', 'SK_BaseModel.fbx');
-});
-
-document.getElementById('btnClear').addEventListener('click', clearScene);
-
-document.getElementById('btnReset').addEventListener('click', ()=>{
-  // Reset to a sane default view even if nothing loaded
-  controls.target.set(0, 80, 0);
-  camera.position.set(0, 120, 260);
-  camera.near = 0.01;
-  camera.far = 5000;
-  camera.updateProjectionMatrix();
-  controls.update();
-  setStatus('View reset.');
-});
-
-/* Initial status */
-setStatus('Ready. Grid + axes should be visible.');
-</script>
+    setHud("Ready (grid + axes should be visible)", "none");
+  </script>
 </body>
 </html>
