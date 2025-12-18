@@ -2,370 +2,773 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Wiki - 3D Viewer</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root{
-      --bg:#0b0d12;
-      --panel:#111522;
-      --panel2:#0f1220;
-      --text:#e8ecff;
-      --muted:#aeb7d9;
-      --line:rgba(255,255,255,.10);
-      --btn:#1b2336;
-      --btn2:#23304a;
-      --accent:#4aa3ff;
-      --top:56px;
+      --bg0:#07090d;
+      --bg1:#0b1020;
+      --panel:rgba(18,22,34,.78);
+      --panel2:rgba(14,18,28,.70);
+      --border:rgba(255,255,255,.10);
+      --text:#e9eefc;
+      --muted:rgba(233,238,252,.75);
+      --btn:rgba(35,45,70,.65);
+      --btn2:rgba(45,95,255,.20);
+      --accent:rgba(120,170,255,.95);
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --radius:16px;
+      --radius2:12px;
     }
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+
+    html,body{height:100%; margin:0; background:radial-gradient(1200px 700px at 20% 20%, #0d1a33 0%, var(--bg0) 60%), linear-gradient(180deg, var(--bg1), var(--bg0)); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
+    a{color:inherit}
 
     /* Top bar */
     .topbar{
       position:sticky; top:0; z-index:50;
-      height:var(--top);
       display:flex; align-items:center; justify-content:space-between;
-      padding:0 12px;
-      background:linear-gradient(to bottom, rgba(10,12,18,.98), rgba(10,12,18,.92));
-      border-bottom:1px solid var(--line);
+      padding:10px 12px;
+      background:linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.20));
+      border-bottom:1px solid rgba(255,255,255,.08);
       backdrop-filter: blur(10px);
     }
-    .topbar .left, .topbar .right{ display:flex; gap:10px; align-items:center; }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px; border-radius:10px;
-      background:rgba(255,255,255,.06);
-      border:1px solid var(--line);
-      color:var(--text); text-decoration:none;
+    .topbar .left{
+      display:flex; align-items:center; gap:10px;
+      min-width: 260px;
+    }
+    .topbar .center{
+      display:flex; align-items:center; gap:10px; justify-content:center;
+      flex:1;
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .topbar .right{
+      display:flex; align-items:center; gap:8px;
+      min-width: 220px;
+      justify-content:flex-end;
+    }
+
+    /* Important: no hover “bounce” */
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      height:34px;
+      padding:0 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      color:var(--text);
+      font-weight:600;
       font-size:13px;
+      cursor:pointer;
+      text-decoration:none;
+      user-select:none;
+      transform: translateZ(0);
     }
-    .pill:hover{ border-color:rgba(255,255,255,.22); }
-    .title{
-      font-weight:800; letter-spacing:.3px;
-      font-size:14px; opacity:.95;
+    .btn:hover{ filter:brightness(1.12); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      border:1px solid rgba(120,170,255,.40);
+      background:linear-gradient(180deg, rgba(120,170,255,.22), rgba(120,170,255,.08));
     }
-    .hint{ font-size:12px; color:var(--muted); margin-left:10px; }
 
     /* Layout */
     .wrap{
-      height: calc(100vh - var(--top)); /* CRITICAL: gives #stage real height via children */
+      height: calc(100vh - 56px);
       display:grid;
-      grid-template-columns: 1fr 330px;
+      grid-template-columns: 1fr 320px;
       gap:12px;
       padding:12px;
-    }
-    @media (max-width: 980px){
-      .wrap{ grid-template-columns: 1fr; height:auto; min-height: calc(100vh - var(--top)); }
+      box-sizing:border-box;
     }
 
-    /* Viewer */
-    .viewerCard{
+    .viewer{
       position:relative;
-      background:radial-gradient(1200px 700px at 50% 15%, rgba(90,120,255,.15), rgba(0,0,0,0) 55%),
-                 linear-gradient(to bottom, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius:14px;
+      background: radial-gradient(900px 600px at 20% 20%, rgba(120,170,255,.09), rgba(0,0,0,0) 55%),
+                  radial-gradient(900px 600px at 70% 60%, rgba(80,120,255,.06), rgba(0,0,0,0) 60%),
+                  rgba(10,12,18,.65);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       overflow:hidden;
-      min-height: 520px;
+      min-height: 420px;
     }
-    /* CRITICAL: stage must fill card */
+
     #stage{
       position:absolute; inset:0;
-      width:100%;
-      height:100%;
     }
 
     .hud{
-      position:absolute; left:12px; bottom:12px; z-index:5;
-      display:flex; gap:8px; flex-wrap:wrap;
-      pointer-events:none;
-    }
-    .hud .chip{
-      pointer-events:none;
-      padding:6px 9px; border-radius:999px;
-      background:rgba(0,0,0,.45);
-      border:1px solid rgba(255,255,255,.12);
-      color:var(--text);
-      font-size:12px;
-    }
-
-    /* Side panel */
-    .side{
-      background:linear-gradient(to bottom, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-      overflow:auto;
-      min-height: 520px;
-    }
-    .side h3{ margin:0 0 6px; font-size:14px; }
-    .side p{ margin:6px 0; color:var(--muted); font-size:12.5px; line-height:1.4; }
-
-    .btn{
-      width:100%;
-      padding:10px 12px;
+      position:absolute;
+      left:12px; bottom:12px;
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      padding:8px 10px;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.10);
       border-radius:12px;
-      border:1px solid var(--line);
-      background:linear-gradient(to bottom, var(--btn2), var(--btn));
-      color:var(--text);
-      font-weight:700;
-      cursor:pointer;
-      margin-top:10px;
+      backdrop-filter: blur(10px);
+      font-size:12px;
+      color:var(--muted);
     }
-    .btn:hover{ border-color:rgba(255,255,255,.22); }
-    .btn.secondary{ font-weight:700; background:rgba(255,255,255,.05); }
+    .pill{
+      padding:4px 8px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:999px;
+      color:var(--text);
+      font-weight:600;
+    }
 
-    .box{
+    .side{
+      background: rgba(10,12,18,.55);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:auto;
+    }
+
+    .side .section{
+      padding:12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .side .section:last-child{ border-bottom:none; }
+    .h{
+      margin:0 0 4px;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:0 0 10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .row{ display:flex; gap:8px; flex-wrap:wrap; }
+    .row .btn{ flex:1; min-width:140px; }
+
+    .slot{
       margin-top:10px;
       padding:10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    }
+    .slot label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+      font-weight:700;
+    }
+    select{
+      width:100%;
+      height:36px;
       border-radius:12px;
-      border:1px solid var(--line);
+      border:1px solid rgba(255,255,255,.14);
       background:rgba(0,0,0,.25);
-      font-size:12px;
-      color:var(--muted);
-      overflow:auto;
+      color:var(--text);
+      padding:0 10px;
+      outline:none;
     }
-    code{ color:#d7e6ff; }
-    .status{
-      margin-top:10px;
-      font-size:12px;
-      color:var(--muted);
+
+    .tiny{
+      font-size:11px;
+      color:rgba(233,238,252,.68);
+      line-height:1.35;
     }
-    .status b{ color:var(--text); }
+    code{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      padding:2px 6px;
+      border-radius:8px;
+      color:rgba(233,238,252,.92);
+    }
+
+    /* Mobile */
+    @media (max-width: 980px){
+      .wrap{ grid-template-columns: 1fr; height:auto; min-height: calc(100vh - 56px); }
+      .side{ height:auto; }
+      .topbar .left{ min-width:auto; }
+      .topbar .right{ min-width:auto; }
+      .topbar .center{ display:none; }
+      .viewer{ height: 62vh; }
+    }
   </style>
-
-  <!-- Import map: no downloads needed. Works on GitHub Pages. -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-    }
-  }
-  </script>
 </head>
-
 <body>
+
   <div class="topbar">
     <div class="left">
-      <a class="pill" href="index.html">← Menu</a>
-      <div class="title">Wiki - 3D Viewer</div>
-      <div class="hint">Drag rotate • Scroll zoom • Right-drag pan</div>
+      <a class="btn" href="index.html">← Menu</a>
+      <div style="font-weight:900;">Wiki - 3D Viewer</div>
     </div>
+
+    <div class="center">
+      Drag to rotate • Scroll to zoom • Right-drag to pan
+    </div>
+
     <div class="right">
-      <a class="pill" href="tips.html">Tips</a>
-      <a class="pill" href="maps.html">Maps</a>
+      <a class="btn" href="tips.html">Tips</a>
+      <a class="btn" href="maps.html">Maps</a>
     </div>
   </div>
 
   <div class="wrap">
-    <div class="viewerCard">
-      <div id="stage" aria-label="3D viewer stage"></div>
+    <div class="viewer">
+      <div id="stage"></div>
 
       <div class="hud">
-        <div class="chip" id="hudStatus">Status: Ready</div>
-        <div class="chip" id="hudLoaded">Loaded: none</div>
+        <span class="pill" id="status">Status: Ready</span>
+        <span>Loaded: <b id="loadedList">Nothing</b></span>
       </div>
     </div>
 
-    <aside class="side">
-      <h3>Controls</h3>
-      <p>Loads FBX from <code>/assets/models/</code></p>
+    <div class="side">
 
-      <button class="btn" id="btnLoadBase">Load Base Model</button>
-      <button class="btn secondary" id="btnReset">Reset View</button>
-      <button class="btn secondary" id="btnClear">Clear Scene</button>
+      <div class="section">
+        <div class="h">Controls</div>
+        <div class="sub">Loads FBX from <code>assets/models/</code></div>
 
-      <div class="box">
-        Base FBX path used:<br>
-        <code>assets/models/SK_BaseModel.fbx</code><br><br>
-        If you see a grid + axes, Three.js is working.
-        If FBX loads but looks blank, it’s usually camera framing or scale — this page auto-frames after load.
+        <div class="row">
+          <button class="btn primary" id="btnLoadBase">Load Base Model</button>
+          <button class="btn" id="btnReset">Reset View</button>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn" id="btnApplyTextures">Apply Base Textures</button>
+          <button class="btn" id="btnClear">Clear Scene</button>
+        </div>
+
+        <p class="tiny" style="margin:10px 0 0">
+          If you see a grid + axes, Three.js is running. If the FBX loads but is dark, use <b>Apply Base Textures</b> (and make sure textures exist in <code>assets/textures/</code>).
+        </p>
       </div>
 
-      <div class="status" id="statusText"><b>Debug:</b> waiting…</div>
-    </aside>
+      <div class="section">
+        <div class="h">Character Parts</div>
+        <div class="sub">Pick parts to add/remove (replaces the same slot).</div>
+
+        <!-- Slots -->
+        <div class="slot">
+          <label>Head</label>
+          <select id="selHead"></select>
+        </div>
+
+        <div class="slot">
+          <label>Hair</label>
+          <select id="selHair"></select>
+        </div>
+
+        <div class="slot">
+          <label>Face / Mask</label>
+          <select id="selFace"></select>
+        </div>
+
+        <div class="slot">
+          <label>Torso</label>
+          <select id="selTorso"></select>
+        </div>
+
+        <div class="slot">
+          <label>Arms (Upper / Lower)</label>
+          <select id="selArms"></select>
+        </div>
+
+        <div class="slot">
+          <label>Hands</label>
+          <select id="selHands"></select>
+        </div>
+
+        <div class="slot">
+          <label>Hips</label>
+          <select id="selHips"></select>
+        </div>
+
+        <div class="slot">
+          <label>Legs / Knees</label>
+          <select id="selLegs"></select>
+        </div>
+
+        <div class="slot">
+          <label>Feet</label>
+          <select id="selFeet"></select>
+        </div>
+
+        <div class="slot">
+          <label>Extras / Other</label>
+          <select id="selExtras"></select>
+        </div>
+
+        <p class="tiny" style="margin:12px 0 0">
+          Add/remove: edit the lists in <code>partsCatalog</code> inside this file.  
+          If parts don’t line up, it means the FBX origins/skeletons differ. They must match the base rig/origin for “snap-on” behavior.
+        </p>
+      </div>
+
+    </div>
   </div>
 
   <script type="module">
-    import * as THREE from "three";
-    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-    import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
+    import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+    import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+    import { FBXLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/FBXLoader.js";
 
-    const stage = document.getElementById("stage");
-    const hudStatus = document.getElementById("hudStatus");
-    const hudLoaded = document.getElementById("hudLoaded");
-    const statusText = document.getElementById("statusText");
+    /* ===========================
+       CONFIG
+    =========================== */
+    const PATH_MODELS   = "assets/models/";
+    const PATH_TEXTURES = "assets/textures/";
 
+    const BASE_FBX = PATH_MODELS + "SK_BaseModel.fbx";
+
+    // Your texture names (place them in assets/textures/)
+    const BASE_TEX = {
+      color:      PATH_TEXTURES + "T_ColorMap.png",
+      opacity:    PATH_TEXTURES + "T_OpacityMap.png",
+      reflection: PATH_TEXTURES + "T_ReflectionMap.png",
+      smoothness: PATH_TEXTURES + "T_SmoothnessMap.png", // NOTE: may be inverse of roughness
+      emission:   PATH_TEXTURES + "T_EmissionMap.png"
+    };
+
+    // Put your FBX part files here (what you pasted)
+    // Tip: keep "None" first so you can remove a slot.
+    const partsCatalog = {
+      head: [
+        { name: "None", file: "" },
+        { name: "SciFi Civl 09 Head", file: "SK_SCFI_CIVL_09_22AHED_HU01.fbx" },
+        { name: "SciFi Civl 10 Head", file: "SK_SCFI_CIVL_10_22AHED_HU01.fbx" },
+        { name: "Fant KNGT 17 Head",  file: "SK_FANT_KNGT_17_22AHED_HU01.fbx" },
+        { name: "Horr VILN 01 Head",  file: "SK_HORR_VILN_01_22AHED_HU01.fbx" },
+        { name: "Horr VILN 01 Head (alt)", file: "SK_HORR_VILN_01_22AHED_HU01.fbx" }
+      ],
+      hair: [
+        { name: "None", file: "" },
+        { name: "SciFi Civl 09 Hair", file: "SK_SCFI_CIVL_09_02HAIR_HU01.fbx" }
+      ],
+      face: [
+        { name: "None", file: "" },
+        { name: "Fant KNGT 17 Face", file: "SK_FANT_KNGT_17_23AFAC_HU01.fbx" },
+        { name: "SciFi Civl 09 Face", file: "SK_SCFI_CIVL_09_23AFAC_HU01.fbx" }
+      ],
+      torso: [
+        { name: "None", file: "" },
+        { name: "Fant KNGT 17 Torso", file: "SK_FANT_KNGT_17_10TORS_HU01.fbx" },
+        { name: "SciFi Civl 09 Torso", file: "SK_SCFI_CIVL_09_10TORS_HU01.fbx" }
+      ],
+      arms: [
+        { name: "None", file: "" },
+        { name: "Fant KNGT 17 Upper L", file: "SK_FANT_KNGT_17_11AUPL_HU01.fbx" },
+        { name: "Fant KNGT 17 Upper R", file: "SK_FANT_KNGT_17_12AUPR_HU01.fbx" },
+        { name: "Fant KNGT 17 Lower L", file: "SK_FANT_KNGT_17_13ALWL_HU01.fbx" },
+        { name: "Fant KNGT 17 Lower R", file: "SK_FANT_KNGT_17_14ALWR_HU01.fbx" },
+
+        { name: "SciFi Civl 09 Upper L", file: "SK_SCFI_CIVL_09_11AUPL_HU01.fbx" },
+        { name: "SciFi Civl 09 Upper R", file: "SK_SCFI_CIVL_09_12AUPR_HU01.fbx" },
+        { name: "SciFi Civl 09 Lower L", file: "SK_SCFI_CIVL_09_13ALWL_HU01.fbx" },
+        { name: "SciFi Civl 09 Lower R", file: "SK_SCFI_CIVL_09_14ALWR_HU01.fbx" }
+      ],
+      hands: [
+        { name: "None", file: "" },
+        { name: "Fant KNGT 17 Hand L", file: "SK_FANT_KNGT_17_15HNDL_HU01.fbx" },
+        { name: "Fant KNGT 17 Hand R", file: "SK_FANT_KNGT_17_16HNDR_HU01.fbx" },
+        { name: "SciFi Civl 09 Hand L", file: "SK_SCFI_CIVL_09_15HNDL_HU01.fbx" },
+        { name: "SciFi Civl 09 Hand R", file: "SK_SCFI_CIVL_09_16HNDR_HU01.fbx" }
+      ],
+      hips: [
+        { name: "None", file: "" },
+        { name: "Fant KNGT 17 Hips", file: "SK_FANT_KNGT_17_17HIPS_HU01.fbx" },
+        { name: "SciFi Civl 09 Hips", file: "SK_SCFI_CIVL_09_17HIPS_HU01.fbx" }
+      ],
+      legs: [
+        { name: "None", file: "" },
+        { name: "Fant KNGT 17 Leg L", file: "SK_FANT_KNGT_17_18LEGL_HU01.fbx" },
+        { name: "Fant KNGT 17 Leg R", file: "SK_FANT_KNGT_17_19LEGR_HU01.fbx" },
+        { name: "Fant KNGT 17 Knee L", file: "SK_FANT_KNGT_17_33AKNL_HU01.fbx" },
+        { name: "Fant KNGT 17 Knee R", file: "SK_FANT_KNGT_17_34AKNR_HU01.fbx" },
+
+        { name: "SciFi Civl 09 Leg L", file: "SK_SCFI_CIVL_09_18LEGL_HU01.fbx" },
+        { name: "SciFi Civl 09 Leg R", file: "SK_SCFI_CIVL_09_19LEGR_HU01.fbx" },
+        { name: "SciFi Civl 09 Knee L", file: "SK_SCFI_CIVL_09_33AKNL_HU01.fbx" },
+        { name: "SciFi Civl 09 Knee R", file: "SK_SCFI_CIVL_09_34AKNR_HU01.fbx" }
+      ],
+      feet: [
+        { name: "None", file: "" },
+        { name: "Fant KNGT 17 Foot L", file: "SK_FANT_KNGT_17_20FOTL_HU01.fbx" },
+        { name: "Fant KNGT 17 Foot R", file: "SK_FANT_KNGT_17_21FOTR_HU01.fbx" },
+        { name: "SciFi Civl 09 Foot L", file: "SK_SCFI_CIVL_09_20FOTL_HU01.fbx" },
+        { name: "SciFi Civl 09 Foot R", file: "SK_SCFI_CIVL_09_21FOTR_HU01.fbx" }
+      ],
+      extras: [
+        { name: "None", file: "" },
+        { name: "Fant KNGT 17 Back", file: "SK_FANT_KNGT_17_24ABAC_HU01.fbx" },
+        { name: "Fant KNGT 17 HP Front", file: "SK_FANT_KNGT_17_25AHPF_HU01.fbx" },
+        { name: "Fant KNGT 17 HP Back", file: "SK_FANT_KNGT_17_26AHPB_HU01.fbx" },
+        { name: "Fant KNGT 17 HP Left", file: "SK_FANT_KNGT_17_27AHPL_HU01.fbx" },
+        { name: "Fant KNGT 17 HP Right", file: "SK_FANT_KNGT_17_28AHPR_HU01.fbx" },
+        { name: "Fant KNGT 17 Shoulder L", file: "SK_FANT_KNGT_17_29ASHL_HU01.fbx" },
+        { name: "Fant KNGT 17 Shoulder R", file: "SK_FANT_KNGT_17_30ASHR_HU01.fbx" },
+        { name: "Fant KNGT 17 Elbow L", file: "SK_FANT_KNGT_17_31AEBL_HU01.fbx" },
+        { name: "Fant KNGT 17 Elbow R", file: "SK_FANT_KNGT_17_32AEBR_HU01.fbx" },
+
+        { name: "SciFi Civl 09 Back", file: "SK_SCFI_CIVL_09_24ABAC_HU01.fbx" },
+        { name: "SciFi Civl 09 HP Front", file: "SK_SCFI_CIVL_09_25AHPF_HU01.fbx" },
+        { name: "SciFi Civl 09 HP Back", file: "SK_SCFI_CIVL_09_26AHPB_HU01.fbx" },
+        { name: "SciFi Civl 09 HP Left", file: "SK_SCFI_CIVL_09_27AHPL_HU01.fbx" },
+        { name: "SciFi Civl 09 HP Right", file: "SK_SCFI_CIVL_09_28AHPR_HU01.fbx" },
+        { name: "SciFi Civl 09 Shoulder L", file: "SK_SCFI_CIVL_09_29ASHL_HU01.fbx" },
+        { name: "SciFi Civl 09 Shoulder R", file: "SK_SCFI_CIVL_09_30ASHR_HU01.fbx" },
+        { name: "SciFi Civl 09 Elbow L", file: "SK_SCFI_CIVL_09_31AEBL_HU01.fbx" },
+        { name: "SciFi Civl 09 Elbow R", file: "SK_SCFI_CIVL_09_32AEBR_HU01.fbx" },
+
+        { name: "SciFi Civl 10 Shoulder L", file: "SK_SCFI_CIVL_10_29ASHL_HU01.fbx" },
+        { name: "SciFi Civl 10 Shoulder R", file: "SK_SCFI_CIVL_10_30ASHR_HU01.fbx" }
+      ]
+    };
+
+    /* ===========================
+       DOM
+    =========================== */
+    const elStage = document.getElementById("stage");
+    const elStatus = document.getElementById("status");
+    const elLoaded = document.getElementById("loadedList");
+
+    const btnLoadBase = document.getElementById("btnLoadBase");
+    const btnReset = document.getElementById("btnReset");
+    const btnClear = document.getElementById("btnClear");
+    const btnApplyTextures = document.getElementById("btnApplyTextures");
+
+    /* ===========================
+       THREE CORE
+    =========================== */
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0b0d12);
+    scene.fog = new THREE.FogExp2(0x05070c, 0.03);
 
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 2000);
-    camera.position.set(0, 1.4, 3.2);
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 5000);
+    camera.position.set(0, 1.35, 3.0);
 
-    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false });
+    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    stage.appendChild(renderer.domElement);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    renderer.shadowMap.enabled = true;
+
+    elStage.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.08;
-    controls.target.set(0, 1.0, 0);
+    controls.dampingFactor = 0.06;
+    controls.screenSpacePanning = true;
+    controls.minDistance = 0.35;
+    controls.maxDistance = 35;
+    controls.target.set(0, 1.05, 0);
 
-    // Lights
-    scene.add(new THREE.AmbientLight(0xffffff, 0.85));
-    const dir = new THREE.DirectionalLight(0xffffff, 0.9);
-    dir.position.set(3, 6, 4);
+    // Lights (this is what fixes the “black silhouette” most of the time)
+    const hemi = new THREE.HemisphereLight(0xbfd7ff, 0x080b12, 1.0);
+    scene.add(hemi);
+
+    const dir = new THREE.DirectionalLight(0xffffff, 1.35);
+    dir.position.set(3, 6, 3);
+    dir.castShadow = true;
+    dir.shadow.mapSize.set(2048, 2048);
+    dir.shadow.camera.near = 0.1;
+    dir.shadow.camera.far = 50;
+    dir.shadow.camera.left = -10;
+    dir.shadow.camera.right = 10;
+    dir.shadow.camera.top = 10;
+    dir.shadow.camera.bottom = -10;
     scene.add(dir);
 
-    // Grid + axes (so you always see something)
-    const grid = new THREE.GridHelper(20, 20, 0x335577, 0x223344);
-    grid.position.y = 0;
+    const fill = new THREE.DirectionalLight(0xaec8ff, 0.55);
+    fill.position.set(-3, 2.5, -2);
+    scene.add(fill);
+
+    // Ground (subtle)
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(60, 60),
+      new THREE.MeshStandardMaterial({ color:0x0a0d14, roughness:1, metalness:0 })
+    );
+    ground.rotation.x = -Math.PI/2;
+    ground.position.y = 0;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    // Debug helpers (kept subtle)
+    const grid = new THREE.GridHelper(12, 24, 0x2d3d66, 0x141a2b);
+    grid.position.y = 0.001;
     scene.add(grid);
-    const axes = new THREE.AxesHelper(1.2);
+    const axes = new THREE.AxesHelper(0.75);
     scene.add(axes);
 
-    // Keep loaded models in a group so we can clear easily
-    const modelRoot = new THREE.Group();
-    scene.add(modelRoot);
-
-    function setHud(msg, loaded) {
-      hudStatus.textContent = "Status: " + msg;
-      statusText.innerHTML = "<b>Debug:</b> " + msg;
-      if (loaded !== undefined) hudLoaded.textContent = "Loaded: " + loaded;
-    }
-
-    // CRITICAL: size renderer from the real element size
-    function resize() {
-      const w = stage.clientWidth;
-      const h = stage.clientHeight;
-      if (!w || !h) return; // if hidden/collapsed momentarily
+    // Resize
+    function resize(){
+      const w = elStage.clientWidth;
+      const h = elStage.clientHeight;
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
     }
-
-    // Use ResizeObserver so it works on mobile/desktop and when panels resize
-    const ro = new ResizeObserver(() => resize());
-    ro.observe(stage);
-    window.addEventListener("orientationchange", () => setTimeout(resize, 50));
-    window.addEventListener("resize", () => setTimeout(resize, 50));
+    new ResizeObserver(resize).observe(elStage);
     resize();
 
-    function clearModel() {
-      while (modelRoot.children.length) {
-        const obj = modelRoot.children.pop();
-        obj.traverse?.(n => {
-          if (n.geometry) n.geometry.dispose?.();
-          if (n.material) {
-            const mats = Array.isArray(n.material) ? n.material : [n.material];
-            mats.forEach(m => {
-              for (const k in m) {
-                if (m[k] && m[k].isTexture) m[k].dispose?.();
-              }
-              m.dispose?.();
-            });
-          }
-        });
+    // Loader
+    const fbxLoader = new FBXLoader();
+
+    // State: base + slots
+    let baseObj = null;
+    const slots = new Map(); // slotName -> Object3D
+
+    function setStatus(text){ elStatus.textContent = "Status: " + text; }
+
+    function updateLoadedList(){
+      const names = [];
+      if (baseObj) names.push("Base");
+      for (const [k,obj] of slots.entries()){
+        if (obj) names.push(k);
       }
-      setHud("Cleared scene", "none");
+      elLoaded.textContent = names.length ? names.join(", ") : "Nothing";
     }
 
-    function frameObject(object3D) {
-      // Compute bounding box
-      const box = new THREE.Box3().setFromObject(object3D);
+    // Adds shadows + improves materials
+    function prepObject(root){
+      root.traverse((o)=>{
+        if (o.isMesh){
+          o.castShadow = true;
+          o.receiveShadow = true;
+
+          // If FBX materials come in unlit or weird, normalize them to Standard.
+          // Keep existing maps if present.
+          const m = o.material;
+          if (m){
+            const maps = {
+              map: m.map || null,
+              normalMap: m.normalMap || null,
+              emissiveMap: m.emissiveMap || null,
+              alphaMap: m.alphaMap || null,
+              roughnessMap: m.roughnessMap || null,
+              metalnessMap: m.metalnessMap || null
+            };
+            const std = new THREE.MeshStandardMaterial({
+              color: 0xffffff,
+              roughness: 0.9,
+              metalness: 0.05,
+              map: maps.map,
+              normalMap: maps.normalMap,
+              emissiveMap: maps.emissiveMap,
+              alphaMap: maps.alphaMap,
+              roughnessMap: maps.roughnessMap,
+              metalnessMap: maps.metalnessMap,
+              transparent: !!maps.alphaMap
+            });
+            o.material = std;
+          } else {
+            o.material = new THREE.MeshStandardMaterial({ color:0xffffff, roughness:0.9, metalness:0.05 });
+          }
+        }
+      });
+    }
+
+    function clearScene(){
+      if (baseObj){ scene.remove(baseObj); baseObj = null; }
+      for (const [k,obj] of slots.entries()){
+        if (obj) scene.remove(obj);
+      }
+      slots.clear();
+      setStatus("Cleared");
+      updateLoadedList();
+    }
+
+    function frameToObject(obj){
+      // Auto-center + frame camera to the loaded model so it doesn't “load off-screen”
+      const box = new THREE.Box3().setFromObject(obj);
       const size = box.getSize(new THREE.Vector3());
       const center = box.getCenter(new THREE.Vector3());
 
-      // Recenter the model around origin-ish
-      object3D.position.sub(center);
+      // Move object so it's centered around origin-ish
+      obj.position.x += (obj.position.x - center.x);
+      obj.position.y += (obj.position.y - center.y);
+      obj.position.z += (obj.position.z - center.z);
 
-      // Fit camera to model
       const maxDim = Math.max(size.x, size.y, size.z) || 1;
-      const fitDist = maxDim / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5)));
-      const dist = fitDist * 1.35;
+      const fitDist = maxDim * 2.2;
 
-      camera.position.set(0, maxDim * 0.35 + 1.0, dist);
-      controls.target.set(0, maxDim * 0.35, 0);
+      controls.target.set(0, Math.max(0.9, maxDim*0.55), 0);
+      camera.position.set(0, Math.max(1.2, maxDim*0.9), fitDist);
       controls.update();
     }
 
-    async function loadFBX(path, label) {
-      setHud("Loading…", label);
-      const loader = new FBXLoader();
-
-      return new Promise((resolve, reject) => {
-        loader.load(
+    async function loadFBX(path){
+      return new Promise((resolve, reject)=>{
+        fbxLoader.load(
           path,
-          (obj) => {
-            // Make sure it renders even if materials are weird
-            obj.traverse((n) => {
-              if (n.isMesh) {
-                n.castShadow = false;
-                n.receiveShadow = false;
-
-                // If FBX has no material, give it one
-                if (!n.material) {
-                  n.material = new THREE.MeshStandardMaterial({ color: 0xbfc7ff, roughness: 0.85, metalness: 0.0 });
-                } else {
-                  // If material exists but is too dark, bump emissive slightly
-                  const mats = Array.isArray(n.material) ? n.material : [n.material];
-                  mats.forEach(m => {
-                    if (m.color) m.color.convertSRGBToLinear?.();
-                    if ("emissive" in m) m.emissiveIntensity = Math.max(m.emissiveIntensity || 0, 0.15);
-                  });
-                }
-              }
-            });
-
-            modelRoot.add(obj);
-            frameObject(obj);
-            setHud("Loaded", label);
-            resolve(obj);
-          },
-          (evt) => {
-            if (evt.total) {
-              const pct = Math.round((evt.loaded / evt.total) * 100);
-              setHud(`Loading… ${pct}%`, label);
-            }
-          },
-          (err) => {
-            console.error(err);
-            setHud("Failed to load (check path / case / 404)", label);
-            reject(err);
-          }
+          (obj)=> resolve(obj),
+          undefined,
+          (err)=> reject(err)
         );
       });
     }
 
-    // Buttons
-    document.getElementById("btnLoadBase").addEventListener("click", async () => {
-      clearModel();
-      try {
-        await loadFBX("assets/models/SK_BaseModel.fbx", "SK_BaseModel.fbx");
-      } catch {}
-    });
+    async function loadBase(){
+      try{
+        setStatus("Loading base...");
+        if (baseObj) scene.remove(baseObj);
 
-    document.getElementById("btnClear").addEventListener("click", () => clearModel());
+        const obj = await loadFBX(BASE_FBX);
+        prepObject(obj);
 
-    document.getElementById("btnReset").addEventListener("click", () => {
-      camera.position.set(0, 1.4, 3.2);
-      controls.target.set(0, 1.0, 0);
+        // FBX files often come in huge or tiny. Normalize a bit:
+        obj.scale.setScalar(0.01); // adjust if needed (0.01 is common for Blender->FBX)
+        scene.add(obj);
+        baseObj = obj;
+
+        frameToObject(baseObj);
+        setStatus("Base loaded");
+        updateLoadedList();
+      } catch(e){
+        console.error(e);
+        setStatus("Base load failed (check path/case)");
+      }
+    }
+
+    // Apply YOUR texture set to ALL meshes in base model
+    async function applyBaseTextures(){
+      if (!baseObj){
+        setStatus("Load base first");
+        return;
+      }
+      setStatus("Applying textures...");
+
+      const texLoader = new THREE.TextureLoader();
+
+      function loadTex(url){
+        return new Promise((resolve, reject)=>{
+          texLoader.load(url, (t)=>{
+            t.colorSpace = THREE.SRGBColorSpace;
+            t.flipY = false; // FBX UV orientation often expects this
+            resolve(t);
+          }, undefined, reject);
+        });
+      }
+
+      try{
+        const tColor = await loadTex(BASE_TEX.color);
+        const tOpacity = await loadTex(BASE_TEX.opacity);
+        const tRefl = await loadTex(BASE_TEX.reflection);
+        const tSmooth = await loadTex(BASE_TEX.smoothness);
+        const tEmit = await loadTex(BASE_TEX.emission);
+
+        baseObj.traverse((o)=>{
+          if (!o.isMesh) return;
+
+          const mat = new THREE.MeshStandardMaterial({
+            map: tColor,
+            alphaMap: tOpacity,
+            transparent: true,
+            metalnessMap: tRefl,
+            roughnessMap: tSmooth,   // NOTE: if this looks “backwards”, invert the image or we can add a custom invert.
+            emissiveMap: tEmit,
+            emissive: new THREE.Color(0xffffff),
+            emissiveIntensity: 0.25,
+            roughness: 1.0,
+            metalness: 0.05
+          });
+
+          o.material = mat;
+          o.material.needsUpdate = true;
+        });
+
+        setStatus("Textures applied");
+      } catch(e){
+        console.error(e);
+        setStatus("Texture load failed (missing assets/textures files)");
+      }
+    }
+
+    async function setSlot(slotName, file){
+      // Remove old
+      const prev = slots.get(slotName);
+      if (prev) scene.remove(prev);
+
+      if (!file){
+        slots.delete(slotName);
+        setStatus(slotName + " cleared");
+        updateLoadedList();
+        return;
+      }
+
+      try{
+        setStatus("Loading " + slotName + "...");
+        const obj = await loadFBX(PATH_MODELS + file);
+        prepObject(obj);
+        obj.scale.setScalar(0.01); // keep consistent with base
+
+        // If your parts are authored to the same origin, this will align.
+        scene.add(obj);
+        slots.set(slotName, obj);
+
+        // Don’t reframe every time (annoying). Only if base not loaded.
+        if (!baseObj) frameToObject(obj);
+
+        setStatus(slotName + " loaded");
+        updateLoadedList();
+      } catch(e){
+        console.error(e);
+        setStatus(slotName + " failed (check file name/case)");
+      }
+    }
+
+    function resetView(){
+      controls.target.set(0, 1.05, 0);
+      camera.position.set(0, 1.35, 3.0);
       controls.update();
-      setHud("Reset view", hudLoaded.textContent.replace("Loaded: ",""));
-    });
+      setStatus("View reset");
+    }
+
+    // Populate selects
+    function fillSelect(selectId, slotKey){
+      const sel = document.getElementById(selectId);
+      sel.innerHTML = "";
+      for (const item of partsCatalog[slotKey]){
+        const opt = document.createElement("option");
+        opt.value = item.file;
+        opt.textContent = item.name;
+        sel.appendChild(opt);
+      }
+      sel.addEventListener("change", () => setSlot(slotKey, sel.value));
+      sel.value = ""; // default None
+    }
+
+    fillSelect("selHead", "head");
+    fillSelect("selHair", "hair");
+    fillSelect("selFace", "face");
+    fillSelect("selTorso", "torso");
+    fillSelect("selArms", "arms");
+    fillSelect("selHands", "hands");
+    fillSelect("selHips", "hips");
+    fillSelect("selLegs", "legs");
+    fillSelect("selFeet", "feet");
+    fillSelect("selExtras", "extras");
+
+    // Buttons
+    btnLoadBase.addEventListener("click", loadBase);
+    btnReset.addEventListener("click", resetView);
+    btnClear.addEventListener("click", clearScene);
+    btnApplyTextures.addEventListener("click", applyBaseTextures);
 
     // Render loop
-    function animate() {
-      requestAnimationFrame(animate);
+    function tick(){
       controls.update();
       renderer.render(scene, camera);
+      requestAnimationFrame(tick);
     }
-    animate();
+    tick();
 
-    setHud("Ready (grid + axes should be visible)", "none");
+    // Initial
+    setStatus("Ready");
+    updateLoadedList();
   </script>
 </body>
 </html>
+
