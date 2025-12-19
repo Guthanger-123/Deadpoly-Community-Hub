@@ -1,133 +1,381 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>DeadPoly Maps</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <title>DeadPoly Maps</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD7LNZHQMM"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GD7LNZHQMM"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-GD7LNZHQMM');
+  </script>
 
-  gtag('config', 'G-GD7LNZHQMM');
-</script>
-  
-<style>
+  <style>
+    :root{
+      --bg:#0b0d10;
+      --panel:rgba(255,255,255,.06);
+      --panel2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:#eaeaea;
+      --muted:#b8b8b8;
+      --muted2:#9b9b9b;
+      --glow: rgba(120,180,255,.35);
+      --glow2: rgba(120,180,255,.18);
+      --radius:18px;
+    }
 
-  /* ===== Top Bar (shared) ===== */
-.topbar{
-  position: sticky; top:0; z-index:1000;
-  display:grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items:center;
-  gap:12px;
-  padding:12px 16px;
-  background: rgba(10,10,10,.72);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255,255,255,.08);
-}
-.topbar-title{
-  justify-self:center;
-  color:#cfcfcf;
-  font: 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  letter-spacing:.4px;
-}
-.topbar-right{
-  justify-self:end;
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-.btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:7px 12px;
-  border-radius:10px;
-  text-decoration:none;
-  color:#e9e9e9;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.10);
-  font: 12px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  transition: transform .12s ease, background .12s ease;
-}
-.btn:hover{
-  background: rgba(255,255,255,.10);
-  transform: translateY(-1px);
-}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(1100px 600px at 30% 10%, rgba(60,120,255,.18), transparent 60%),
+        radial-gradient(800px 500px at 80% 20%, rgba(0,255,200,.08), transparent 55%),
+        linear-gradient(180deg, #07080a, #0b0d10 40%, #090a0c);
+      overflow-x:hidden;
+    }
 
-body   {
-  background:#111;
-  color:white;
-  font-family:system-ui;
-  margin:0;
-  padding:18px;
-}
+    /* ===== Top Bar (shared) ===== */
+    .topbar{
+      position: sticky; top:0; z-index:1000;
+      display:grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items:center;
+      gap:12px;
+      padding:12px 16px;
+      background: rgba(10,10,10,.72);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .topbar-title{
+      justify-self:center;
+      color:#d6d6d6;
+      font: 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      letter-spacing:.45px;
+      opacity:.95;
+    }
+    .topbar-right{
+      justify-self:end;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 12px;
+      border-radius:12px;
+      text-decoration:none;
+      color:#f0f0f0;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      font: 12px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:hover{
+      background: rgba(255,255,255,.10);
+      border-color: rgba(255,255,255,.16);
+      transform: translateY(-1px);
+    }
 
-.back {
-  margin-bottom:30px;
-  display:inline-block;
-  color:#ccc;
-  text-decoration:none;
-}
+    /* ===== Page Wrap ===== */
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 16px 48px;
+    }
 
-.maps {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:40px;
-}
+    /* ===== Hero ===== */
+    .hero{
+      margin-top: 8px;
+      padding: 18px 18px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(900px 300px at 25% 0%, rgba(120,180,255,.18), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow:
+        0 14px 40px rgba(0,0,0,.55),
+        0 0 0 1px rgba(255,255,255,.04) inset;
+    }
+    .hero h1{
+      margin:0 0 6px;
+      font-weight:800;
+      letter-spacing:.2px;
+      font-size: 28px;
+    }
+    .hero p{
+      margin:0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .heroRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top: 12px;
+      align-items:center;
+    }
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color:#dcdcdc;
+      font-size: 12px;
+    }
+    .dot{
+      width:7px; height:7px;
+      border-radius:999px;
+      background: rgba(120,180,255,.9);
+      box-shadow: 0 0 14px rgba(120,180,255,.55);
+    }
 
-.map-card {
-  text-align:center;
-}
+    /* ===== Cards Grid ===== */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: 1fr; }
+      .hero h1{ font-size: 24px; }
+    }
 
-.map-card img {
-  width:100%;
-  max-width:420px;
-  border-radius:12px;
-  cursor:pointer;
-  transition:opacity .15s;
-}
+    .card{
+      position: relative;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: 0 18px 60px rgba(0,0,0,.55);
+      overflow:hidden;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(120,180,255,.25);
+      box-shadow:
+        0 22px 70px rgba(0,0,0,.60),
+        0 0 0 1px rgba(120,180,255,.10) inset;
+    }
 
-.map-card img:hover { opacity:.85; }
-</style>
+    .cardHead{
+      padding: 14px 14px 10px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .cardTitle{
+      margin:0;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing:.2px;
+    }
+    .cardMeta{
+      margin-top: 6px;
+      color: var(--muted2);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .tagRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:flex-end;
+    }
+    .tag{
+      font-size: 11px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color:#d8d8d8;
+      white-space:nowrap;
+    }
+
+    .thumbLink{
+      display:block;
+      padding: 0 14px 14px;
+      text-decoration:none;
+      color:inherit;
+    }
+    .thumb{
+      width:100%;
+      aspect-ratio: 1 / 1;
+      max-height: 460px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.30);
+      overflow:hidden;
+      position: relative;
+      box-shadow: 0 12px 30px rgba(0,0,0,.45);
+    }
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      transform: scale(1.01);
+      transition: transform .22s ease, filter .22s ease, opacity .22s ease;
+      opacity:.95;
+      filter: saturate(1.05) contrast(1.05);
+    }
+    .card:hover .thumb img{
+      transform: scale(1.04);
+      opacity: 1;
+    }
+
+    .thumbOverlay{
+      position:absolute;
+      inset:auto 12px 12px 12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      pointer-events:none;
+    }
+    .cta{
+      pointer-events:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.40);
+      backdrop-filter: blur(8px);
+      color:#f0f0f0;
+      font-size: 12px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset;
+    }
+    .cta .arrow{
+      font-weight:900;
+      opacity:.9;
+    }
+    .hint{
+      pointer-events:none;
+      font-size: 11px;
+      color: rgba(255,255,255,.78);
+      background: rgba(0,0,0,.32);
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 8px 10px;
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+    }
+
+    /* Tiny footer row */
+    .foot{
+      margin-top: 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      color: rgba(255,255,255,.55);
+      font-size: 11px;
+      padding: 0 4px;
+    }
+    .foot a{ color: rgba(180,210,255,.9); text-decoration:none; }
+    .foot a:hover{ text-decoration:underline; }
+  </style>
 </head>
 
-  <!-- TOP BAR -->
-<div class="topbar">
-  <a class="btn" href="index.html">← Menu</a>
-
-  <div class="topbar-title">Maps</div>
-
-  <div class="topbar-right">
-    <a class="btn" href="tips.html">Tips</a>
-    <a class="btn" href="wiki.html">Wiki</a>
-  </div>
-</div>
-
-  
 <body>
 
-<a class="back" href="index.html">← Back to Hub</a>
-
-<div class="maps">
-  <div class="map-card">
-    <h2>Garden City</h2>
-    <a href="garden-city.html">
-      <img src="assets/GCMap_.png">
-    </a>
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <a class="btn" href="index.html">← Menu</a>
+    <div class="topbar-title">Maps</div>
+    <div class="topbar-right">
+      <a class="btn" href="tips.html">Tips</a>
+      <a class="btn" href="wiki.html">Wiki</a>
+    </div>
   </div>
 
-  <div class="map-card">
-    <h2>Delta</h2>
-    <a href="delta.html">
-      <img src="assets/delta.png">
-    </a>
+  <div class="wrap">
+    <div class="hero">
+      <h1>Interactive Maps</h1>
+      <p>Pick a map below. Click the image to open the full interactive version (POIs, filters, layers, coords, etc.).</p>
+
+      <div class="heroRow">
+        <span class="pill"><span class="dot"></span> Mobile friendly</span>
+        <span class="pill"><span class="dot"></span> Fast nav</span>
+        <span class="pill"><span class="dot"></span> Click-to-open</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Garden City -->
+      <article class="card">
+        <div class="cardHead">
+          <div>
+            <h2 class="cardTitle">Garden City</h2>
+            <div class="cardMeta">Mainland survival route planning + POI browsing.</div>
+          </div>
+          <div class="tagRow">
+            <span class="tag">POIs</span>
+            <span class="tag">Layers</span>
+            <span class="tag">Coords</span>
+          </div>
+        </div>
+
+        <a class="thumbLink" href="garden-city.html" aria-label="Open Garden City interactive map">
+          <div class="thumb">
+            <img src="assets/GCMap_.png" alt="Garden City map thumbnail">
+            <div class="thumbOverlay">
+              <div class="cta"><span class="arrow">▶</span> Open interactive map</div>
+              <div class="hint">Click image</div>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <!-- Delta -->
+      <article class="card">
+        <div class="cardHead">
+          <div>
+            <h2 class="cardTitle">Delta</h2>
+            <div class="cardMeta">Island layout + key landmarks and routes.</div>
+          </div>
+          <div class="tagRow">
+            <span class="tag">Quick</span>
+            <span class="tag">Routes</span>
+            <span class="tag">POIs</span>
+          </div>
+        </div>
+
+        <a class="thumbLink" href="delta.html" aria-label="Open Delta interactive map">
+          <div class="thumb">
+            <img src="assets/delta.png" alt="Delta map thumbnail">
+            <div class="thumbOverlay">
+              <div class="cta"><span class="arrow">▶</span> Open interactive map</div>
+              <div class="hint">Click image</div>
+            </div>
+          </div>
+        </a>
+      </article>
+    </div>
+
+    <div class="foot">
+      <div>Tip: If a thumbnail ever fails, check exact filename + case in <code>assets/</code>.</div>
+      <div><a href="index.html">Back to Hub</a></div>
+    </div>
   </div>
-</div>
 
 </body>
 </html>
