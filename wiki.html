@@ -2,240 +2,270 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>DeadPoly Hub — Wiki (3D Viewer)</title>
+  <title>DeadPoly Wiki — 3D Viewer + Character Dresser</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <style>
     :root{
-      --bg:#07080c;
-      --panel:rgba(255,255,255,.06);
-      --panel2:rgba(255,255,255,.045);
-      --line:rgba(255,255,255,.08);
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.65);
-      --btn:rgba(255,255,255,.08);
-      --btn2:rgba(255,255,255,.12);
-      --accent:#6ea8ff;
-      --radius:14px;
+      --bg0:#07090d;
+      --bg1:#0b0f18;
+      --panel: rgba(20,24,34,.82);
+      --panel2: rgba(16,18,26,.78);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
+      --txt:#e7ecff;
+      --muted: rgba(231,236,255,.70);
+      --accent:#8bb7ff;
+      --accent2:#6aa6ff;
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --r: 16px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      background: radial-gradient(1200px 700px at 25% 10%, rgba(90,140,255,.15), transparent 55%),
-                  radial-gradient(900px 600px at 70% 20%, rgba(255,255,255,.06), transparent 60%),
-                  var(--bg);
-      color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--txt);
+      background:
+        radial-gradient(1200px 700px at 20% 0%, rgba(110,170,255,.18), transparent 55%),
+        radial-gradient(900px 600px at 80% 20%, rgba(130,90,255,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
       overflow:hidden;
     }
 
-    /* Top bar */
+    /* Topbar */
     .topbar{
       height:56px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       padding:0 14px;
-      border-bottom:1px solid var(--line);
-      background:linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,.2));
+      border-bottom:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(10,12,18,.85), rgba(10,12,18,.55));
+      backdrop-filter: blur(10px);
     }
-    .leftTop{display:flex;align-items:center;gap:10px}
-    .brand{font-weight:800; letter-spacing:.3px}
-    .hint{color:var(--muted); font-size:12px}
-    .topBtns{display:flex;gap:10px;align-items:center}
-    .pill{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 12px;border:1px solid var(--line);
-      background:var(--btn); color:var(--text);
-      border-radius:999px; text-decoration:none;
-      transition:background .15s,border-color .15s, transform .02s;
-      font-weight:600; font-size:13px;
+    .leftTop{
+      display:flex; align-items:center; gap:10px;
+      min-width:260px;
     }
-    .pill:hover{background:var(--btn2); border-color:rgba(255,255,255,.15)}
-    .pill:active{transform:translateY(1px)}
-    .pill.primary{border-color:rgba(110,168,255,.45)}
-    .pill.primary:hover{border-color:rgba(110,168,255,.75)}
+    .title{
+      font-weight:800;
+      letter-spacing:.2px;
+      display:flex; gap:10px; align-items:baseline;
+    }
+    .title small{font-weight:600; color:var(--muted)}
+    .centerTop{
+      color:var(--muted);
+      font-size:13px;
+      text-align:center;
+      padding:0 12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .rightTop{
+      display:flex; gap:10px; align-items:center;
+      min-width:260px;
+      justify-content:flex-end;
+    }
+    a.btn, button.btn{
+      appearance:none;
+      border:1px solid var(--stroke2);
+      color:var(--txt);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      padding:8px 12px;
+      border-radius:12px;
+      text-decoration:none;
+      font-weight:650;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .08s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    a.btn:hover, button.btn:hover{
+      border-color: rgba(140,185,255,.35);
+      background: linear-gradient(180deg, rgba(140,185,255,.18), rgba(255,255,255,.04));
+      transform: translateY(-1px);
+    }
+    a.btn:active, button.btn:active{transform: translateY(0px);}
 
     /* Layout */
     .wrap{
-      height:calc(100% - 56px);
+      height: calc(100% - 56px);
       display:grid;
-      grid-template-columns: 360px 1fr;
-      gap:14px;
-      padding:14px;
+      grid-template-columns: 360px 1fr 360px; /* left wiki | stage | right controls */
+      gap: 12px;
+      padding: 12px;
     }
 
-    /* Sidebar */
-    .sidebar{
-      border:1px solid var(--line);
-      background:linear-gradient(to bottom, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border-radius:var(--radius);
+    .panel{
+      background: var(--panel);
+      border:1px solid var(--stroke);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
       overflow:hidden;
+      min-height: 0;
       display:flex;
       flex-direction:column;
-      min-height:0;
     }
-    .sideHeader{
-      padding:12px 12px 10px;
-      border-bottom:1px solid var(--line);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    .panelHeader{
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
     }
-    .tabs{display:flex; gap:8px}
-    .tabBtn{
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:var(--btn);
-      color:var(--text);
-      font-weight:700;
-      font-size:12px;
-      cursor:pointer;
+    .panelHeader h2{
+      margin:0;
+      font-size:16px;
+      font-weight:800;
+      letter-spacing:.2px;
     }
-    .tabBtn.active{border-color:rgba(110,168,255,.6); background:rgba(110,168,255,.12)}
-    .sideBody{
-      padding:12px;
+    .panelHeader p{
+      margin:6px 0 0;
+      font-size:12.5px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+
+    .panelBody{
+      padding: 12px 14px;
       overflow:auto;
       min-height:0;
     }
 
-    details{
-      border:1px solid var(--line);
-      border-radius:12px;
-      background:var(--panel2);
+    /* Left wiki */
+    .wikiGroup{
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      background: rgba(0,0,0,.18);
       margin-bottom:10px;
       overflow:hidden;
     }
-    summary{
+    .wikiGroup summary{
+      list-style:none;
       cursor:pointer;
       padding:10px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
       font-weight:800;
-      list-style:none;
-      display:flex; align-items:center; justify-content:space-between;
+      user-select:none;
     }
-    summary::-webkit-details-marker{display:none}
-    .catInner{padding:0 12px 12px}
-    .item{
-      border:1px solid var(--line);
-      background:rgba(0,0,0,.25);
-      border-radius:12px;
-      padding:10px 10px;
-      margin-top:10px;
+    .wikiGroup summary::-webkit-details-marker{display:none;}
+    .wikiGroup .content{
+      padding: 0 12px 12px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
     }
-    .itemTitle{font-weight:900; font-size:13px}
-    .itemText{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.35}
-    .row{
-      display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;
-    }
-    .miniBtn{
-      padding:7px 10px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--btn);
-      color:var(--text);
-      font-weight:700;
+    .tagRow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+    .tag{
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      padding:6px 10px;
       font-size:12px;
+      background: rgba(255,255,255,.04);
+      color:var(--txt);
       cursor:pointer;
     }
-    .miniBtn:hover{background:var(--btn2)}
-    .miniBtn.primary{border-color:rgba(110,168,255,.55)}
+    .tag:hover{border-color: rgba(140,185,255,.35);}
 
-    /* Main viewer */
-    .main{
-      border:1px solid var(--line);
-      background:linear-gradient(to bottom, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border-radius:var(--radius);
-      overflow:hidden;
-      display:grid;
-      grid-template-columns: 1fr 320px;
-      min-height:0;
-    }
-    .stageWrap{
+    /* Stage */
+    .viewer{
       position:relative;
       min-height:0;
-      border-right:1px solid var(--line);
     }
     #stage{
-      position:absolute; inset:0;
+      position:absolute; inset: 0;
+      border-radius: var(--r);
+      overflow:hidden;
+      background:
+        radial-gradient(1200px 700px at 40% 0%, rgba(110,170,255,.15), transparent 55%),
+        radial-gradient(900px 600px at 70% 30%, rgba(130,90,255,.10), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.65));
     }
     .hud{
       position:absolute;
-      left:12px; bottom:12px;
-      background:rgba(0,0,0,.45);
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px 10px;
-      color:var(--muted);
-      font-size:12px;
-      max-width: 70%;
+      left:12px; right:12px; bottom:12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
       pointer-events:none;
     }
-    .side{
-      padding:12px;
-      overflow:auto;
-      min-height:0;
-    }
-    .panelTitle{font-weight:900; margin:2px 0 8px}
-    .small{color:var(--muted); font-size:12px; line-height:1.35}
-    .btnCol{display:grid; gap:10px; margin-top:10px}
-    .bigBtn{
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background:var(--btn);
-      color:var(--text);
-      font-weight:800;
-      cursor:pointer;
-    }
-    .bigBtn:hover{background:var(--btn2)}
-    .bigBtn.primary{border-color:rgba(110,168,255,.6); background:rgba(110,168,255,.12)}
-    .field{
-      margin-top:12px;
-      border:1px solid var(--line);
-      background:rgba(0,0,0,.25);
-      border-radius:12px;
-      padding:10px;
-    }
-    .field label{
-      display:block;
-      font-weight:900;
+    .chip{
+      pointer-events:none;
       font-size:12px;
-      margin-bottom:8px;
       color:var(--muted);
+      background: rgba(0,0,0,.35);
+      border:1px solid var(--stroke);
+      padding:8px 10px;
+      border-radius:12px;
+      backdrop-filter: blur(8px);
+    }
+    .status{
+      pointer-events:none;
+      font-size:12px;
+      color:rgba(200,255,210,.8);
+      background: rgba(0,0,0,.35);
+      border:1px solid rgba(120,255,160,.18);
+      padding:8px 10px;
+      border-radius:12px;
+      backdrop-filter: blur(8px);
+    }
+
+    /* Right controls */
+    .controlsRow{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+      margin-bottom: 12px;
+    }
+    .mini{
+      font-size:12.5px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .box{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+      font-weight:700;
     }
     select{
       width:100%;
       padding:10px 10px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.35);
-      color:var(--text);
+      border-radius: 12px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      color:var(--txt);
       outline:none;
     }
-    .status{
-      margin-top:12px;
-      padding:10px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background:rgba(0,0,0,.35);
-      font-size:12px;
-      color:var(--muted);
-      white-space:pre-wrap;
-      word-break:break-word;
+    select:focus{
+      border-color: rgba(140,185,255,.35);
+    }
+
+    .hr{
+      height:1px;
+      background: var(--stroke);
+      margin:12px 0;
     }
 
     /* Mobile */
-    @media (max-width: 980px){
-      body{overflow:auto}
+    @media (max-width: 1100px){
+      body{overflow:auto;}
       .wrap{
         height:auto;
         grid-template-columns: 1fr;
       }
-      .main{
-        grid-template-columns: 1fr;
-      }
-      .stageWrap{min-height:520px; border-right:none; border-bottom:1px solid var(--line)}
-      .topbar{position:sticky; top:0; z-index:5}
+      .viewer{height: 60vh;}
+      #stage{position:relative; height:60vh;}
+      .panel{min-height:unset;}
     }
   </style>
 </head>
@@ -243,280 +273,333 @@
 <body>
   <div class="topbar">
     <div class="leftTop">
-      <a class="pill" href="index.html">← Menu</a>
-      <div class="brand">Wiki — 3D Viewer</div>
-      <div class="hint">Drag rotate • Scroll zoom • Right-drag pan</div>
+      <a class="btn" href="index.html">← Menu</a>
+      <div class="title">
+        <span>Wiki</span>
+        <small>3D Viewer</small>
+      </div>
     </div>
-    <div class="topBtns">
-      <a class="pill" href="tips.html">Tips</a>
-      <a class="pill primary" href="maps.html">Maps</a>
+
+    <div class="centerTop">Drag to rotate • Scroll to zoom • Right-drag to pan</div>
+
+    <div class="rightTop">
+      <a class="btn" href="tips.html">Tips</a>
+      <a class="btn" href="maps.html">Maps</a>
     </div>
   </div>
 
   <div class="wrap">
-    <!-- LEFT: Wiki / Categories -->
-    <div class="sidebar">
-      <div class="sideHeader">
-        <div class="tabs">
-          <button class="tabBtn active" id="tabWiki">Wiki</button>
-          <button class="tabBtn" id="tabNotes">Notes</button>
-        </div>
-        <span class="hint">Left = info • Right = 3D</span>
+    <!-- LEFT: WIKI CATEGORIES -->
+    <section class="panel">
+      <div class="panelHeader">
+        <h2>Wiki Categories</h2>
+        <p>Use this left side as your “mini wiki”. Add entries anytime.</p>
       </div>
-
-      <div class="sideBody" id="wikiPane">
-        <details open>
-          <summary>Getting Started <span class="hint">Basics</span></summary>
-          <div class="catInner">
-            <div class="item">
-              <div class="itemTitle">How to add new parts</div>
-              <div class="itemText">
-                Upload FBX to <b>assets/models/</b> and add it to the <b>PARTS</b> list in this file
-                (search “PARTS CONFIG”). Refresh — it appears in the dropdown.
-              </div>
-            </div>
-
-            <div class="item">
-              <div class="itemTitle">Why models sometimes look black</div>
-              <div class="itemText">
-                FBX often imports without textures bound. Use <b>Apply Base Textures</b> on the right
-                (only affects meshes that accept it). Also make sure the textures exist in <b>assets/texture/</b>.
-              </div>
-            </div>
-
-            <div class="item">
-              <div class="itemTitle">Quick test if your FBX is real on GitHub Pages</div>
-              <div class="itemText">
-                Open: <b>/assets/models/SK_BaseModel.fbx</b> in your browser.
-                If it downloads a tiny file or shows LFS text, it’s not the real FBX binary.
-              </div>
+      <div class="panelBody">
+        <details class="wikiGroup" open>
+          <summary>Getting Started <span style="color:var(--muted)">+</span></summary>
+          <div class="content">
+            Basic hub notes, community tips, and quick links.
+            <div class="tagRow">
+              <div class="tag" onclick="alert('Add a real link here later')">Official</div>
+              <div class="tag" onclick="alert('Add a real link here later')">Patch Notes</div>
+              <div class="tag" onclick="alert('Add a real link here later')">FAQ</div>
             </div>
           </div>
         </details>
 
-        <details>
-          <summary>Items / Gear <span class="hint">WIP</span></summary>
-          <div class="catInner">
-            <div class="item">
-              <div class="itemTitle">Example entry</div>
-              <div class="itemText">You can add real wiki cards like this per item.</div>
-              <div class="row">
-                <button class="miniBtn primary" id="btnLoadBaseFromWiki">Load Base Model</button>
-                <button class="miniBtn" id="btnResetViewFromWiki">Reset View</button>
-              </div>
-            </div>
+        <details class="wikiGroup">
+          <summary>Items <span style="color:var(--muted)">+</span></summary>
+          <div class="content">
+            Add item pages here (weapons, armor, tools, etc). You can also put a 3D showcase on the right.
           </div>
         </details>
 
-        <details>
-          <summary>Enemies <span class="hint">WIP</span></summary>
-          <div class="catInner">
-            <div class="item">
-              <div class="itemTitle">Placeholder</div>
-              <div class="itemText">Add enemy info + images later.</div>
+        <details class="wikiGroup">
+          <summary>Locations <span style="color:var(--muted)">+</span></summary>
+          <div class="content">
+            Add location notes, loot routes, bunker guides, safe zones, etc.
+          </div>
+        </details>
+
+        <details class="wikiGroup">
+          <summary>Behind the Scenes (Dev) <span style="color:var(--muted)">+</span></summary>
+          <div class="content">
+            Put internal notes here (coordinates, POI naming rules, etc).
+            <div style="margin-top:10px;" class="mini">
+              Tip: If you want a “hidden” dev panel later, we can add a keybind (ex: Ctrl+Shift+D) and a simple passcode gate.
             </div>
           </div>
         </details>
       </div>
+    </section>
 
-      <div class="sideBody" id="notesPane" style="display:none">
-        <div class="item">
-          <div class="itemTitle">Dev Notes</div>
-          <div class="itemText">
-            This page uses Three.js + FBXLoader. GitHub Pages can’t serve Git LFS pointer files as real FBX.
-            If your FBX is “2 bytes” on GitHub, you must re-upload as real binary or stop tracking FBX with LFS.
+    <!-- CENTER: 3D STAGE -->
+    <section class="panel viewer">
+      <div id="stage"></div>
+      <div class="hud">
+        <div class="chip" id="loadedOut">Loaded: (none)</div>
+        <div class="status" id="statusOut">Status: Ready.</div>
+      </div>
+    </section>
+
+    <!-- RIGHT: CONTROLS / CHARACTER DRESSER -->
+    <section class="panel">
+      <div class="panelHeader">
+        <h2>Model Showcase / Character Dresser</h2>
+        <p>Loads FBX from <b>assets/models/</b> and base textures from <b>assets/texture/</b>.</p>
+      </div>
+      <div class="panelBody">
+
+        <div class="controlsRow">
+          <button class="btn" id="btnLoadBase">Load Base Model</button>
+          <button class="btn" id="btnReset">Reset View</button>
+          <button class="btn" id="btnApplyTex">Apply Base Textures</button>
+          <button class="btn" id="btnClear">Clear Scene</button>
+        </div>
+
+        <div class="box">
+          <div class="mini">
+            If you see <b>nothing</b> after loading, it’s usually one of:
+            <ul style="margin:8px 0 0 18px; color:var(--muted);">
+              <li>bad path / filename mismatch (GitHub Pages is case-sensitive)</li>
+              <li>model is dark (hit <b>Apply Base Textures</b> and we also light it)</li>
+              <li>camera framing (this page auto-frames after load)</li>
+            </ul>
+          </div>
+          <div class="hr"></div>
+          <div class="mini"><b>Base FBX path used:</b><br><span id="basePathOut" style="color:var(--accent)"></span></div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="box">
+          <div style="font-weight:900; margin-bottom:8px;">Character Parts</div>
+          <div class="mini" style="margin-bottom:10px;">Pick a part to “equip” into that slot.</div>
+
+          <div style="display:grid; gap:10px;">
+            <div>
+              <label>Head</label>
+              <select id="selHead"></select>
+            </div>
+            <div>
+              <label>Hair</label>
+              <select id="selHair"></select>
+            </div>
+            <div>
+              <label>Face / Mask</label>
+              <select id="selFace"></select>
+            </div>
+            <div>
+              <label>Torso</label>
+              <select id="selTorso"></select>
+            </div>
+            <div>
+              <label>Arms (Upper / Lower)</label>
+              <select id="selArms"></select>
+            </div>
+            <div>
+              <label>Hands</label>
+              <select id="selHands"></select>
+            </div>
+            <div>
+              <label>Hips</label>
+              <select id="selHips"></select>
+            </div>
+            <div>
+              <label>Legs / Knees</label>
+              <select id="selLegs"></select>
+            </div>
+            <div>
+              <label>Feet</label>
+              <select id="selFeet"></select>
+            </div>
+            <div>
+              <label>Extras / Other</label>
+              <select id="selExtras"></select>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <div class="mini">
+            <b>How to add/remove parts:</b><br>
+            1) Upload the FBX into <code>assets/models/</code><br>
+            2) Add its filename into the <code>PART_FILES</code> list in this file<br>
+            3) Refresh — it will auto-sort into slots by the code in the name
           </div>
         </div>
+
       </div>
-    </div>
-
-    <!-- RIGHT: Viewer + Dresser -->
-    <div class="main">
-      <div class="stageWrap">
-        <div id="stage"></div>
-        <div class="hud">Tip: after loading a model, hit <b>Reset View</b> if it’s off-screen.</div>
-      </div>
-
-      <div class="side">
-        <div class="panelTitle">Controls</div>
-        <div class="small">Loads FBX from <b>assets/models/</b></div>
-
-        <div class="btnCol">
-          <button class="bigBtn primary" id="btnLoadBase">Load Base Model</button>
-          <button class="bigBtn" id="btnResetView">Reset View</button>
-          <button class="bigBtn" id="btnApplyTextures">Apply Base Textures</button>
-          <button class="bigBtn" id="btnClear">Clear Scene</button>
-        </div>
-
-        <div class="field">
-          <label>Head</label>
-          <select id="selHead"></select>
-        </div>
-        <div class="field">
-          <label>Hair</label>
-          <select id="selHair"></select>
-        </div>
-        <div class="field">
-          <label>Face / Mask</label>
-          <select id="selFace"></select>
-        </div>
-        <div class="field">
-          <label>Torso</label>
-          <select id="selTorso"></select>
-        </div>
-        <div class="field">
-          <label>Arms (Upper / Lower)</label>
-          <select id="selArms"></select>
-        </div>
-        <div class="field">
-          <label>Hands</label>
-          <select id="selHands"></select>
-        </div>
-        <div class="field">
-          <label>Hips</label>
-          <select id="selHips"></select>
-        </div>
-        <div class="field">
-          <label>Legs / Knees</label>
-          <select id="selLegs"></select>
-        </div>
-        <div class="field">
-          <label>Feet</label>
-          <select id="selFeet"></select>
-        </div>
-
-        <div class="status" id="status">Status: Ready.</div>
-      </div>
-    </div>
+    </section>
   </div>
 
-  <!-- Three.js (modules) -->
+  <!-- Three.js + FBXLoader (MODULE) -->
   <script type="module">
     import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
     import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
     import { FBXLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/FBXLoader.js";
 
-    /* ==================== PATHS ==================== */
+    /* -------------------- CONFIG -------------------- */
     const BASE_FBX = "assets/models/SK_BaseModel.fbx";
 
-    // Optional textures (apply button tries these)
+    // Your texture folder is named: assets/texture/
     const TEX = {
       color:      "assets/texture/T_ColorMap.png",
+      emissive:   "assets/texture/T_EmissionMap.png",
       opacity:    "assets/texture/T_OpacityMap.png",
-      smoothness: "assets/texture/T_SmoothnessMap.png",
-      emission:   "assets/texture/T_EmissionMap.png",
-      // reflection map is not a standard PBR map in three; leaving it out on purpose
+      reflection: "assets/texture/T_ReflectionMap.png",
+      smoothness: "assets/texture/T_SmoothnessMap.png"
     };
 
-    /* ==================== PARTS CONFIG (EDIT HERE) ==================== */
-    // Put files exactly as they appear in /assets/models/ (case-sensitive).
-    // “None” means remove that slot.
-    const PARTS = {
-      head: [
-        { name:"None", file:"" },
-        { name:"Fantasy Knight Head", file:"assets/models/SK_FANT_KNGT_17_22AHED_HU01.fbx" },
-        { name:"SciFi Civilian Head", file:"assets/models/SK_SCFI_CIVL_09_22AHED_HU01.fbx" },
-        { name:"Horror Villain Head", file:"assets/models/SK_HORR_VILN_01_22AHED_HU01.fbx" },
-        { name:"SciFi Civ 10 Head", file:"assets/models/SK_SCFI_CIVL_10_22AHED_HU01.fbx" },
-      ],
-      hair: [
-        { name:"None", file:"" },
-        { name:"SciFi Civilian Hair", file:"assets/models/SK_SCFI_CIVL_09_02HAIR_HU01.fbx" },
-      ],
-      face: [
-        { name:"None", file:"" },
-        { name:"Fantasy Knight Face", file:"assets/models/SK_FANT_KNGT_17_23AFAC_HU01.fbx" },
-        { name:"SciFi Civilian Face", file:"assets/models/SK_SCFI_CIVL_09_23AFAC_HU01.fbx" },
-        { name:"SciFi Civilian Back Acc", file:"assets/models/SK_SCFI_CIVL_09_24ABAC_HU01.fbx" },
-      ],
-      torso: [
-        { name:"None", file:"" },
-        { name:"Fantasy Knight Torso", file:"assets/models/SK_FANT_KNGT_17_10TORS_HU01.fbx" },
-        { name:"SciFi Civilian Torso", file:"assets/models/SK_SCFI_CIVL_09_10TORS_HU01.fbx" },
-      ],
-      arms: [
-        { name:"None", file:"" },
-        { name:"Fantasy Knight Arms (L/R)", file:"assets/models/SK_FANT_KNGT_17_11AUPL_HU01.fbx" }, // example anchor; add more as needed
-        { name:"SciFi Civilian Arms (L/R)", file:"assets/models/SK_SCFI_CIVL_09_11AUPL_HU01.fbx" },
-      ],
-      hands: [
-        { name:"None", file:"" },
-        { name:"Fantasy Knight Hands", file:"assets/models/SK_FANT_KNGT_17_15HNDL_HU01.fbx" },
-        { name:"SciFi Civilian Hands", file:"assets/models/SK_SCFI_CIVL_09_15HNDL_HU01.fbx" },
-      ],
-      hips: [
-        { name:"None", file:"" },
-        { name:"Fantasy Knight Hips", file:"assets/models/SK_FANT_KNGT_17_17HIPS_HU01.fbx" },
-        { name:"SciFi Civilian Hips", file:"assets/models/SK_SCFI_CIVL_09_17HIPS_HU01.fbx" },
-      ],
-      legs: [
-        { name:"None", file:"" },
-        { name:"Fantasy Knight Legs", file:"assets/models/SK_FANT_KNGT_17_18LEGL_HU01.fbx" },
-        { name:"SciFi Civilian Legs", file:"assets/models/SK_SCFI_CIVL_09_18LEGL_HU01.fbx" },
-      ],
-      feet: [
-        { name:"None", file:"" },
-        { name:"Fantasy Knight Feet", file:"assets/models/SK_FANT_KNGT_17_20FOTL_HU01.fbx" },
-        { name:"SciFi Civilian Feet", file:"assets/models/SK_SCFI_CIVL_09_20FOTL_HU01.fbx" },
-      ],
+    // Put your FBX part filenames here (must exist in assets/models/)
+    // NOTE: GitHub Pages is CASE-SENSITIVE.
+    const PART_FILES = [
+      // Base examples
+      "SK_BaseModel.fbx",
+      "SK_HORR_VILN_01_22AHED_HU01.fbx",
+
+      // Fantasy knight (examples from your list)
+      "SK_FANT_KNGT_17_10TORS_HU01.fbx",
+      "SK_FANT_KNGT_17_11AUPL_HU01.fbx",
+      "SK_FANT_KNGT_17_12AUPR_HU01.fbx",
+      "SK_FANT_KNGT_17_13ALWL_HU01.fbx",
+      "SK_FANT_KNGT_17_14ALWR_HU01.fbx",
+      "SK_FANT_KNGT_17_15HNDL_HU01.fbx",
+      "SK_FANT_KNGT_17_16HNDR_HU01.fbx",
+      "SK_FANT_KNGT_17_17HIPS_HU01.fbx",
+      "SK_FANT_KNGT_17_18LEGL_HU01.fbx",
+      "SK_FANT_KNGT_17_19LEGR_HU01.fbx",
+      "SK_FANT_KNGT_17_20FOTL_HU01.fbx",
+      "SK_FANT_KNGT_17_21FOTR_HU01.fbx",
+      "SK_FANT_KNGT_17_22AHED_HU01.fbx",
+      "SK_FANT_KNGT_17_23AFAC_HU01.fbx",
+      "SK_FANT_KNGT_17_24ABAC_HU01.fbx",
+      "SK_FANT_KNGT_17_25AHPF_HU01.fbx",
+      "SK_FANT_KNGT_17_26AHPB_HU01.fbx",
+      "SK_FANT_KNGT_17_27AHPL_HU01.fbx",
+      "SK_FANT_KNGT_17_28AHPR_HU01.fbx",
+      "SK_FANT_KNGT_17_29ASHL_HU01.fbx",
+      "SK_FANT_KNGT_17_30ASHR_HU01.fbx",
+      "SK_FANT_KNGT_17_31AEBL_HU01.fbx",
+      "SK_FANT_KNGT_17_32AEBR_HU01.fbx",
+      "SK_FANT_KNGT_17_33AKNL_HU01.fbx",
+      "SK_FANT_KNGT_17_34AKNR_HU01.fbx",
+
+      // Sci-fi civl 09 (examples)
+      "SK_SCFI_CIVL_09_02HAIR_HU01.fbx",
+      "SK_SCFI_CIVL_09_10TORS_HU01.fbx",
+      "SK_SCFI_CIVL_09_11AUPL_HU01.fbx",
+      "SK_SCFI_CIVL_09_12AUPR_HU01.fbx",
+      "SK_SCFI_CIVL_09_13ALWL_HU01.fbx",
+      "SK_SCFI_CIVL_09_14ALWR_HU01.fbx",
+      "SK_SCFI_CIVL_09_15HNDL_HU01.fbx",
+      "SK_SCFI_CIVL_09_16HNDR_HU01.fbx",
+      "SK_SCFI_CIVL_09_17HIPS_HU01.fbx",
+      "SK_SCFI_CIVL_09_18LEGL_HU01.fbx",
+      "SK_SCFI_CIVL_09_19LEGR_HU01.fbx",
+      "SK_SCFI_CIVL_09_20FOTL_HU01.fbx",
+      "SK_SCFI_CIVL_09_21FOTR_HU01.fbx",
+      "SK_SCFI_CIVL_09_22AHED_HU01.fbx",
+      "SK_SCFI_CIVL_09_23AFAC_HU01.fbx",
+      "SK_SCFI_CIVL_09_24ABAC_HU01.fbx",
+      "SK_SCFI_CIVL_09_25AHPF_HU01.fbx",
+      "SK_SCFI_CIVL_09_26AHPB_HU01.fbx",
+      "SK_SCFI_CIVL_09_27AHPL_HU01.fbx",
+      "SK_SCFI_CIVL_09_28AHPR_HU01.fbx",
+      "SK_SCFI_CIVL_09_29ASHL_HU01.fbx",
+      "SK_SCFI_CIVL_09_30ASHR_HU01.fbx",
+      "SK_SCFI_CIVL_09_31AEBL_HU01.fbx",
+      "SK_SCFI_CIVL_09_32AEBR_HU01.fbx",
+      "SK_SCFI_CIVL_09_33AKNL_HU01.fbx",
+      "SK_SCFI_CIVL_09_34AKNR_HU01.fbx",
+
+      // Sci-fi civl 10 (examples)
+      "SK_SCFI_CIVL_10_22AHED_HU01.fbx",
+      "SK_SCFI_CIVL_10_26AHPB_HU01.fbx",
+      "SK_SCFI_CIVL_10_27AHPL_HU01.fbx",
+      "SK_SCFI_CIVL_10_28AHPR_HU01.fbx",
+      "SK_SCFI_CIVL_10_29ASHL_HU01.fbx",
+      "SK_SCFI_CIVL_10_30ASHR_HU01.fbx"
+    ];
+
+    /* -------------------- UI refs -------------------- */
+    const stage = document.getElementById("stage");
+    const loadedOut = document.getElementById("loadedOut");
+    const statusOut = document.getElementById("statusOut");
+    const basePathOut = document.getElementById("basePathOut");
+    basePathOut.textContent = BASE_FBX;
+
+    const btnLoadBase = document.getElementById("btnLoadBase");
+    const btnReset = document.getElementById("btnReset");
+    const btnApplyTex = document.getElementById("btnApplyTex");
+    const btnClear = document.getElementById("btnClear");
+
+    const selects = {
+      head:   document.getElementById("selHead"),
+      hair:   document.getElementById("selHair"),
+      face:   document.getElementById("selFace"),
+      torso:  document.getElementById("selTorso"),
+      arms:   document.getElementById("selArms"),
+      hands:  document.getElementById("selHands"),
+      hips:   document.getElementById("selHips"),
+      legs:   document.getElementById("selLegs"),
+      feet:   document.getElementById("selFeet"),
+      extras: document.getElementById("selExtras")
     };
 
-    /* ==================== UI ==================== */
-    const $ = (id)=>document.getElementById(id);
-    const statusEl = $("status");
+    function setStatus(msg, ok=true){
+      statusOut.textContent = "Status: " + msg;
+      statusOut.style.borderColor = ok ? "rgba(120,255,160,.18)" : "rgba(255,120,120,.22)";
+      statusOut.style.color = ok ? "rgba(200,255,210,.85)" : "rgba(255,200,200,.85)";
+    }
 
-    function setStatus(msg){ statusEl.textContent = "Status: " + msg; }
-
-    // left sidebar tabs
-    const tabWiki = $("tabWiki"), tabNotes=$("tabNotes");
-    const wikiPane=$("wikiPane"), notesPane=$("notesPane");
-    tabWiki.onclick=()=>{tabWiki.classList.add("active");tabNotes.classList.remove("active");wikiPane.style.display="block";notesPane.style.display="none";};
-    tabNotes.onclick=()=>{tabNotes.classList.add("active");tabWiki.classList.remove("active");notesPane.style.display="block";wikiPane.style.display="none";};
-
-    $("btnLoadBaseFromWiki").onclick=()=>loadBase();
-    $("btnResetViewFromWiki").onclick=()=>frameAll();
-
-    /* ==================== THREE CORE ==================== */
-    const stage = $("stage");
-
+    /* -------------------- Three setup -------------------- */
     const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     stage.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.background = null;
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 5000);
-    camera.position.set(0, 1.4, 3.0);
+    camera.position.set(0, 1.4, 3);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.target.set(0, 1.2, 0);
+    controls.dampingFactor = 0.08;
+    controls.target.set(0, 1.1, 0);
 
-    // Lighting so models aren’t black
-    const hemi = new THREE.HemisphereLight(0xffffff, 0x334455, 0.9);
+    // Lights (this fixes the “black silhouette” look)
+    const hemi = new THREE.HemisphereLight(0xcfe3ff, 0x101018, 1.05);
     scene.add(hemi);
 
-    const key = new THREE.DirectionalLight(0xffffff, 1.15);
-    key.position.set(3, 6, 4);
+    const key = new THREE.DirectionalLight(0xffffff, 1.25);
+    key.position.set(2.5, 4.5, 3.0);
     key.castShadow = false;
     scene.add(key);
 
-    const fill = new THREE.DirectionalLight(0xffffff, 0.45);
-    fill.position.set(-4, 3, -3);
+    const fill = new THREE.DirectionalLight(0x9bbcff, 0.55);
+    fill.position.set(-3.0, 1.8, -2.5);
     scene.add(fill);
 
-    // Helpers (optional)
-    const grid = new THREE.GridHelper(10, 10, 0x223344, 0x111722);
-    grid.position.y = 0;
+    const rim = new THREE.DirectionalLight(0xffffff, 0.35);
+    rim.position.set(0, 3.5, -4.0);
+    scene.add(rim);
+
+    // Subtle ground reference
+    const grid = new THREE.GridHelper(10, 20, 0x334455, 0x223344);
+    grid.material.transparent = true;
+    grid.material.opacity = 0.18;
     scene.add(grid);
 
-    const axes = new THREE.AxesHelper(0.75);
-    axes.position.set(0, 0.02, 0);
-    scene.add(axes);
+    // Where models go
+    const root = new THREE.Group();
+    scene.add(root);
 
-    // resize correctly (most common “blank canvas” cause)
+    // Keep track of equipped slot meshes
+    const slotObjects = new Map(); // slotName -> Object3D
+    let baseObject = null;
+
     function resize(){
       const w = stage.clientWidth;
       const h = stage.clientHeight;
@@ -527,228 +610,309 @@
     window.addEventListener("resize", resize);
     resize();
 
-    // render loop
-    function tick(){
+    function animate(){
+      requestAnimationFrame(animate);
       controls.update();
       renderer.render(scene, camera);
-      requestAnimationFrame(tick);
     }
-    tick();
+    animate();
 
-    /* ==================== LOADING ==================== */
+    /* -------------------- Helpers -------------------- */
     const fbxLoader = new FBXLoader();
+    const texLoader = new THREE.TextureLoader();
 
-    // We keep track of objects by slot so changing dropdown replaces that part
-    const slots = {
-      base: null,
-      head: null,
-      hair: null,
-      face: null,
-      torso: null,
-      arms: null,
-      hands: null,
-      hips: null,
-      legs: null,
-      feet: null
-    };
-
-    function clearSlot(slot){
-      if (slots[slot]){
-        scene.remove(slots[slot]);
-        slots[slot].traverse(o=>{
-          if (o.geometry) o.geometry.dispose?.();
-          if (o.material){
-            const mats = Array.isArray(o.material) ? o.material : [o.material];
-            mats.forEach(m=>{
-              for (const k in m){
-                const v = m[k];
-                if (v && v.isTexture) v.dispose?.();
-              }
-              m.dispose?.();
-            });
-          }
-        });
-        slots[slot] = null;
+    function clearScene(){
+      // remove all slot objects + base
+      for (const [slot,obj] of slotObjects){
+        root.remove(obj);
       }
-    }
+      slotObjects.clear();
 
-    function clearAll(){
-      Object.keys(slots).forEach(k=>clearSlot(k));
-      setStatus("Cleared scene.");
-    }
-
-    async function loadFBX(path, slotName){
-      if (!path){
-        clearSlot(slotName);
-        setStatus(`Removed ${slotName}.`);
-        frameAll();
-        return;
+      if (baseObject){
+        root.remove(baseObject);
+        baseObject = null;
       }
-
-      setStatus(`Loading ${slotName}… ${path}`);
-      return new Promise((resolve, reject)=>{
-        fbxLoader.load(
-          path,
-          (obj)=>{
-            // FBX scale is often huge; normalize a bit
-            obj.scale.setScalar(0.01); // if yours becomes tiny/huge, adjust to 0.1 or 0.001
-
-            clearSlot(slotName);
-            slots[slotName] = obj;
-            scene.add(obj);
-
-            // try to keep parts aligned near base (assumes shared origin/skeleton)
-            // If parts come in offset, you’ll need to export them with matching origin in Blender/UE.
-            if (slots.base && slotName !== "base"){
-              obj.position.copy(slots.base.position);
-              obj.rotation.copy(slots.base.rotation);
-            }
-
-            setStatus(`Loaded ${slotName}.`);
-            frameAll();
-            resolve(obj);
-          },
-          (xhr)=>{
-            // progress optional
-          },
-          (err)=>{
-            console.error(err);
-            setStatus(`ERROR loading ${slotName}. Check DevTools → Network/Console.\nPath: ${path}`);
-            reject(err);
-          }
-        );
-      });
+      loadedOut.textContent = "Loaded: (none)";
+      setStatus("Cleared.");
     }
 
-    async function loadBase(){
-      // base
-      await loadFBX(BASE_FBX, "base");
+    function computeBox(obj){
+      const box = new THREE.Box3().setFromObject(obj);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      return { box, size, center };
     }
 
-    // Frame everything after load (keeps it visible)
-    function frameAll(){
-      const box = new THREE.Box3();
-      let any = false;
-      Object.values(slots).forEach(o=>{
-        if (!o) return;
-        const b = new THREE.Box3().setFromObject(o);
-        if (b.isEmpty()) return;
-        box.union(b);
-        any = true;
-      });
-
-      if (!any){
-        controls.target.set(0, 1.2, 0);
-        camera.position.set(0, 1.4, 3.0);
-        controls.update();
-        return;
-      }
-
-      const size = new THREE.Vector3();
-      const center = new THREE.Vector3();
-      box.getSize(size);
-      box.getCenter(center);
-
+    function frameObject(obj){
+      const { size, center } = computeBox(obj);
       const maxDim = Math.max(size.x, size.y, size.z);
       const fitDist = maxDim / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5)));
       const dist = fitDist * 1.35;
 
       controls.target.copy(center);
-
-      // move camera back on a diagonal
-      camera.position.copy(center).add(new THREE.Vector3(dist * 0.55, dist * 0.35, dist * 0.75));
-      camera.near = Math.max(0.01, dist / 100);
-      camera.far = dist * 100;
+      camera.position.set(center.x + dist*0.35, center.y + dist*0.20, center.z + dist);
+      camera.near = Math.max(0.01, maxDim / 500);
+      camera.far = Math.max(1000, maxDim * 50);
       camera.updateProjectionMatrix();
       controls.update();
     }
 
-    /* ==================== TEXTURES (optional) ==================== */
-    const texLoader = new THREE.TextureLoader();
-    async function applyBaseTextures(){
-      if (!slots.base){
-        setStatus("Load Base Model first.");
+    function normalizeMaterials(obj){
+      obj.traverse(child=>{
+        if (child.isMesh){
+          child.castShadow = false;
+          child.receiveShadow = false;
+
+          // If FBX gives MeshPhongMaterial or similar, convert to Standard for better PBR-ish look
+          const old = child.material;
+          const mats = Array.isArray(old) ? old : [old];
+
+          const newMats = mats.map(m=>{
+            const nm = new THREE.MeshStandardMaterial({
+              color: (m && m.color) ? m.color.clone() : new THREE.Color(0xffffff),
+              roughness: 0.9,
+              metalness: 0.05
+            });
+            return nm;
+          });
+
+          child.material = Array.isArray(old) ? newMats : newMats[0];
+        }
+      });
+    }
+
+    async function applyBaseTexturesTo(obj){
+      setStatus("Loading textures...");
+      const tColor = await texLoader.loadAsync(TEX.color);
+      tColor.colorSpace = THREE.SRGBColorSpace;
+
+      // These are “best guess” since your maps aren’t named as standard PBR.
+      // You can tweak later.
+      let tEmissive=null, tOpacity=null, tRough=null, tMetal=null;
+
+      try { tEmissive = await texLoader.loadAsync(TEX.emissive); } catch {}
+      try { tOpacity  = await texLoader.loadAsync(TEX.opacity); } catch {}
+      try { tMetal    = await texLoader.loadAsync(TEX.reflection); } catch {}
+      try { tRough    = await texLoader.loadAsync(TEX.smoothness); } catch {}
+
+      if (tEmissive) tEmissive.colorSpace = THREE.SRGBColorSpace;
+
+      obj.traverse(child=>{
+        if (!child.isMesh) return;
+        const mats = Array.isArray(child.material) ? child.material : [child.material];
+        mats.forEach(mat=>{
+          mat.map = tColor;
+
+          if (tEmissive){
+            mat.emissive = new THREE.Color(0xffffff);
+            mat.emissiveMap = tEmissive;
+            mat.emissiveIntensity = 0.25;
+          }
+
+          if (tOpacity){
+            mat.alphaMap = tOpacity;
+            mat.transparent = true;
+            mat.opacity = 1.0;
+          }
+
+          // reflection map as “metalness map” (approx)
+          if (tMetal){
+            mat.metalness = 0.15;
+            mat.metalnessMap = tMetal;
+          }
+
+          // smoothness map inverted-ish to roughness (approx)
+          if (tRough){
+            mat.roughness = 0.85;
+            mat.roughnessMap = tRough;
+          }
+
+          mat.needsUpdate = true;
+        });
+      });
+
+      setStatus("Textures applied.");
+    }
+
+    function loadFBX(path){
+      return new Promise((resolve,reject)=>{
+        fbxLoader.load(
+          path,
+          (obj)=>resolve(obj),
+          (xhr)=>{ /* progress optional */ },
+          (err)=>reject(err)
+        );
+      });
+    }
+
+    /* -------------------- Slot logic (auto-sort filenames) -------------------- */
+    function slotFromFilename(fn){
+      // Looks at chunk like: _22AHED_ , _02HAIR_ , _10TORS_ etc
+      const u = fn.toUpperCase();
+
+      if (u.includes("HAIR")) return "hair";
+      if (u.includes("AHED")) return "head";
+      if (u.includes("AFAC") || u.includes("ABAC")) return "face";
+      if (u.includes("TORS")) return "torso";
+      if (u.includes("AUPL") || u.includes("AUPR") || u.includes("ALWL") || u.includes("ALWR")) return "arms";
+      if (u.includes("HNDL") || u.includes("HNDR")) return "hands";
+      if (u.includes("HIPS")) return "hips";
+      if (u.includes("LEGL") || u.includes("LEGR") || u.includes("AKNL") || u.includes("AKNR")) return "legs";
+      if (u.includes("FOTL") || u.includes("FOTR")) return "feet";
+
+      // Helm pieces etc
+      if (u.includes("AHP") || u.includes("AEB") || u.includes("ASH") || u.includes("AHPB") || u.includes("AHPF")) return "extras";
+
+      return "extras";
+    }
+
+    function buildPartLists(){
+      const buckets = {
+        head:[], hair:[], face:[], torso:[], arms:[], hands:[], hips:[], legs:[], feet:[], extras:[]
+      };
+
+      PART_FILES.forEach(fn=>{
+        if (!fn.toLowerCase().endsWith(".fbx")) return;
+        if (fn === "SK_BaseModel.fbx") return; // keep base out of parts lists
+        const slot = slotFromFilename(fn);
+        buckets[slot].push(fn);
+      });
+
+      // sort for nicer dropdowns
+      Object.keys(buckets).forEach(k=>buckets[k].sort());
+      return buckets;
+    }
+
+    function fillSelect(selectEl, files){
+      selectEl.innerHTML = "";
+      // first option = none
+      const opt0 = document.createElement("option");
+      opt0.value = "";
+      opt0.textContent = "(none)";
+      selectEl.appendChild(opt0);
+
+      files.forEach(fn=>{
+        const opt = document.createElement("option");
+        opt.value = fn;
+        opt.textContent = fn.replace(".fbx",""); // display
+        selectEl.appendChild(opt);
+      });
+    }
+
+    function initDropdowns(){
+      const lists = buildPartLists();
+      fillSelect(selects.head, lists.head);
+      fillSelect(selects.hair, lists.hair);
+      fillSelect(selects.face, lists.face);
+      fillSelect(selects.torso, lists.torso);
+      fillSelect(selects.arms, lists.arms);
+      fillSelect(selects.hands, lists.hands);
+      fillSelect(selects.hips, lists.hips);
+      fillSelect(selects.legs, lists.legs);
+      fillSelect(selects.feet, lists.feet);
+      fillSelect(selects.extras, lists.extras);
+    }
+
+    initDropdowns();
+
+    async function equip(slot, filename){
+      // remove existing in that slot
+      if (slotObjects.has(slot)){
+        root.remove(slotObjects.get(slot));
+        slotObjects.delete(slot);
+      }
+      if (!filename){
+        setStatus(`Removed ${slot}.`);
         return;
       }
 
-      setStatus("Loading textures…");
+      const path = "assets/models/" + filename;
+      setStatus(`Loading ${slot}...`);
+      try{
+        const obj = await loadFBX(path);
+        normalizeMaterials(obj);
 
-      // Load only what exists; missing files will error in console but won’t break the page
-      const loadTex = (url)=> new Promise((res)=>{
-        texLoader.load(url, (t)=>{ t.colorSpace = THREE.SRGBColorSpace; res(t); }, undefined, ()=>res(null));
-      });
+        // IMPORTANT:
+        // These parts will only line up automatically if:
+        // - they share the same skeleton/origin OR are already positioned to match base in the FBX files.
+        // If they don't line up, that's an asset/origin issue (not a web issue).
+        root.add(obj);
+        slotObjects.set(slot, obj);
 
-      const map       = await loadTex(TEX.color);
-      const alphaMap  = await loadTex(TEX.opacity);
-      const roughMap  = await loadTex(TEX.smoothness); // smoothness != roughness, but better than nothing
-      const emisMap   = await loadTex(TEX.emission);
+        loadedOut.textContent = `Loaded: ${filename}`;
+        setStatus(`Equipped ${slot}.`);
 
-      let changed = 0;
+        // Frame the full character (base + parts) if base exists, else frame the part.
+        frameObject(baseObject || obj);
 
-      slots.base.traverse((o)=>{
-        if (!o.isMesh) return;
-        // Replace material with a visible PBR material
-        const m = new THREE.MeshStandardMaterial({
-          color: 0xffffff,
-          map: map || null,
-          transparent: !!alphaMap,
-          alphaMap: alphaMap || null,
-          roughness: 0.9,
-          metalness: 0.05,
-          roughnessMap: roughMap || null,
-          emissive: new THREE.Color(0x000000),
-          emissiveMap: emisMap || null,
-          emissiveIntensity: emisMap ? 0.6 : 0.0
-        });
-        o.material = m;
-        changed++;
-      });
-
-      setStatus(changed ? `Applied textures/material to ${changed} mesh(es).` : "No meshes found to apply textures to.");
+      }catch(e){
+        console.error(e);
+        setStatus(`Failed to load ${filename} (check path/case).`, false);
+      }
     }
 
-    /* ==================== DROPDOWNS ==================== */
-    function fillSelect(selectEl, list, slotName){
-      selectEl.innerHTML = "";
-      list.forEach((p, idx)=>{
-        const opt = document.createElement("option");
-        opt.value = p.file;
-        opt.textContent = p.name;
-        selectEl.appendChild(opt);
-      });
+    // Hook up selects
+    selects.head.addEventListener("change", e=>equip("head", e.target.value));
+    selects.hair.addEventListener("change", e=>equip("hair", e.target.value));
+    selects.face.addEventListener("change", e=>equip("face", e.target.value));
+    selects.torso.addEventListener("change", e=>equip("torso", e.target.value));
+    selects.arms.addEventListener("change", e=>equip("arms", e.target.value));
+    selects.hands.addEventListener("change", e=>equip("hands", e.target.value));
+    selects.hips.addEventListener("change", e=>equip("hips", e.target.value));
+    selects.legs.addEventListener("change", e=>equip("legs", e.target.value));
+    selects.feet.addEventListener("change", e=>equip("feet", e.target.value));
+    selects.extras.addEventListener("change", e=>equip("extras", e.target.value));
 
-      selectEl.addEventListener("change", async ()=>{
-        // ensure base is loaded first if user equips parts
-        if (!slots.base && slotName !== "base"){
-          await loadBase();
+    /* -------------------- Buttons -------------------- */
+    btnClear.addEventListener("click", clearScene);
+
+    btnReset.addEventListener("click", ()=>{
+      const targetObj = baseObject || (slotObjects.size ? [...slotObjects.values()][0] : null);
+      if (targetObj) frameObject(targetObj);
+      else setStatus("Nothing to frame.");
+    });
+
+    btnLoadBase.addEventListener("click", async ()=>{
+      setStatus("Loading base...");
+      try{
+        // if base already loaded, re-frame it
+        if (baseObject){
+          frameObject(baseObject);
+          setStatus("Base already loaded.");
+          return;
         }
-        await loadFBX(selectEl.value, slotName);
-      });
-    }
 
-    fillSelect($("selHead"),  PARTS.head,  "head");
-    fillSelect($("selHair"),  PARTS.hair,  "hair");
-    fillSelect($("selFace"),  PARTS.face,  "face");
-    fillSelect($("selTorso"), PARTS.torso, "torso");
-    fillSelect($("selArms"),  PARTS.arms,  "arms");
-    fillSelect($("selHands"), PARTS.hands, "hands");
-    fillSelect($("selHips"),  PARTS.hips,  "hips");
-    fillSelect($("selLegs"),  PARTS.legs,  "legs");
-    fillSelect($("selFeet"),  PARTS.feet,  "feet");
+        const obj = await loadFBX(BASE_FBX);
+        normalizeMaterials(obj);
+        baseObject = obj;
+        root.add(obj);
 
-    /* ==================== BUTTONS ==================== */
-    $("btnLoadBase").onclick = ()=>loadBase();
-    $("btnResetView").onclick = ()=>frameAll();
-    $("btnClear").onclick = ()=>clearAll();
-    $("btnApplyTextures").onclick = ()=>applyBaseTextures();
+        loadedOut.textContent = "Loaded: SK_BaseModel.fbx";
+        setStatus("Base loaded.");
+        frameObject(obj);
 
-    // Auto-load base if you want:
-    // loadBase();
+      }catch(e){
+        console.error(e);
+        setStatus("Failed to load base (check BASE_FBX path/case).", false);
+      }
+    });
 
-    /* ==================== IMPORTANT: GitHub Pages + LFS ==================== */
-    // If your FBX is tracked by Git LFS, GitHub Pages will serve a pointer file instead of the binary.
-    // Symptom: model “loads” but is empty / broken, or the file is tiny (KB or bytes).
-    // Fix: upload FBX as real binary in repo (no LFS), or switch to .glb.
+    btnApplyTex.addEventListener("click", async ()=>{
+      const target = baseObject;
+      if (!target){
+        setStatus("Load base first, then apply textures.", false);
+        return;
+      }
+      try{
+        await applyBaseTexturesTo(target);
+        frameObject(target);
+      }catch(e){
+        console.error(e);
+        setStatus("Texture apply failed (check /assets/texture/ paths).", false);
+      }
+    });
+
+    setStatus("Ready.");
   </script>
 </body>
 </html>
