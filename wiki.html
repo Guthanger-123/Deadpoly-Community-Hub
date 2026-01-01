@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeadPoly Hub — Wiki Hub</title>
+  <link rel="stylesheet" href="wiki-shared.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="top-left">
+        <a class="btn" href="index.html">← Menu</a>
+        <div class="brand">Wiki <span class="badge">Wiki Hub</span></div>
+      </div>
+      <div class="top-right">
+        <a class="btn" href="https://deadpoly.wiki/Main_Page" target="_blank" rel="noopener">Official Wiki ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="shell">
+      <div class="panel side">
+        <h2>Wiki Categories</h2>
+        <div class="muted">Local pages (fast) + one official button above.</div>
+        <div class="nav">
+          <a class="active" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
+<a class="" href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
+<a class="" href="masks.html"><span>Masks</span><span class="small">→</span></a>
+<a class="" href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
+<a class="" href="armor.html"><span>Armor</span><span class="small">→</span></a>
+<a class="" href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
+<a class="" href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
+<a class="" href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
+<a class="" href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
+<a class="" href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
+        </div>
+      </div>
+
+      <div class="panel main">
+        <div class="hero">
+          <div>
+            <h1>Wiki Hub</h1>
+            <div class="sub">Pick a category. Every page keeps the same look + one official button.</div>
+          </div>
+          <div class="badge" id="countBadge">0 items</div>
+        </div>
+
+        <div class="toolbar">
+          <input id="q" class="search" placeholder="Search Wiki Hub..." />
+          <div class="pills" id="pills"></div>
+          <div class="viewtoggle">
+            <button class="btn" id="gridBtn" type="button">Cards</button>
+            <button class="btn" id="tableBtn" type="button">Table</button>
+          </div>
+        </div>
+
+        <div id="grid" class="grid"></div>
+
+        <div id="table" class="tablewrap" style="display:none">
+          <table>
+            <thead id="thead"></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+
+        <div id="extras"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="wiki-shared.js"></script>
+  <!-- page script -->
+  <script>
+
+const cards = [
+  {title:"Helmets", file:"helmets.html"},
+  {title:"Armor", file:"armor.html"},
+  {title:"Ammo", file:"ammo.html"},
+  {title:"Backpacks", file:"backpacks.html"},
+  {title:"Consumables", file:"consumables.html"},
+  {title:"Masks", file:"masks.html"},
+  {title:"Weapons", file:"weapons.html"},
+  {title:"Crafting", file:"crafting.html"},
+  {title:"Collectibles", file:"collectibles.html"},
+];
+document.getElementById("countBadge").textContent = cards.length + " pages";
+document.getElementById("pills").style.display = "none";
+document.getElementById("table").style.display = "none";
+document.getElementById("tableBtn").style.display = "none";
+document.getElementById("gridBtn").style.display = "none";
+document.getElementById("q").placeholder = "Search pages...";
+document.getElementById("q").addEventListener("input", render);
+
+function render(){
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const items = cards.filter(c => !q || c.title.toLowerCase().includes(q));
+  document.getElementById("grid").innerHTML = items.map(c => `
+    <a class="card" href="${c.file}">
+      <div class="thumb"><div class="badge">Page</div></div>
+      <div>
+        <h3>${escapeHtml(c.title)}</h3>
+        <div class="meta">Open local page</div>
+      </div>
+    </a>
+  `).join("");
+}
+render();
+
+  </script>
+</body>
+</html>

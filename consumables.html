@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeadPoly Hub — Consumables</title>
+  <link rel="stylesheet" href="wiki-shared.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="top-left">
+        <a class="btn" href="index.html">← Menu</a>
+        <div class="brand">Wiki <span class="badge">Consumables</span></div>
+      </div>
+      <div class="top-right">
+        <a class="btn" href="https://deadpoly.wiki/Consumables" target="_blank" rel="noopener">Official Wiki ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="shell">
+      <div class="panel side">
+        <h2>Wiki Categories</h2>
+        <div class="muted">Local pages (fast) + one official button above.</div>
+        <div class="nav">
+          <a class="" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
+<a class="" href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
+<a class="" href="masks.html"><span>Masks</span><span class="small">→</span></a>
+<a class="" href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
+<a class="" href="armor.html"><span>Armor</span><span class="small">→</span></a>
+<a class="" href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
+<a class="" href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
+<a class="active" href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
+<a class="" href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
+<a class="" href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
+        </div>
+      </div>
+
+      <div class="panel main">
+        <div class="hero">
+          <div>
+            <h1>Consumables</h1>
+            <div class="sub">Food, beverages, and medicines with quick search + filters.</div>
+          </div>
+          <div class="badge" id="countBadge">0 items</div>
+        </div>
+
+        <div class="toolbar">
+          <input id="q" class="search" placeholder="Search Consumables..." />
+          <div class="pills" id="pills"></div>
+          <div class="viewtoggle">
+            <button class="btn" id="gridBtn" type="button">Cards</button>
+            <button class="btn" id="tableBtn" type="button">Table</button>
+          </div>
+        </div>
+
+        <div id="grid" class="grid"></div>
+
+        <div id="table" class="tablewrap" style="display:none">
+          <table>
+            <thead id="thead"></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+
+        <div id="extras"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="wiki-shared.js"></script>
+  <!-- page script -->
+  <script>
+
+const DATA = [{"category": "Food", "name": "Beef Stew", "file": "TM_CanFoodBeefStew_E.png", "hydration": "-2", "hunger": "15", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Canned Beans", "file": "TM_CanFoodBeans_E.png", "hydration": "-2", "hunger": "15", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Chili", "file": "TM_CanFoodChili_E.png", "hydration": "-2", "hunger": "15", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Pineapple", "file": "TM_CanFoodPineapple_E.png", "hydration": "2", "hunger": "10", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Soup", "file": "TM_CanFoodSoup_E.png", "hydration": "-2", "hunger": "15", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Apple", "file": "TM_FoodApple_E.png", "hydration": "5", "hunger": "10", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Banana", "file": "TM_FoodBanana_E.png", "hydration": "5", "hunger": "10", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Bread", "file": "TM_FoodBread_E.png", "hydration": "-5", "hunger": "15", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Carrot", "file": "TM_FoodCarrot_E.png", "hydration": "2", "hunger": "10", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Egg", "file": "TM_FoodEgg_E.png", "hydration": "-5", "hunger": "20", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Fish", "file": "TM_FoodFish_E.png", "hydration": "-10", "hunger": "20", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Meat", "file": "TM_FoodMeat_E.png", "hydration": "-10", "hunger": "20", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Peach", "file": "TM_FoodPeach_E.png", "hydration": "5", "hunger": "10", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Pear", "file": "TM_FoodPear_E.png", "hydration": "5", "hunger": "10", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Pizza", "file": "TM_FoodPizza_E.png", "hydration": "-10", "hunger": "30", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Steak", "file": "TM_FoodSteak_E.png", "hydration": "-10", "hunger": "30", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Food", "name": "Tomato", "file": "TM_FoodTomato_E.png", "hydration": "2", "hunger": "10", "stamina": "0", "hungerDecay": "??", "hydrationDecay": "??", "staminaDecay": "??"}, {"category": "Beverages", "name": "Water (Small)", "file": "TM_WaterSmall_E.png", "hydration": "20", "hunger": "0", "stamina": "0", "staminaDecay": "??", "alcohol": "??"}, {"category": "Beverages", "name": "Water (Large)", "file": "TM_Water_E.png", "hydration": "50", "hunger": "0", "stamina": "0", "staminaDecay": "??", "alcohol": "??"}, {"category": "Beverages", "name": "Soda", "file": "TM_SodaCola_E.png", "hydration": "10", "hunger": "0", "stamina": "0", "staminaDecay": "??", "alcohol": "??"}, {"category": "Beverages", "name": "Juice", "file": "TM_JuiceFruit_E.png", "hydration": "10", "hunger": "0", "stamina": "0", "staminaDecay": "??", "alcohol": "??"}, {"category": "Beverages", "name": "Wine", "file": "TM_Wine_E.png", "hydration": "10", "hunger": "0", "stamina": "0", "staminaDecay": "??", "alcohol": "??"}, {"category": "Beverages", "name": "Beer", "file": "TM_Beer_E.png", "hydration": "10", "hunger": "0", "stamina": "0", "staminaDecay": "??", "alcohol": "??"}, {"category": "Medicines", "name": "Bandage", "file": "TM_MedBandage_E.png", "hydration": "??", "hunger": "??", "stamina": "??", "staminaDecay": "??", "health": "??", "infection": "??"}, {"category": "Medicines", "name": "Medkit", "file": "TM_MedKit_E.png", "hydration": "??", "hunger": "??", "stamina": "??", "staminaDecay": "??", "health": "??", "infection": "??"}, {"category": "Medicines", "name": "Cure", "file": "TM_MedCure_E.png", "hydration": "??", "hunger": "??", "stamina": "??", "staminaDecay": "??", "health": "??", "infection": "??"}, {"category": "Medicines", "name": "Painkiller", "file": "TM_MedPain_E.png", "hydration": "??", "hunger": "??", "stamina": "??", "staminaDecay": "??", "health": "??", "infection": "??"}, {"category": "Medicines", "name": "Antibiotics", "file": "TM_MedAntibiotics_E.png", "hydration": "??", "hunger": "??", "stamina": "??", "staminaDecay": "??", "health": "??", "infection": "??"}];
+
+const pillsEl = document.getElementById("pills");
+const qEl = document.getElementById("q");
+const gridEl = document.getElementById("grid");
+const tableEl = document.getElementById("table");
+const theadEl = document.getElementById("thead");
+const tbodyEl = document.getElementById("tbody");
+const countBadge = document.getElementById("countBadge");
+
+let mode = "grid";
+let cat = "all";
+
+makePills(pillsEl, [
+  {label:"All", value:"all", selected:true},
+  {label:"Food", value:"Food"},
+  {label:"Beverages", value:"Beverages"},
+  {label:"Medicines", value:"Medicines"},
+], v => { cat=v; render(); });
+
+document.getElementById("gridBtn").addEventListener("click", ()=>{ mode="grid"; render(); });
+document.getElementById("tableBtn").addEventListener("click", ()=>{ mode="table"; render(); });
+qEl.addEventListener("input", render);
+
+function matches(item, q){
+  const hay = (item.name + " " + item.category).toLowerCase();
+  if (q && !hay.includes(q)) return false;
+  if (cat !== "all" && item.category !== cat) return false;
+  return true;
+}
+
+function val(v){ return (v===undefined || v===null || v==="") ? "—" : v; }
+
+function render(){
+  const q = qEl.value.trim().toLowerCase();
+  const items = DATA.filter(it => matches(it, q));
+  countBadge.textContent = items.length + " items";
+
+  if (mode === "table") {
+    gridEl.style.display = "none";
+    tableEl.style.display = "block";
+    theadEl.innerHTML = `<tr>
+      <th style="width:64px">Img</th>
+      <th>Name</th>
+      <th>Cat</th>
+      <th>Hyd</th>
+      <th>Hun</th>
+      <th>Sta</th>
+      <th>Health</th>
+      <th>Infect</th>
+      <th>Alcohol</th>
+      <th>Decays</th>
+    </tr>`;
+    tbodyEl.innerHTML = items.map(it => {
+      const img = officialFileUrl(it.file);
+      const href = officialPageUrl(it.name);
+      const dec = [it.hungerDecay, it.hydrationDecay, it.staminaDecay].filter(Boolean).join(" / ");
+      return `<tr>
+        <td><img src="${img}" alt="" style="width:44px;height:44px;object-fit:contain"/></td>
+        <td><a href="${href}" target="_blank" rel="noopener">${escapeHtml(it.name)}</a></td>
+        <td>${escapeHtml(it.category)}</td>
+        <td>${escapeHtml(val(it.hydration))}</td>
+        <td>${escapeHtml(val(it.hunger))}</td>
+        <td>${escapeHtml(val(it.stamina))}</td>
+        <td>${escapeHtml(val(it.health))}</td>
+        <td>${escapeHtml(val(it.infection))}</td>
+        <td>${escapeHtml(val(it.alcohol))}</td>
+        <td>${escapeHtml(dec || "—")}</td>
+      </tr>`;
+    }).join("");
+  } else {
+    tableEl.style.display = "none";
+    gridEl.style.display = "grid";
+    gridEl.innerHTML = items.map(it => {
+      const img = officialFileUrl(it.file);
+      const href = officialPageUrl(it.name);
+      const dec = [
+        it.hungerDecay ? `HunDec ${it.hungerDecay}` : "",
+        it.hydrationDecay ? `HydDec ${it.hydrationDecay}` : "",
+        it.staminaDecay ? `StaDec ${it.staminaDecay}` : "",
+      ].filter(Boolean);
+      const extras = [];
+      if (it.health) extras.push(`HP ${it.health}`);
+      if (it.infection) extras.push(`Infect ${it.infection}`);
+      if (it.alcohol) extras.push(`Alc ${it.alcohol}`);
+      return `<a class="card" href="${href}" target="_blank" rel="noopener">
+        <div class="thumb"><img src="${img}" alt=""/></div>
+        <div>
+          <h3>${escapeHtml(it.name)}</h3>
+          <div class="meta">${escapeHtml(it.category)}</div>
+          <div class="kv">
+            <span>Hyd ${escapeHtml(val(it.hydration))}</span>
+            <span>Hun ${escapeHtml(val(it.hunger))}</span>
+            <span>Sta ${escapeHtml(val(it.stamina))}</span>
+            ${extras.map(x=>`<span>${escapeHtml(x)}</span>`).join("")}
+          </div>
+          ${dec.length ? `<div class="meta" style="margin-top:6px">${escapeHtml(dec.join(" • "))}</div>` : ``}
+        </div>
+      </a>`;
+    }).join("");
+  }
+}
+
+render();
+
+  </script>
+</body>
+</html>
