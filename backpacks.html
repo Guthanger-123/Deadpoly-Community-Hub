@@ -1,192 +1,199 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>DeadPoly — Backpacks</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DeadPoly Community Hub — Backpacks</title>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GD7LNZHQMM"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-GD7LNZHQMM');
+  </script>
+
   <style>
-    :root{--bg:#0b0b0f;--panel:#12121a;--panel2:#0f0f16;--line:#2a2a36;--text:#f2f2f2;--muted:#b7b7c2;--btn:#1c1c26;--btnHover:#262638;}
-    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
-    a{color:inherit;text-decoration:none}
-    .topbar{position:sticky;top:0;z-index:999;background:linear-gradient(to bottom, rgba(10,10,14,.92), rgba(10,10,14,.7));backdrop-filter: blur(6px);border-bottom:1px solid var(--line);}
-    .topbar-inner{max-width:1200px;margin:0 auto;padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between;}
-    .btn{display:inline-flex;align-items:center;gap:8px;background:var(--btn);border:1px solid var(--line);padding:8px 10px;border-radius:10px;transition:background .12s ease, transform .08s ease;}
+    :root{--bg:#0b0b0f;--panel:#14141b;--panel2:#101016;--text:#f2f2f2;--muted:#b7b7c2;--line:#2a2a36;--btn:#1c1c26;--btnHover:#242434}
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit}
+    .topbar{position:sticky;top:0;z-index:999;background:linear-gradient(to bottom, rgba(10,10,14,.92), rgba(10,10,14,.7));backdrop-filter: blur(6px);border-bottom:1px solid var(--line)}
+    .topbar-inner{max-width:1180px;margin:0 auto;padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .btn{display:inline-flex;align-items:center;gap:8px;background:var(--btn);border:1px solid var(--line);color:var(--text);padding:8px 10px;border-radius:10px;text-decoration:none;transition:transform .08s ease, background .12s ease;user-select:none}
     .btn:hover{background:var(--btnHover)} .btn:active{transform:scale(.98)}
-    .wrap{max-width:1200px;margin:0 auto;padding:18px 14px 40px}
-    h1{margin:0;font-size:26px;letter-spacing:.3px}
-    .sub{margin:6px 0 0;color:var(--muted)}
-    .card{margin-top:14px;background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));border:1px solid var(--line);border-radius:16px;padding:14px;}
-    table{width:100%;border-collapse:separate;border-spacing:0;margin-top:8px;overflow:hidden;border-radius:14px;border:1px solid var(--line)}
-    thead th{background:rgba(255,255,255,.03);text-align:left;font-size:12px;color:var(--muted);padding:10px;border-bottom:1px solid var(--line)}
-    tbody td{padding:10px;border-bottom:1px solid rgba(255,255,255,.06);vertical-align:middle}
-    tbody tr:hover{background:rgba(255,255,255,.03)}
-    .thumb{width:64px;height:64px;object-fit:contain;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);border-radius:10px}
+    .wrap{max-width:1180px;margin:0 auto;padding:18px 14px 40px}
+    h1{margin:0 0 6px;font-size:26px;letter-spacing:.3px}
+    .sub{margin:0 0 16px;color:var(--muted)}
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:12px}
+    .panel h2{margin:0 0 10px;font-size:18px}
+    table{width:100%;border-collapse:separate;border-spacing:0}
+    th,td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+    th{color:#d9d9e6;font-weight:700;text-align:left;font-size:13px;letter-spacing:.2px}
+    tr:hover td{background:rgba(255,255,255,.02)}
+    .imgcell{width:64px}
+    .thumb{width:44px;height:44px;border-radius:12px;object-fit:contain;background:var(--panel2);border:1px solid var(--line)}
     .muted{color:var(--muted)}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:10px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
     .tile{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02);padding:10px;display:flex;gap:10px;align-items:center}
-    .tile img{width:54px;height:54px;object-fit:contain}
-    .tile b{display:block}
-    .bigimg{width:100%;max-width:760px;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.25)}
+    .tile img{width:46px;height:46px;border-radius:12px;object-fit:contain;background:var(--panel2);border:1px solid var(--line)}
+    .hr{height:1px;background:var(--line);margin:12px 0}
+    .bigimg{width:100%;max-width:900px;border-radius:16px;border:1px solid var(--line);background:var(--panel2)}
+    .rightlinks{display:flex;gap:10px;align-items:center}
   </style>
 </head>
+
 <body>
   <div class="topbar">
     <div class="topbar-inner">
       <a class="btn" href="wiki.html">← Wiki</a>
-      <div class="sub" style="margin:0">Backpacks</div>
-      <a class="btn" href="https://deadpoly.wiki/Backpacks" target="_blank" rel="noopener">Official Page ↗</a>
+      <div class="muted">Backpacks</div>
+      <div class="rightlinks">
+        <a class="btn" href="https://deadpoly.wiki/Backpacks" target="_blank" rel="noopener">Official Page ↗</a>
+      </div>
     </div>
   </div>
 
   <div class="wrap">
-    <div>
-      <h1>Backpacks</h1>
-      <div class="sub">Local tables + official images (Special:FilePath).</div>
-    </div>
+    <h1>Backpacks</h1>
+    <div class="sub">Tier tables + nesting rules + variant gallery.</div>
 
-    <div class="card" id="tables"></div>
-
-    <div class="card">
-      <h2 style="margin:0 0 6px">Nesting Rules</h2>
-      <div class="muted">You can store smaller backpacks inside larger ones, but not same-size bags within each other.</div>
-      <div style="margin-top:10px">
-        <img class="bigimg" alt="Bag Nesting Graph" src="https://deadpoly.wiki/Special:FilePath/Bag_Nesting_Graph.png">
+    <div class="panel">
+      <h2>Tier 3</h2>
+      <div style="overflow:auto">
+        <table>
+          <thead>
+            <tr>
+              <th class="imgcell"></th>
+              <th>Name</th>
+              <th>Main</th>
+              <th>Extra</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="t3"></tbody>
+        </table>
       </div>
     </div>
 
-    <div class="card" id="variants"></div>
+    <div class="panel">
+      <h2>Tier 2</h2>
+      <div style="overflow:auto">
+        <table>
+          <thead>
+            <tr>
+              <th class="imgcell"></th>
+              <th>Name</th>
+              <th>Main</th>
+              <th>Extra</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="t2"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Tier 1</h2>
+      <div style="overflow:auto">
+        <table>
+          <thead>
+            <tr>
+              <th class="imgcell"></th>
+              <th>Name</th>
+              <th>Main</th>
+              <th>Extra</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="t1"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Nesting Rules</h2>
+      <div class="muted" style="margin-bottom:10px">
+        You can store lower-capacity backpacks inside larger ones. Same-size bags do not nest.
+      </div>
+      <img class="bigimg" alt="Bag nesting graph" id="nestGraph">
+    </div>
+
+    <div class="panel">
+      <h2>Variant Gallery (quick)</h2>
+      <div class="grid" id="gallery"></div>
+      <div class="muted" style="margin-top:10px">If any image doesn’t load, it means the filename differs on the official wiki—tell me the exact file name and I’ll patch it.</div>
+    </div>
   </div>
 
 <script>
-  function filePathUrl(filename){
-    return "https://deadpoly.wiki/Special:FilePath/" + encodeURIComponent(filename);
-  }
-  function esc(s){
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  }
+  const OFFICIAL = "https://deadpoly.wiki";
+  const fileUrl = (name) => `${OFFICIAL}/Special:FilePath/${encodeURIComponent(name)}`;
 
   const tier3 = [
-    {file:"TM_BackpackRaid_1_E.png", name:"Raid Backpack", main:"120", extra:"32", total:"152"},
-    {file:"TM_BackpackRushGold_E.png", name:"Rush Backpack (Gold)", main:"64", extra:"24", total:"88"},
-    {file:"TM_BackpackOverlandWhite_E.png", name:"Overland Backpack", main:"64", extra:"23", total:"87"},
-    {file:"TM_BackpackNomad1_E.png", name:"Nomad Backpack", main:"48", extra:"31", total:"79"},
-    {file:"TM_BackpackRush_E.png", name:"Rush Backpack", main:"48", extra:"16", total:"64"},
-    {file:"Backpack_Expedition_Red.png", name:"Expedition Backpack", main:"48", extra:"8", total:"56"},
+    {img:"TM_BackpackRaid_1_E.png", name:"Raid Backpack", main:120, extra:32, total:152},
+    {img:"TM_BackpackRushGold_E.png", name:"Rush Backpack (Gold)", main:64, extra:24, total:88},
+    {img:"TM_BackpackOverlandWhite_E.png", name:"Overland Backpack", main:64, extra:23, total:87},
+    {img:"TM_BackpackNomad1_E.png", name:"Nomad Backpack", main:48, extra:31, total:79},
+    {img:"TM_BackpackRush_E.png", name:"Rush Backpack", main:48, extra:16, total:64},
+    {img:"Backpack_Expedition_Red.png", name:"Expedition Backpack", main:48, extra:8, total:56}
   ];
 
   const tier2 = [
-    {file:"Backpack_Hunting_LightGreen.png", name:"Hunting Backpack", main:"42", extra:"0", total:"42"},
-    {file:"Backpack_Topload_1.png", name:"Topload Backpack", main:"42", extra:"0", total:"42"},
+    {img:"Backpack_Hunting_LightGreen.png", name:"Hunting Backpack", main:42, extra:0, total:42},
+    {img:"Backpack_Topload_1.png", name:"Topload Backpack", main:42, extra:0, total:42}
   ];
 
   const tier1 = [
-    {file:"Backpack_Buzzy.png", name:"Cute Backpack", main:"16", extra:"0", total:"16"},
-    {file:"Backpack_School_Blue.png", name:"School Backpack", main:"16", extra:"0", total:"16"},
-    {file:"TM_Bag_E.png", name:"Bag", main:"9", extra:"0", total:"9"},
+    {img:"Backpack_Buzzy.png", name:"Cute Backpack", main:16, extra:0, total:16},
+    {img:"Backpack_School_Blue.png", name:"School Backpack", main:16, extra:0, total:16},
+    {img:"TM_Bag_E.png", name:"Bag", main:9, extra:0, total:9}
   ];
 
-  function renderTier(title, items){
-    return `
-      <h2 style="margin:0 0 6px">${esc(title)}</h2>
-      <table>
-        <thead><tr><th style="width:86px">Image</th><th>Name</th><th style="width:150px">Main</th><th style="width:170px">Extra</th><th style="width:150px">Total Slots</th></tr></thead>
-        <tbody>
-          ${items.map(i => `
-            <tr>
-              <td><img class="thumb" src="${filePathUrl(i.file)}" alt="${esc(i.name)}"></td>
-              <td style="font-weight:700">${esc(i.name)}</td>
-              <td class="muted">${esc(i.main)}</td>
-              <td class="muted">${esc(i.extra)}</td>
-              <td class="muted">${esc(i.total)}</td>
-            </tr>
-          `).join("")}
-        </tbody>
-      </table>
-      <div style="height:14px"></div>
-    `;
+  function fill(tbodyId, rows){
+    const tb = document.getElementById(tbodyId);
+    tb.innerHTML = "";
+    rows.forEach(r=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="imgcell"><img class="thumb" src="${fileUrl(r.img)}" alt=""></td>
+        <td><b>${esc(r.name)}</b></td>
+        <td>${esc(r.main)}</td>
+        <td>${esc(r.extra)}</td>
+        <td>${esc(r.total)}</td>
+      `;
+      tb.appendChild(tr);
+    });
   }
 
-  document.getElementById("tables").innerHTML = `
-    <div class="muted">This table lists backpacks in the game and their total space.</div>
-    <div style="height:12px"></div>
-    ${renderTier("Tier 3 Backpacks", tier3)}
-    ${renderTier("Tier 2 Backpacks", tier2)}
-    ${renderTier("Tier 1 Backpacks", tier1)}
-  `;
+  fill("t3", tier3);
+  fill("t2", tier2);
+  fill("t1", tier1);
 
-  const variantGroups = [
-    {title:"Rush Backpacks", items:[
-      {file:"TM_BackpackRush_E.png", name:"Black"},
-      {file:"TM_BackpackRushGold_E.png", name:"Gold"},
-      {file:"TM_BackpackRushTan_E.png", name:"Tan"},
-    ]},
-    {title:"Raid Backpacks", items:[
-      {file:"TM_BackpackRaid_1_E.png", name:"Dark Green"},
-      {file:"TM_BackpackRaid_2_E.png", name:"Camo Green"},
-      {file:"TM_BackpackRaid_3_E.png", name:"Tan/Brown"},
-      {file:"TM_BackpackRaid_4_E.png", name:"Red/Black"},
-      {file:"TM_BackpackRaid_5_E.png", name:"Grey/Black"},
-      {file:"TM_BackpackRaid_6_E.png", name:"Purple/Blue"},
-    ]},
-    {title:"Nomad Backpack", items:[
-      {file:"TM_BackpackNomad1_E.png", name:"Nomad"},
-    ]},
-    {title:"Expedition Backpacks", items:[
-      {file:"Backpack_Expedition_Blue.png", name:"Blue"},
-      {file:"Backpack_Expedition_Green.png", name:"Green"},
-      {file:"Backpack_Expedition_Orange.png", name:"Orange"},
-      {file:"Backpack_Expedition_Purple.png", name:"Purple"},
-      {file:"Backpack_Expedition_Red.png", name:"Red"},
-    ]},
-    {title:"Hunting Backpacks", items:[
-      {file:"Backpack_Hunting_LightGreen.png", name:"Light Green"},
-      {file:"Backpack_Hunting_DarkGreen.png", name:"Dark Green"},
-      {file:"Backpack_Hunting_Black.png", name:"Black"},
-      {file:"Backpack_Hunting_Tan.png", name:"Tan"},
-    ]},
-    {title:"Topload Backpack", items:[
-      {file:"Backpack_Topload_1.png", name:"Topload"},
-    ]},
-    {title:"Cute Packs & Animal Packs", items:[
-      {file:"Backpack_Buzzy.png", name:"Buzzy"},
-      {file:"Backpack_Cute_Black.png", name:"Black"},
-      {file:"Backpack_Cute_Blue.png", name:"Blue"},
-      {file:"Backpack_Cute_Pink.png", name:"Pink"},
-      {file:"Backpack_Cute_Purple.png", name:"Purple"},
-      {file:"Backpack_Cute_White.png", name:"White"},
-    ]},
-    {title:"School Backpacks", items:[
-      {file:"Backpack_School_Blue.png", name:"Blue"},
-      {file:"Backpack_School_Green.png", name:"Green"},
-      {file:"Backpack_School_Orange.png", name:"Orange"},
-      {file:"Backpack_School_Pink.png", name:"Pink"},
-      {file:"Backpack_School_Purple.png", name:"Purple"},
-      {file:"Backpack_School_Red.png", name:"Red"},
-      {file:"Backpack_School_Teal.png", name:"Teal"},
-    ]},
-    {title:"Handmade Bag", items:[
-      {file:"TM_Bag_E.png", name:"Bag"},
-    ]},
+  document.getElementById("nestGraph").src = fileUrl("Bag_Nesting_Graph.png");
+
+  const galleryFiles = [
+    "TM_BackpackRush_E.png","TM_BackpackRushGold_E.png","TM_BackpackRushTan_E.png",
+    "TM_BackpackRaid_1_E.png","TM_BackpackRaid_2_E.png","TM_BackpackRaid_3_E.png","TM_BackpackRaid_4_E.png","TM_BackpackRaid_5_E.png","TM_BackpackRaid_6_E.png",
+    "TM_BackpackNomad1_E.png",
+    "Backpack_Expedition_Blue.png","Backpack_Expedition_Green.png","Backpack_Expedition_Orange.png","Backpack_Expedition_Purple.png","Backpack_Expedition_Red.png",
+    "Backpack_Hunting_LightGreen.png","Backpack_Hunting_DarkGreen.png","Backpack_Hunting_Black.png","Backpack_Hunting_Tan.png",
+    "Backpack_Topload_1.png",
+    "Backpack_Cute_Black.png","Backpack_Cute_Blue.png","Backpack_Cute_Pink.png","Backpack_Cute_Purple.png","Backpack_Cute_White.png",
+    "Backpack_School_Green.png","Backpack_School_Orange.png","Backpack_School_Pink.png","Backpack_School_Purple.png","Backpack_School_Red.png","Backpack_School_Teal.png",
+    "TM_Bag_E.png"
   ];
 
-  document.getElementById("variants").innerHTML = `
-    <h2 style="margin:0 0 6px">Images (Variants)</h2>
-    <div class="muted">Quick visual list of backpack variants.</div>
-    ${variantGroups.map(g => `
-      <div style="margin-top:14px;font-weight:800">${esc(g.title)}</div>
-      <div class="grid">
-        ${g.items.map(i => `
-          <div class="tile">
-            <img src="${filePathUrl(i.file)}" alt="${esc(i.name)}">
-            <div>
-              <b>${esc(i.name)}</b>
-              <div class="muted" style="font-size:12px">${esc(i.file)}</div>
-            </div>
-          </div>
-        `).join("")}
-      </div>
-    `).join("")}
-  `;
+  const gallery = document.getElementById("gallery");
+  galleryFiles.forEach(f=>{
+    const div = document.createElement("div");
+    div.className = "tile";
+    div.innerHTML = `<img src="${fileUrl(f)}" alt=""><div class="muted">${esc(f)}</div>`;
+    gallery.appendChild(div);
+  });
+
+  function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 </script>
 </body>
 </html>
