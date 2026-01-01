@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeadPoly Community Hub — Armor</title>
+  <style>
+    :root{
+      --bg:#0b0b0f; --panel:#14141b; --panel2:#101016; --text:#f2f2f2; --muted:#b7b7c2;
+      --line:#2a2a36; --btn:#1c1c26; --btnHover:#242434;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
+    a{color:inherit}
+    .topbar{position:sticky;top:0;z-index:999;background:linear-gradient(to bottom, rgba(10,10,14,.92), rgba(10,10,14,.7));backdrop-filter: blur(6px);border-bottom:1px solid var(--line);}
+    .topbar-inner{max-width:1200px;margin:0 auto;padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between;}
+    .btn{display:inline-flex;align-items:center;gap:8px;background:var(--btn);border:1px solid var(--line);color:var(--text);padding:8px 10px;border-radius:10px;text-decoration:none;transition:transform .08s ease, background .12s ease;user-select:none;}
+    .btn:hover{background:var(--btnHover)} .btn:active{transform:scale(.98)}
+    .wrap{max-width:1200px;margin:0 auto;padding:18px 14px 40px}
+    h1{margin:0;font-size:26px;letter-spacing:.3px}
+    .sub{margin:6px 0 0;color:var(--muted)}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+    .search{flex:1;min-width:240px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--text);outline:none;}
+    .section{margin-top:16px;background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));border:1px solid var(--line);border-radius:16px;padding:12px;}
+    .section h2{margin:0 0 8px;font-size:16px}
+    table{width:100%;border-collapse:separate;border-spacing:0 10px}
+    th{color:var(--muted);font-weight:600;text-align:left;padding:0 10px}
+    td{background:rgba(255,255,255,.02);border:1px solid var(--line);padding:10px;vertical-align:middle;}
+    tr td:first-child{border-radius:12px 0 0 12px} tr td:last-child{border-radius:0 12px 12px 0}
+    .thumb{width:64px;height:64px;object-fit:contain;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);border-radius:12px;display:block;}
+    .name{font-weight:700}
+    .note{color:var(--muted)}
+    .footer{margin-top:14px;color:var(--muted);font-size:12px}
+    .nowrap{white-space:nowrap}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a class="btn" href="wiki.html">← Wiki Hub</a>
+      <div class="sub" style="margin:0">Armor</div>
+      <a class="btn" href="https://deadpoly.wiki/Main_Page" target="_blank" rel="noopener">Official Wiki ↗</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <h1>Body Armor</h1>
+    <div class="sub">Each type of body armor comes in multiple colors or styles of camo.</div>
+
+    <div class="controls">
+      <input id="q" class="search" placeholder="Search armor (ex: vest, swat, tech, karuta)..." />
+    </div>
+
+    <div class="section">
+      <h2>Armor Table</h2>
+      <div id="out"></div>
+    </div>
+
+    <div class="footer">If images don’t load, it’s usually filename/case mismatch on the official wiki.</div>
+  </div>
+
+<script>
+  function fileUrl(filename){
+    const a = "https://deadpoly.wiki/index.php?title=Special:FilePath/" + encodeURIComponent(filename);
+    const b = "https://deadpoly.wiki/wiki/Special:FilePath/" + encodeURIComponent(filename);
+    return { a, b };
+  }
+
+  const armor = [
+    { name:"Apocalypse Vest", img:"apoc_black.png", type:"Heavy", slots:"7", maxkg:"25", cap:"2x8", std:"10", ap:"5", notes:"Comes in 4 colors: Black, Blue, Green, and Desert" },
+    { name:"Banana Suit", img:"banana_suit.jpg", type:"Full Body", slots:"4", maxkg:"N/A", cap:"N/A", std:"N/A", ap:"N/A", notes:"" },
+    { name:"Cat Pajama", img:"cat_pajama_pink.png", type:"Full Body", slots:"4", maxkg:"N/A", cap:"N/A", std:"N/A", ap:"N/A", notes:"Comes in multiple Colors: Pink" },
+    { name:"Composite Armor", img:"composite_armor_blue.jpg", type:"Full Body", slots:"4", maxkg:"N/A", cap:"N/A", std:"18", ap:"0", notes:"Comes in Multiple Colors: Blue, Yellow" },
+    { name:"Dinosaur Pajama", img:"dinosaur_pajama_brown.jpg", type:"Full Body", slots:"4", maxkg:"N/A", cap:"N/A", std:"N/A", ap:"N/A", notes:"Comes in multiple Colors: Brown" },
+    { name:"Heavy Vest", img:"heavy_green.png", type:"Heavy", slots:"7", maxkg:"25", cap:"2x8", std:"10", ap:"5", notes:"Comes in 4 colors: Flat Green, Jungle, Desert, and Snowy" },
+    { name:"Hot Dog Suit", img:"hot_dog_suit_new.jpg", type:"Full Body", slots:"4", maxkg:"N/A", cap:"N/A", std:"N/A", ap:"N/A", notes:"Has 2 variations: New and Damaged" },
+    { name:"Karuta Armor", img:"karuta_armor_yellow.jpg", type:"Full Body", slots:"4", maxkg:"N/A", cap:"N/A", std:"18", ap:"0", notes:"Comes in multiple Colors: Red, Green, Yellow, Blue" },
+    { name:"Karuta Armor (Samurai)", img:"karuta_armor_samurai.jpg", type:"Full Body", slots:"4", maxkg:"N/A", cap:"N/A", std:"18", ap:"0", notes:"" },
+    { name:"Light Vest", img:"light_green.png", type:"Light", slots:"4", maxkg:"N/A", cap:"N/A", std:"4", ap:"0", notes:"Comes in 4 colors: Flat Green, Jungle, Desert, and Snowy" },
+    { name:"Medium Vest", img:"medium_green.png", type:"Medium", slots:"5", maxkg:"10", cap:"1x8", std:"7", ap:"2", notes:"Comes in 4 colors: Flat Green, Jungle, Desert, and Snowy" },
+    { name:"Metal Armor", img:"Metal_Armor.png", type:"Light", slots:"4", maxkg:"N/A", cap:"N/A", std:"15", ap:"5", notes:"Comes in 5 colors: Grey, Silver, White, Green, and Red" },
+    { name:"Press Vest", img:"press_vest.jpg", type:"Medium", slots:"5", maxkg:"12.5", cap:"1x8+4", std:"7", ap:"2", notes:"" },
+    { name:"SWAT Vest", img:"Swat.png", type:"Medium", slots:"6", maxkg:"15", cap:"2x8", std:"7", ap:"3", notes:"" },
+    { name:"Tech Armor", img:"tech_armor_white.jpg", type:"Full Body", slots:"4", maxkg:"N/A", cap:"N/A", std:"18", ap:"0", notes:"Comes in multiple Colors: Blue, Black, Red, White" },
+    { name:"Tiger Pajama", img:"tiger_pajama_orange.jpg", type:"Full Body", slots:"4", maxkg:"N/A", cap:"N/A", std:"N/A", ap:"N/A", notes:"Comes in multiple Colors: Green, Orange" },
+  ];
+
+  const qEl = document.getElementById("q");
+  qEl.addEventListener("input", render);
+
+  function render(){
+    const q = qEl.value.trim().toLowerCase();
+    const rows = armor.filter(x => {
+      if (!q) return true;
+      const hay = (x.name+" "+x.type+" "+x.notes).toLowerCase();
+      return hay.includes(q);
+    });
+
+    const html = `
+      <table>
+        <thead>
+          <tr>
+            <th class="nowrap">Image</th>
+            <th>Name</th>
+            <th class="nowrap">Type</th>
+            <th class="nowrap">Hotbar Slots</th>
+            <th class="nowrap">Max KG</th>
+            <th class="nowrap">Capacity</th>
+            <th class="nowrap">Std Armor</th>
+            <th class="nowrap">AP Armor</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r => {
+            const {a,b} = fileUrl(r.img);
+            return `
+              <tr>
+                <td style="width:84px">
+                  <img class="thumb" src="${a}" onerror="this.onerror=null;this.src='${b}'" alt="${r.img}">
+                </td>
+                <td><div class="name">${esc(r.name)}</div></td>
+                <td class="nowrap">${esc(r.type)}</td>
+                <td class="nowrap">${esc(r.slots)}</td>
+                <td class="nowrap">${esc(r.maxkg)}</td>
+                <td class="nowrap">${esc(r.cap)}</td>
+                <td class="nowrap">${esc(r.std)}</td>
+                <td class="nowrap">${esc(r.ap)}</td>
+                <td><div class="note">${esc(r.notes||"")}</div></td>
+              </tr>`;
+          }).join("")}
+        </tbody>
+      </table>`;
+    document.getElementById("out").innerHTML = html;
+  }
+
+  function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  render();
+</script>
+</body>
+</html>
