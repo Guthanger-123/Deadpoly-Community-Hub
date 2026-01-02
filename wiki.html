@@ -3,111 +3,88 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DeadPoly Hub — Wiki Hub</title>
-  <link rel="stylesheet" href="wiki-shared.css" />
+  <title>DeadPoly Community Hub — Wiki</title>
+  <link rel="stylesheet" href="wiki-shared.css">
 </head>
 <body>
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="top-left">
-        <a class="btn" href="index.html">← Menu</a>
-        <div class="brand">Wiki <span class="badge">Wiki Hub</span></div>
-      </div>
-      <div class="top-right">
-        <a class="btn" href="https://deadpoly.wiki/Main_Page" target="_blank" rel="noopener">Official Wiki ↗</a>
-      </div>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-left">
+      <a class="btn" href="index.html">← Menu</a>
+      <span class="pilltitle">Wiki</span>
+      <span class="pilltitle">Wiki Hub</span>
     </div>
+    <a id="officialBtn" class="btn" href="https://deadpoly.wiki/Main_Page" target="_blank" rel="noopener">Official Wiki ↗</a>
   </div>
+</div>
 
-  <div class="container">
-    <div class="shell">
-      <div class="panel side">
-        <h2>Wiki Categories</h2>
-        <div class="muted">Local pages (fast) + one official button above.</div>
-        <div class="nav">
-          <a class="active" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
-<a class="" href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
-<a class="" href="masks.html"><span>Masks</span><span class="small">→</span></a>
-<a class="" href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
-<a class="" href="armor.html"><span>Armor</span><span class="small">→</span></a>
-<a class="" href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
-<a class="" href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
-<a class="" href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
-<a class="" href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
-<a class="" href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
+<div class="shell">
+  <div class="layout">
+
+    <aside class="panel sidebar">
+      <h3>Wiki Categories</h3>
+      <div class="muted">Local pages (fast) + one official button above.</div>
+
+      <div class="navlist">
+        <a class="navbtn" href="wiki.html" data-nav="hub"><span class="label">Hub</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="helmets.html" data-nav="helmets"><span class="label">Helmets</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="masks.html" data-nav="masks"><span class="label">Masks</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="weapons.html" data-nav="weapons"><span class="label">Weapons</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="armor.html" data-nav="armor"><span class="label">Armor</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="ammo.html" data-nav="ammo"><span class="label">Ammo</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="backpacks.html" data-nav="backpacks"><span class="label">Backpacks</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="consumables.html" data-nav="consumables"><span class="label">Consumables</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="crafting.html" data-nav="crafting"><span class="label">Crafting</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="collectibles.html" data-nav="collectibles"><span class="label">Collectibles</span><span class="arrow">→</span></a>
+      </div>
+    </aside>
+
+    <main class="panel main">
+      <div class="head">
+        <div>
+          <h1 id="pageTitle">Wiki Hub</h1>
+          <div id="pageSubtitle" class="sub">Pick a category. Every page keeps the same look + pulls images from the official DeadPoly wiki.</div>
         </div>
+        <div class="badge"><span class="dot"></span><span id="countBadge">9 pages</span></div>
       </div>
 
-      <div class="panel main">
-        <div class="hero">
-          <div>
-            <h1>Wiki Hub</h1>
-            <div class="sub">Pick a category. Every page keeps the same look + one official button.</div>
-          </div>
-          <div class="badge" id="countBadge">0 items</div>
-        </div>
-
-        <div class="toolbar">
-          <input id="q" class="search" placeholder="Search Wiki Hub..." />
-          <div class="pills" id="pills"></div>
-          <div class="viewtoggle">
-            <button class="btn" id="gridBtn" type="button">Cards</button>
-            <button class="btn" id="tableBtn" type="button">Table</button>
-          </div>
-        </div>
-
-        <div id="grid" class="grid"></div>
-
-        <div id="table" class="tablewrap" style="display:none">
-          <table>
-            <thead id="thead"></thead>
-            <tbody id="tbody"></tbody>
-          </table>
-        </div>
-
-        <div id="extras"></div>
+      <div class="controls">
+        <input id="q" class="search" placeholder="Search pages..." />
+        <div class="filters" id="filters"></div>
       </div>
-    </div>
+
+      <div id="cards" class="grid"></div>
+
+      <div class="note">
+        If images don’t show: you likely have a mixed-content blocker or you’re offline.
+        These pages load images from <b>deadpoly.wiki</b> using MediaWiki <code>Special:FilePath</code>.
+      </div>
+    </main>
+
   </div>
+</div>
 
-  <script src="wiki-shared.js"></script>
-  <!-- page script -->
-  <script>
-
-const cards = [
-  {title:"Helmets", file:"helmets.html"},
-  {title:"Armor", file:"armor.html"},
-  {title:"Ammo", file:"ammo.html"},
-  {title:"Backpacks", file:"backpacks.html"},
-  {title:"Consumables", file:"consumables.html"},
-  {title:"Masks", file:"masks.html"},
-  {title:"Weapons", file:"weapons.html"},
-  {title:"Crafting", file:"crafting.html"},
-  {title:"Collectibles", file:"collectibles.html"},
-];
-document.getElementById("countBadge").textContent = cards.length + " pages";
-document.getElementById("pills").style.display = "none";
-document.getElementById("table").style.display = "none";
-document.getElementById("tableBtn").style.display = "none";
-document.getElementById("gridBtn").style.display = "none";
-document.getElementById("q").placeholder = "Search pages...";
-document.getElementById("q").addEventListener("input", render);
-
-function render(){
-  const q = document.getElementById("q").value.trim().toLowerCase();
-  const items = cards.filter(c => !q || c.title.toLowerCase().includes(q));
-  document.getElementById("grid").innerHTML = items.map(c => `
-    <a class="card" href="${c.file}">
-      <div class="thumb"><div class="badge">Page</div></div>
-      <div>
-        <h3>${escapeHtml(c.title)}</h3>
-        <div class="meta">Open local page</div>
-      </div>
-    </a>
-  `).join("");
-}
-render();
-
-  </script>
+<script src="wiki-shared.js"></script>
+<script>
+  mountWikiPage({
+    pageTitle: "Wiki Hub",
+    pageSubtitle: "Pick a category. Every page keeps the same look + pulls images from the official DeadPoly wiki.",
+    officialUrl: "https://deadpoly.wiki/Main_Page",
+    navActive: "hub",
+    filters: ["All"],
+    data: [
+      { name:"Helmets", group:"Page", notes:"Open local page", link:"helmets.html" },
+      { name:"Masks", group:"Page", notes:"Open local page", link:"masks.html" },
+      { name:"Weapons", group:"Page", notes:"Open local page", link:"weapons.html" },
+      { name:"Armor", group:"Page", notes:"Open local page", link:"armor.html" },
+      { name:"Ammo", group:"Page", notes:"Open local page", link:"ammo.html" },
+      { name:"Backpacks", group:"Page", notes:"Open local page", link:"backpacks.html" },
+      { name:"Consumables", group:"Page", notes:"Open local page", link:"consumables.html" },
+      { name:"Crafting Stations", group:"Page", notes:"Open local page", link:"crafting.html" },
+      { name:"Collectibles", group:"Page", notes:"Open local page", link:"collectibles.html" }
+    ]
+  });
+</script>
 </body>
 </html>
