@@ -3,159 +3,84 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DeadPoly Hub — Ammo</title>
-  <link rel="stylesheet" href="wiki-shared.css" />
+  <title>DeadPoly Wiki — Ammo</title>
+  <link rel="stylesheet" href="wiki-shared.css">
 </head>
 <body>
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="top-left">
-        <a class="btn" href="index.html">← Menu</a>
-        <div class="brand">Wiki <span class="badge">Ammo</span></div>
-      </div>
-      <div class="top-right">
-        <a class="btn" href="https://deadpoly.wiki/Ammo" target="_blank" rel="noopener">Official Wiki ↗</a>
-      </div>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-left">
+      <a class="btn" href="wiki.html">← Wiki Hub</a>
+      <span class="pilltitle">Wiki</span>
+      <span class="pilltitle">Ammo</span>
     </div>
+    <a id="officialBtn" class="btn" href="https://deadpoly.wiki/Ammo" target="_blank" rel="noopener">Official Wiki ↗</a>
   </div>
+</div>
 
-  <div class="container">
-    <div class="shell">
-      <div class="panel side">
-        <h2>Wiki Categories</h2>
-        <div class="muted">Local pages (fast) + one official button above.</div>
-        <div class="nav">
-          <a class="" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
-<a class="" href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
-<a class="" href="masks.html"><span>Masks</span><span class="small">→</span></a>
-<a class="" href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
-<a class="" href="armor.html"><span>Armor</span><span class="small">→</span></a>
-<a class="active" href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
-<a class="" href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
-<a class="" href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
-<a class="" href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
-<a class="" href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
-        </div>
+<div class="shell">
+  <div class="layout">
+
+    <aside class="panel sidebar">
+      <h3>Wiki Categories</h3>
+      <div class="muted">Local pages (fast) + one official button above.</div>
+
+      <div class="navlist">
+        <a class="navbtn" href="wiki.html" data-nav="hub"><span class="label">Hub</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="helmets.html" data-nav="helmets"><span class="label">Helmets</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="masks.html" data-nav="masks"><span class="label">Masks</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="weapons.html" data-nav="weapons"><span class="label">Weapons</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="armor.html" data-nav="armor"><span class="label">Armor</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="ammo.html" data-nav="ammo"><span class="label">Ammo</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="backpacks.html" data-nav="backpacks"><span class="label">Backpacks</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="consumables.html" data-nav="consumables"><span class="label">Consumables</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="crafting.html" data-nav="crafting"><span class="label">Crafting</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="collectibles.html" data-nav="collectibles"><span class="label">Collectibles</span><span class="arrow">→</span></a>
       </div>
+    </aside>
 
-      <div class="panel main">
-        <div class="hero">
-          <div>
-            <h1>Ammo</h1>
-            <div class="sub">Ammo types and crafting requirements (Bullet Press required to craft ammo).</div>
-          </div>
-          <div class="badge" id="countBadge">0 items</div>
-        </div>
-
-        <div class="toolbar">
-          <input id="q" class="search" placeholder="Search Ammo..." />
-          <div class="pills" id="pills"></div>
-          <div class="viewtoggle">
-            <button class="btn" id="gridBtn" type="button">Cards</button>
-            <button class="btn" id="tableBtn" type="button">Table</button>
-          </div>
-        </div>
-
-        <div id="grid" class="grid"></div>
-
-        <div id="table" class="tablewrap" style="display:none">
-          <table>
-            <thead id="thead"></thead>
-            <tbody id="tbody"></tbody>
-          </table>
-        </div>
-
-        <div id="extras"></div>
-      </div>
-    </div>
-  </div>
-
-  <script src="wiki-shared.js"></script>
-  <!-- page script -->
-  <script>
-
-const DATA = [{"status": "Available", "file": "TM_556x45_E.png", "ammo": "5.56x45mm", "craft": "2x Refined Metal, 2x Gunpowder"}, {"status": "Available", "file": "TM_762x39_E.png", "ammo": "7.62x39mm", "craft": "2x Refined Metal, 2x Gunpowder"}, {"status": "Available", "file": "TM_9mm_E.png", "ammo": "9mm", "craft": "1x Refined Metal, 1x Gunpowder"}, {"status": "Available", "file": "TM_12ga_E.png", "ammo": "12Ga", "craft": "1x Refined Metal, 4x Gunpowder, 4x Plastic"}, {"status": "Unavailable", "file": "TM_22lr_E.png", "ammo": ".22 LR", "craft": "??"}, {"status": "Unavailable", "file": "TM_45acp_E.png", "ammo": ".45 ACP", "craft": "??"}, {"status": "Unavailable", "file": "TM_50bmg_E.png", "ammo": ".50 BMG", "craft": "??"}];
-
-const pillsEl = document.getElementById("pills");
-const qEl = document.getElementById("q");
-const gridEl = document.getElementById("grid");
-const tableEl = document.getElementById("table");
-const theadEl = document.getElementById("thead");
-const tbodyEl = document.getElementById("tbody");
-const countBadge = document.getElementById("countBadge");
-
-let mode = "grid";
-let status = "all";
-
-makePills(pillsEl, [
-  {label:"All", value:"all", selected:true},
-  {label:"Available", value:"Available"},
-  {label:"Unavailable", value:"Unavailable"}
-], v => { status=v; render(); });
-
-document.getElementById("gridBtn").addEventListener("click", ()=>{ mode="grid"; render(); });
-document.getElementById("tableBtn").addEventListener("click", ()=>{ mode="table"; render(); });
-qEl.addEventListener("input", render);
-
-function matches(item, q){
-  const hay = (item.ammo + " " + (item.craft||"") + " " + item.status).toLowerCase();
-  if (q && !hay.includes(q)) return false;
-  if (status !== "all" && item.status !== status) return false;
-  return true;
-}
-
-function render(){
-  const q = qEl.value.trim().toLowerCase();
-  const items = DATA.filter(it => matches(it, q));
-  countBadge.textContent = items.length + " items";
-
-  if (mode === "table") {
-    gridEl.style.display = "none";
-    tableEl.style.display = "block";
-    theadEl.innerHTML = `<tr>
-      <th style="width:64px">Img</th>
-      <th>Ammo</th>
-      <th>Status</th>
-      <th>Crafting</th>
-    </tr>`;
-    tbodyEl.innerHTML = items.map(it => {
-      const img = officialFileUrl(it.file);
-      return `<tr>
-        <td><img src="${img}" alt="" style="width:44px;height:44px;object-fit:contain"/></td>
-        <td>${escapeHtml(it.ammo)}</td>
-        <td>${escapeHtml(it.status)}</td>
-        <td>${escapeHtml(it.craft)}</td>
-      </tr>`;
-    }).join("");
-  } else {
-    tableEl.style.display = "none";
-    gridEl.style.display = "grid";
-    gridEl.innerHTML = items.map(it => {
-      const img = officialFileUrl(it.file);
-      return `<div class="card">
-        <div class="thumb"><img src="${img}" alt=""/></div>
+    <main class="panel main">
+      <div class="head">
         <div>
-          <h3>${escapeHtml(it.ammo)}</h3>
-          <div class="meta">${escapeHtml(it.status)}</div>
-          <div class="kv">
-            <span>${escapeHtml(it.craft)}</span>
-          </div>
+          <h1 id="pageTitle">Ammo</h1>
+          <div id="pageSubtitle" class="sub">Ammo types + crafting requirements (Bullet Press required).</div>
         </div>
-      </div>`;
-    }).join("");
-  }
-}
+        <div class="badge"><span class="dot"></span><span id="countBadge">0 items</span></div>
+      </div>
 
-render();
+      <div class="controls">
+        <input id="q" class="search" placeholder="Search ammo (ex: 5.56, 7.62, 9mm, 12ga)..." />
+        <div class="filters" id="filters"></div>
+      </div>
 
-// extras note
-document.getElementById("extras").innerHTML = `
-  <div class="section">
-    <h2>Other</h2>
-    <div class="small"><b>Nails</b> are used as ammo in the Nail Gun, but are more commonly used for crafting.</div>
+      <div id="cards" class="grid"></div>
+    </main>
+
   </div>
-`;
+</div>
 
-  </script>
+<script src="wiki-shared.js"></script>
+<script>
+  const ammo = [
+    {name:"5.56x45mm", image:"TM_556x45_E.png", group:"Available", crafting:"2x Refined Metal, 2x Gunpowder"},
+    {name:"7.62x39mm", image:"TM_762x39_E.png", group:"Available", crafting:"2x Refined Metal, 2x Gunpowder"},
+    {name:"9mm", image:"TM_9mm_E.png", group:"Available", crafting:"1x Refined Metal, 1x Gunpowder"},
+    {name:"12Ga", image:"TM_12ga_E.png", group:"Available", crafting:"1x Refined Metal, 4x Gunpowder, 4x Plastic"},
+    {name:".22 LR", image:"TM_22lr_E.png", group:"Unavailable", crafting:"??"},
+    {name:".45 ACP", image:"TM_45acp_E.png", group:"Unavailable", crafting:"??"},
+    {name:".50 BMG", image:"TM_50bmg_E.png", group:"Unavailable", crafting:"??"},
+    {name:"Nails", group:"Other", notes:"Used as ammo in the Nail Gun; commonly used for crafting. Unavailable"}
+  ];
+
+  mountWikiPage({
+    pageTitle:"Ammo",
+    pageSubtitle:"Ammo types + crafting requirements (Bullet Press required).",
+    officialUrl:"https://deadpoly.wiki/Ammo",
+    navActive:"ammo",
+    filters:["All","Available","Unavailable","Other"],
+    data: ammo
+  });
+</script>
 </body>
 </html>
