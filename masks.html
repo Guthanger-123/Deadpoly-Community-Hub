@@ -3,90 +3,148 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DeadPoly Hub — Masks</title>
-  <link rel="stylesheet" href="wiki-shared.css" />
+  <title>DeadPoly Wiki — Masks</title>
+  <link rel="stylesheet" href="wiki-shared.css">
 </head>
 <body>
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="top-left">
-        <a class="btn" href="index.html">← Menu</a>
-        <div class="brand">Wiki <span class="badge">Masks</span></div>
-      </div>
-      <div class="top-right">
-        <a class="btn" href="https://deadpoly.wiki/Masks" target="_blank" rel="noopener">Official Wiki ↗</a>
-      </div>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-left">
+      <a class="btn" href="wiki.html">← Wiki Hub</a>
+      <span class="pilltitle">Wiki</span>
+      <span class="pilltitle">Masks</span>
     </div>
+    <a id="officialBtn" class="btn" href="https://deadpoly.wiki/Masks" target="_blank" rel="noopener">Official Wiki ↗</a>
   </div>
+</div>
 
-  <div class="container">
-    <div class="shell">
-      <div class="panel side">
-        <h2>Wiki Categories</h2>
-        <div class="muted">Local pages (fast) + one official button above.</div>
-        <div class="nav">
-          <a class="" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
-<a class="" href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
-<a class="active" href="masks.html"><span>Masks</span><span class="small">→</span></a>
-<a class="" href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
-<a class="" href="armor.html"><span>Armor</span><span class="small">→</span></a>
-<a class="" href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
-<a class="" href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
-<a class="" href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
-<a class="" href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
-<a class="" href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
+<div class="shell">
+  <div class="layout">
+
+    <aside class="panel sidebar">
+      <h3>Wiki Categories</h3>
+      <div class="muted">Local pages (fast) + one official button above.</div>
+
+      <div class="navlist">
+        <a class="navbtn" href="wiki.html" data-nav="hub"><span class="label">Hub</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="helmets.html" data-nav="helmets"><span class="label">Helmets</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="masks.html" data-nav="masks"><span class="label">Masks</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="weapons.html" data-nav="weapons"><span class="label">Weapons</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="armor.html" data-nav="armor"><span class="label">Armor</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="ammo.html" data-nav="ammo"><span class="label">Ammo</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="backpacks.html" data-nav="backpacks"><span class="label">Backpacks</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="consumables.html" data-nav="consumables"><span class="label">Consumables</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="crafting.html" data-nav="crafting"><span class="label">Crafting</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="collectibles.html" data-nav="collectibles"><span class="label">Collectibles</span><span class="arrow">→</span></a>
+      </div>
+    </aside>
+
+    <main class="panel main">
+      <div class="head">
+        <div>
+          <h1 id="pageTitle">Masks</h1>
+          <div id="pageSubtitle" class="sub">Rebuild/community mask list. Images are loaded via the official DeadPoly wiki file host.</div>
         </div>
+        <div class="badge"><span class="dot"></span><span id="countBadge">0 items</span></div>
       </div>
 
-      <div class="panel main">
-        <div class="hero">
-          <div>
-            <h1>Masks</h1>
-            <div class="sub">This page is wired up and styled; content will be filled next.</div>
-          </div>
-          <div class="badge" id="countBadge">0 items</div>
-        </div>
-
-        <div class="toolbar">
-          <input id="q" class="search" placeholder="Search Masks..." />
-          <div class="pills" id="pills"></div>
-          <div class="viewtoggle">
-            <button class="btn" id="gridBtn" type="button">Cards</button>
-            <button class="btn" id="tableBtn" type="button">Table</button>
-          </div>
-        </div>
-
-        <div id="grid" class="grid"></div>
-
-        <div id="table" class="tablewrap" style="display:none">
-          <table>
-            <thead id="thead"></thead>
-            <tbody id="tbody"></tbody>
-          </table>
-        </div>
-
-        <div id="extras"></div>
+      <div class="controls">
+        <input id="q" class="search" placeholder="Search masks (ex: plague, reaper, goggles, gas)..." />
+        <div class="filters" id="filters"></div>
       </div>
-    </div>
+
+      <div id="cards" class="grid"></div>
+
+      <div class="note">
+        If a specific image filename doesn’t exist on the official wiki, the tile will still render (but the thumbnail may fail).
+        Fix by correcting the <code>image</code> field to the exact filename on deadpoly.wiki.
+      </div>
+    </main>
+
   </div>
+</div>
 
-  <script src="wiki-shared.js"></script>
-  <!-- page script -->
-  <script>
+<script src="wiki-shared.js"></script>
+<script>
+  const items = [
+    // Glasses & Goggles
+    {name:"Definitely Not Glasses", image:"TM_DefNotGlasses_I.png", group:"Glasses/Goggles", notes:"These are definitely not glasses"},
+    {name:"Definitely Not Glasses (v2)", image:"TM_DefNotGlasses2_I.png", group:"Glasses/Goggles", notes:"These are definitely not glasses"},
+    {name:"Definitely Not Glasses (v3)", image:"TM_DefNotGlasses3_I.png", group:"Glasses/Goggles", notes:"These are definitely not glasses"},
+    {name:"Poly Glasses", image:"TM_GlassesPoly_I.png", group:"Glasses/Goggles", notes:"Apparently if you wear these, you're a gangster"},
+    {name:"Goggles (Black)", image:"TM_Goggles_1_Black.png", group:"Glasses/Goggles", notes:"Eye protection, probably for skiing"},
+    {name:"Goggles (Orange)", image:"TM_Goggles_1_Orange.png", group:"Glasses/Goggles", notes:"Eye protection, probably for skiing"},
+    {name:"Goggles (Purple)", image:"TM_Goggles_1_Purple.png", group:"Glasses/Goggles", notes:"Eye protection, probably for skiing"},
+    {name:"Goggles (Red)", image:"TM_Goggles_1_Red.png", group:"Glasses/Goggles", notes:"Eye protection, probably for skiing"},
+    {name:"Goggles (White)", image:"TM_Goggles_1_White.png", group:"Glasses/Goggles", notes:"Eye protection, probably for skiing"},
+    {name:"Goggles (Steampunk)", image:"TM_Goggles_2_I.png", group:"Glasses/Goggles", notes:"Eye protection, probably for flying something during the renaissance"},
 
-document.getElementById("countBadge").textContent = "0 items";
-document.getElementById("grid").innerHTML = `
-  <div class="section">
-    <h2>Masks</h2>
-    <div class="small">No local data loaded yet for this page. Use the <b>Official Wiki</b> button up top.</div>
-  </div>
-`;
-document.getElementById("table").style.display = "none";
-document.getElementById("gridBtn").style.display = "none";
-document.getElementById("tableBtn").style.display = "none";
-document.getElementById("q").style.display = "none";
-document.getElementById("pills").style.display = "none";
+    // Masks
+    {name:"Bag Mask (Crazy)", image:"TM_BagMask_1_I.png", group:"Masks", notes:"A bag for those that are crazy"},
+    {name:"Bag Mask (Sad)", image:"TM_BagMask_2_I.png", group:"Masks", notes:"A bag for those that are sad"},
+    {name:"Bag Mask (Happy)", image:"TM_BagMask_3_I.png", group:"Masks", notes:"A bag for those that are happy"},
+    {name:"Bag Mask (Meh)", image:"TM_BagMask_4_I.png", group:"Masks", notes:"A bag for those that are meh"},
+    {name:"Blindfold", image:"TM_Blindfold_I.png", group:"Masks", notes:"Makes you look like Gojo"},
+    {name:"Carnival Mask (Red w/Gold)", image:"TM_CarnivalMask_1_I.png", group:"Masks", notes:"Creepy"},
+    {name:"Carnival Mask (Purple w/Grey)", image:"TM_CarnivalMask_2_I.png", group:"Masks", notes:"Creepy"},
+    {name:"Carnival Mask (Black w/Grey)", image:"TM_CarnivalMask_3_I.png", group:"Masks", notes:"Creepy"},
+    {name:"Chicken Head (Blue)", image:"TM_ChickenHeadB_E.png", group:"Masks", notes:"Cockadoodle-do"},
+    {name:"Chicken Head (White)", image:"TM_ChickenHeadW_E.png", group:"Masks", notes:"Cockadoodle-do"},
+    {name:"Chicken Head (Yellow)", image:"TM_ChickenHeadY_E.png", group:"Masks", notes:"Cockadoodle-do"},
+    {name:"Neck Collar", image:"TM_HelmOfMight_E.png", group:"Masks", notes:"You're just kinky if you wear this"},
+    {name:"Juggernaut Mask", image:"TM_JuggernautMask_I.png", group:"Masks", notes:"An ancient tribal mask"},
+    {name:"String Mask", image:"TM_LightMask_E.png", group:"Masks", notes:"A creepily made string mask"},
+    {name:"Crown of the Trickster", image:"TM_LokiHelm_I.png", group:"Masks", notes:"Tell Thor I said hi"},
+    {name:"Mask of the Lamb", image:"TM_LolLambMask_I.png", group:"Masks", notes:"And everywhere Lamb went..."},
+    {name:"Mask of the Wolf", image:"TM_LolWolfMask_I.png", group:"Masks", notes:"...Wolf was sure to follow!"},
+    {name:"Aku Aku Mask", image:"TM_MaskAkuAku_E.png", group:"Masks", notes:"Some sort of islander mask"},
+    {name:"Arcane Mask", image:"TM_MaskArcane_E.png", group:"Masks", notes:"Looks like a sci-fi gas mask"},
+    {name:"Cartoonz Mask", image:"TM_MaskCartoonz_I.png", group:"Masks", notes:""},
+    {name:"Mask Filter (Grey)", image:"TM_MaskFilter_I.png", group:"Masks", notes:"To aid in breathing while gasses are present"},
+    {name:"Gas Mask (Yellow)", image:"TM_MaskGas_1_I.png", group:"Masks", notes:"To aid in breathing while gasses are present"},
+    {name:"Gas Mask (Black)", image:"TM_MaskFilter_I.png", group:"Masks", notes:"To aid in breathing while gasses are present"},
+    {name:"Smoke Mask", image:"TM_MaskMKSmoke_E.png", group:"Masks", notes:"Mortal Kombat reference?"},
+    {name:"Scorpion Mask", image:"TM_MaskScorpion_E.png", group:"Masks", notes:"Mortal Kombat reference?"},
+    {name:"Sub Zero Mask", image:"TM_MaskSubZero_E.png", group:"Masks", notes:"Mortal Kombat reference?"},
+    {name:"Red X Mask", image:"TM_MaskRedX_I.png", group:"Masks", notes:"Definitely a Teen Titans reference"},
+    {name:"Circle Mask", image:"TM_MaskShapeCircle_E.png", group:"Masks", notes:"Squid game reference for sure"},
+    {name:"Square Mask", image:"TM_MaskShapeSquare_E.png", group:"Masks", notes:"Squid game reference for sure"},
+    {name:"Triangle Mask", image:"TM_MaskShapeTriangle_E.png", group:"Masks", notes:"Squid game reference for sure"},
+    {name:"Surgical Mask", image:"TM_MaskSurgical_I.png", group:"Masks", notes:"The mask of a skilled surgeon"},
+    {name:"Metal Collar (Grey)", image:"TM_MetalCollar_2_I.png", group:"Masks", notes:"Comes in other variants"},
+    {name:"Metal Collar (Blue)", image:"TM_MetalCollar_Blue_I.png", group:"Masks", notes:"Comes in other variants"},
+    {name:"Metal Collar (Green)", image:"TM_MetalCollar_Green_I.png", group:"Masks", notes:"Comes in other variants"},
+    {name:"Metal Collar (Also Grey)", image:"TM_MetalCollar_Plain_I.png", group:"Masks", notes:"Comes in other variants"},
+    {name:"Metal Collar (Red)", image:"TM_MetalCollar_Red_I.png", group:"Masks", notes:"Comes in other variants"},
+    {name:"Panda Head", image:"TM_PandaHead_E.png", group:"Masks", notes:"Do you like pandas?"},
+    {name:"Plague Doctor Mask", image:"TM_PlagueMask_E.png", group:"Masks", notes:"Bubonic plague era doctor mask"},
+    {name:"Pumpkin Mask", image:"TM_PumpkinMask_E.png", group:"Masks", notes:"Only available during Halloween"},
+    {name:"Reaper Mask (Black)", image:"TM_ReaperMaskB_E.png", group:"Masks", notes:"Nerf Reaper"},
+    {name:"Reaper Mask (White)", image:"TM_ReaperMaskW_E.png", group:"Masks", notes:"Nerf Reaper"},
+    {name:"Shaman Mask (White/Black)", image:"TM_ShamanMask_1_I.png", group:"Masks", notes:"Less intimidating tribal mask"},
+    {name:"Shaman Mask (Tan/Red)", image:"TM_ShamanMask_I.png", group:"Masks", notes:"Less intimidating tribal mask"},
+    {name:"Skull Mask (Red/Black)", image:"TM_SkullMask_1_I.png", group:"Masks", notes:"Typical apocalypse mask"},
+    {name:"Skull Mask (Blue/Black)", image:"TM_SkullMask_2_I.png", group:"Masks", notes:"Typical apocalypse mask"},
+    {name:"Skull Mask (Pink/Black)", image:"TM_SkullMask_3_I.png", group:"Masks", notes:"Typical apocalypse mask"},
+    {name:"Swirl Mask", image:"TM_SwirlMask_E.png", group:"Masks", notes:"Reminds me of Saw"},
 
-  </script>
+    // Emotional Masks
+    {name:"Mask of Badness", image:"TM_MoB_E.png", group:"Emotional", notes:"Not sure what these do yet", extra:"Stat 1–100"},
+    {name:"Mask of Gladness", image:"TM_MoG_E.png", group:"Emotional", notes:"Not sure what these do yet", extra:"Stat 1–100"},
+    {name:"Mask of Madness", image:"TM_MoM_E.png", group:"Emotional", notes:"Not sure what these do yet", extra:"Stat 1–100"},
+    {name:"Mask of Radness", image:"TM_MoR_E.png", group:"Emotional", notes:"Not sure what these do yet", extra:"Stat 1–100"},
+    {name:"Mask of Sadness", image:"TM_MoS_E.png", group:"Emotional", notes:"Not sure what these do yet", extra:"Stat 1–100"}
+  ];
+
+  mountWikiPage({
+    pageTitle: "Masks",
+    pageSubtitle: "Rebuild/community mask list. Images are loaded via the official DeadPoly wiki file host.",
+    officialUrl: "https://deadpoly.wiki/Masks",
+    navActive: "masks",
+    filters: ["All","Masks","Glasses/Goggles","Emotional"],
+    data: items
+  });
+</script>
 </body>
 </html>
