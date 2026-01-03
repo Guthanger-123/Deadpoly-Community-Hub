@@ -3,166 +3,92 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DeadPoly Hub — Armor</title>
-  <link rel="stylesheet" href="wiki-shared.css" />
+  <title>DeadPoly Wiki — Armor</title>
+  <link rel="stylesheet" href="wiki-shared.css">
 </head>
 <body>
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="top-left">
-        <a class="btn" href="index.html">← Menu</a>
-        <div class="brand">Wiki <span class="badge">Armor</span></div>
-      </div>
-      <div class="top-right">
-        <a class="btn" href="https://deadpoly.wiki/Armor" target="_blank" rel="noopener">Official Wiki ↗</a>
-      </div>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-left">
+      <a class="btn" href="wiki.html">← Wiki Hub</a>
+      <span class="pilltitle">Wiki</span>
+      <span class="pilltitle">Armor</span>
     </div>
+    <a id="officialBtn" class="btn" href="https://deadpoly.wiki/Armor" target="_blank" rel="noopener">Official Wiki ↗</a>
   </div>
+</div>
 
-  <div class="container">
-    <div class="shell">
-      <div class="panel side">
-        <h2>Wiki Categories</h2>
-        <div class="muted">Local pages (fast) + one official button above.</div>
-        <div class="nav">
-          <a class="" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
-<a class="" href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
-<a class="" href="masks.html"><span>Masks</span><span class="small">→</span></a>
-<a class="" href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
-<a class="active" href="armor.html"><span>Armor</span><span class="small">→</span></a>
-<a class="" href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
-<a class="" href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
-<a class="" href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
-<a class="" href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
-<a class="" href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
-        </div>
+<div class="shell">
+  <div class="layout">
+
+    <aside class="panel sidebar">
+      <h3>Wiki Categories</h3>
+      <div class="muted">Local pages (fast) + one official button above.</div>
+
+      <div class="navlist">
+        <a class="navbtn" href="wiki.html" data-nav="hub"><span class="label">Hub</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="helmets.html" data-nav="helmets"><span class="label">Helmets</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="masks.html" data-nav="masks"><span class="label">Masks</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="weapons.html" data-nav="weapons"><span class="label">Weapons</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="armor.html" data-nav="armor"><span class="label">Armor</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="ammo.html" data-nav="ammo"><span class="label">Ammo</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="backpacks.html" data-nav="backpacks"><span class="label">Backpacks</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="consumables.html" data-nav="consumables"><span class="label">Consumables</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="crafting.html" data-nav="crafting"><span class="label">Crafting</span><span class="arrow">→</span></a>
+        <a class="navbtn" href="collectibles.html" data-nav="collectibles"><span class="label">Collectibles</span><span class="arrow">→</span></a>
       </div>
+    </aside>
 
-      <div class="panel main">
-        <div class="hero">
-          <div>
-            <h1>Armor</h1>
-            <div class="sub">Body armor stats and variants. Click an item to open the official page.</div>
-          </div>
-          <div class="badge" id="countBadge">0 items</div>
-        </div>
-
-        <div class="toolbar">
-          <input id="q" class="search" placeholder="Search Armor..." />
-          <div class="pills" id="pills"></div>
-          <div class="viewtoggle">
-            <button class="btn" id="gridBtn" type="button">Cards</button>
-            <button class="btn" id="tableBtn" type="button">Table</button>
-          </div>
-        </div>
-
-        <div id="grid" class="grid"></div>
-
-        <div id="table" class="tablewrap" style="display:none">
-          <table>
-            <thead id="thead"></thead>
-            <tbody id="tbody"></tbody>
-          </table>
-        </div>
-
-        <div id="extras"></div>
-      </div>
-    </div>
-  </div>
-
-  <script src="wiki-shared.js"></script>
-  <!-- page script -->
-  <script>
-
-const DATA = [{"name": "Apocalypse Vest", "page": "Apocalypse Vest", "file": "apoc_black.png", "type": "Heavy", "hotbar": "7", "maxWeight": "25", "capacity": "2x8", "stdArmor": "10", "apArmor": "5", "notes": "Comes in 4 colors: Black, Blue, Green, and Desert"}, {"name": "Banana Suit", "page": "Banana Suit", "file": "banana_suit.jpg", "type": "Full Body", "hotbar": "4", "maxWeight": "N/A", "capacity": "N/A", "stdArmor": "N/A", "apArmor": "N/A", "notes": ""}, {"name": "Cat Pajama", "page": "Cat Pajama", "file": "cat_pajama_pink.png", "type": "Full Body", "hotbar": "4", "maxWeight": "N/A", "capacity": "N/A", "stdArmor": "N/A", "apArmor": "N/A", "notes": "Comes in multiple Colors: Pink"}, {"name": "Composite Armor", "page": "Composite Armor", "file": "composite_armor_blue.jpg", "type": "Full Body", "hotbar": "4", "maxWeight": "N/A", "capacity": "N/A", "stdArmor": "18", "apArmor": "0", "notes": "Comes in Multiple Colors: Blue, Yellow"}, {"name": "Dinosaur Pajama", "page": "Dinosaur Pajama", "file": "dinosaur_pajama_brown.jpg", "type": "Full Body", "hotbar": "4", "maxWeight": "N/A", "capacity": "N/A", "stdArmor": "N/A", "apArmor": "N/A", "notes": "Comes in multiple Colors: Brown"}, {"name": "Heavy Vest", "page": "Heavy Vest", "file": "heavy_green.png", "type": "Heavy", "hotbar": "7", "maxWeight": "25", "capacity": "2x8", "stdArmor": "10", "apArmor": "5", "notes": "Comes in 4 colors: Flat Green, Jungle, Desert, and Snowy"}, {"name": "Hot Dog Suit", "page": "Hot Dog Suit", "file": "hot_dog_suit_new.jpg", "type": "Full Body", "hotbar": "4", "maxWeight": "N/A", "capacity": "N/A", "stdArmor": "N/A", "apArmor": "N/A", "notes": "Has 2 variations: New and Damaged"}, {"name": "Karuta Armor", "page": "Karuta Armor", "file": "karuta_armor_yellow.jpg", "type": "Full Body", "hotbar": "4", "maxWeight": "N/A", "capacity": "N/A", "stdArmor": "18", "apArmor": "0", "notes": "Comes in multiple Colors: Red, Green, Yellow, Blue"}, {"name": "Karuta Armor (Samurai)", "page": "Karuta Armor (Samurai)", "file": "karuta_armor_samurai.jpg", "type": "Full Body", "hotbar": "4", "maxWeight": "N/A", "capacity": "N/A", "stdArmor": "18", "apArmor": "0", "notes": ""}, {"name": "Light Vest", "page": "Light Vest", "file": "light_green.png", "type": "Light", "hotbar": "4", "maxWeight": "N/A", "capacity": "N/A", "stdArmor": "4", "apArmor": "0", "notes": "Comes in 4 colors: Flat Green, Jungle, Desert, and Snowy"}, {"name": "Medium Vest", "page": "Medium Vest", "file": "medium_green.png", "type": "Medium", "hotbar": "5", "maxWeight": "10", "capacity": "1x8", "stdArmor": "7", "apArmor": "2", "notes": "Comes in 4 colors: Flat Green, Jungle, Desert, and Snowy"}, {"name": "Metal Armor", "page": "Metal Armor", "file": "Metal_Armor.png", "type": "Light", "hotbar": "4", "maxWeight": "N/A", "capacity": "N/A", "stdArmor": "15", "apArmor": "5", "notes": "Comes in 5 colors: Grey, Silver, White, Green, and Red"}, {"name": "Press Vest", "page": "Press Vest", "file": "press_vest.jpg", "type": "Medium", "hotbar": "5", "maxWeight": "12.5", "capacity": "1x8+4", "stdArmor": "7", "apArmor": "2", "notes": ""}, {"name": "SWAT Vest", "page": "SWAT Vest", "file": "Swat.png", "type": "Medium", "hotbar": "6", "maxWeight": "15", "capacity": "2x8", "stdArmor": "7", "apArmor": "3", "notes": ""}, {"name": "Tech Armor", "page": "Tech Armor", "file": "tech_armor_white.jpg", "type": "Full Body", "hotbar": "4", "maxWeight": "N/A", "capacity": "N/A", "stdArmor": "18", "apArmor": "0", "notes": "Comes in multiple Colors: Blue, Black, Red, White"}, {"name": "Tiger Pajama", "page": "Tiger Pajama", "file": "tiger_pajama_orange.jpg", "type": "Full Body", "hotbar": "4", "maxWeight": "N/A", "capacity": "N/A", "stdArmor": "N/A", "apArmor": "N/A", "notes": "Comes in multiple Colors: Green, Orange"}];
-
-const pillsEl = document.getElementById("pills");
-const qEl = document.getElementById("q");
-const gridEl = document.getElementById("grid");
-const tableEl = document.getElementById("table");
-const theadEl = document.getElementById("thead");
-const tbodyEl = document.getElementById("tbody");
-const countBadge = document.getElementById("countBadge");
-
-let mode = "grid";
-let typeFilter = "all";
-
-const types = Array.from(new Set(DATA.map(x => (x.type||"").trim()).filter(Boolean))).sort();
-makePills(pillsEl, [
-  {label:"All", value:"all", selected:true},
-  ...types.map(t => ({label:t, value:t}))
-], v => { typeFilter=v; render(); });
-
-document.getElementById("gridBtn").addEventListener("click", ()=>{ mode="grid"; render(); });
-document.getElementById("tableBtn").addEventListener("click", ()=>{ mode="table"; render(); });
-qEl.addEventListener("input", render);
-
-function matches(item, q){
-  const hay = (item.name + " " + (item.type||"") + " " + (item.notes||"")).toLowerCase();
-  if (q && !hay.includes(q)) return false;
-  if (typeFilter !== "all" && item.type !== typeFilter) return false;
-  return true;
-}
-
-function render(){
-  const q = qEl.value.trim().toLowerCase();
-  const items = DATA.filter(it => matches(it, q));
-  countBadge.textContent = items.length + " items";
-
-  if (mode === "table") {
-    gridEl.style.display = "none";
-    tableEl.style.display = "block";
-    theadEl.innerHTML = `<tr>
-      <th style="width:64px">Img</th>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Hotbar</th>
-      <th>Max Wt</th>
-      <th>Capacity</th>
-      <th>Std</th>
-      <th>AP</th>
-      <th>Notes</th>
-    </tr>`;
-    tbodyEl.innerHTML = items.map(it => {
-      const img = officialFileUrl(it.file);
-      const href = officialPageUrl(it.page || it.name);
-      return `<tr>
-        <td><img src="${img}" alt="" style="width:44px;height:44px;object-fit:contain"/></td>
-        <td><a href="${href}" target="_blank" rel="noopener">${escapeHtml(it.name)}</a></td>
-        <td>${escapeHtml(it.type)}</td>
-        <td>${escapeHtml(it.hotbar)}</td>
-        <td>${escapeHtml(it.maxWeight)}</td>
-        <td>${escapeHtml(it.capacity)}</td>
-        <td>${escapeHtml(it.stdArmor)}</td>
-        <td>${escapeHtml(it.apArmor)}</td>
-        <td>${escapeHtml(it.notes||"")}</td>
-      </tr>`;
-    }).join("");
-  } else {
-    tableEl.style.display = "none";
-    gridEl.style.display = "grid";
-    gridEl.innerHTML = items.map(it => {
-      const img = officialFileUrl(it.file);
-      const href = officialPageUrl(it.page || it.name);
-      return `<a class="card" href="${href}" target="_blank" rel="noopener">
-        <div class="thumb"><img src="${img}" alt=""/></div>
+    <main class="panel main">
+      <div class="head">
         <div>
-          <h3>${escapeHtml(it.name)}</h3>
-          <div class="meta">${escapeHtml(it.type)} • Hotbar ${escapeHtml(it.hotbar)} • Cap ${escapeHtml(it.capacity)}</div>
-          <div class="kv">
-            <span>Std ${escapeHtml(it.stdArmor)}</span>
-            <span>AP ${escapeHtml(it.apArmor)}</span>
-            <span>MaxWt ${escapeHtml(it.maxWeight)}</span>
-          </div>
-          ${it.notes ? `<div class="meta" style="margin-top:6px">${escapeHtml(it.notes)}</div>` : ``}
+          <h1 id="pageTitle">Armor</h1>
+          <div id="pageSubtitle" class="sub">Body armor list. Images are loaded from the official DeadPoly wiki file host.</div>
         </div>
-      </a>`;
-    }).join("");
-  }
-}
+        <div class="badge"><span class="dot"></span><span id="countBadge">0 items</span></div>
+      </div>
 
-render();
+      <div class="controls">
+        <input id="q" class="search" placeholder="Search armor (ex: SWAT, Tech, Heavy, Apocalypse)..." />
+        <div class="filters" id="filters"></div>
+      </div>
 
-  </script>
+      <div id="cards" class="grid"></div>
+    </main>
+
+  </div>
+</div>
+
+<script src="wiki-shared.js"></script>
+<script>
+  const armor = [
+    {name:"Apocalypse Vest", image:"apoc_black.png", group:"Heavy", slots:"7", maxWeight:"25 KG", capacity:"2x8", extra:"Std 10 / AP 5", notes:"Variants: Black, Blue, Green, Desert"},
+    {name:"Banana Suit", image:"banana_suit.jpg", group:"Full Body", slots:"4"},
+    {name:"Cat Pajama", image:"cat_pajama_pink.png", group:"Full Body", slots:"4", notes:"Variants: Pink (more exist)"},
+    {name:"Composite Armor", image:"composite_armor_blue.jpg", group:"Full Body", slots:"4", extra:"Std 18 / AP 0", notes:"Variants: Blue, Yellow"},
+    {name:"Dinosaur Pajama", image:"dinosaur_pajama_brown.jpg", group:"Full Body", slots:"4", notes:"Variants: Brown"},
+    {name:"Heavy Vest", image:"heavy_green.png", group:"Heavy", slots:"7", maxWeight:"25 KG", capacity:"2x8", extra:"Std 10 / AP 5", notes:"Variants: Flat Green, Jungle, Desert, Snowy"},
+    {name:"Hot Dog Suit", image:"hot_dog_suit_new.jpg", group:"Full Body", slots:"4", notes:"Variants: New, Damaged"},
+    {name:"Karuta Armor", image:"karuta_armor_yellow.jpg", group:"Full Body", slots:"4", extra:"Std 18 / AP 0", notes:"Variants: Red, Green, Yellow, Blue"},
+    {name:"Karuta Armor (Samurai)", image:"karuta_armor_samurai.jpg", group:"Full Body", slots:"4", extra:"Std 18 / AP 0"},
+    {name:"Light Vest", image:"light_green.png", group:"Light", slots:"4", extra:"Std 4 / AP 0", notes:"Variants: Flat Green, Jungle, Desert, Snowy"},
+    {name:"Medium Vest", image:"medium_green.png", group:"Medium", slots:"5", maxWeight:"10 KG", capacity:"1x8", extra:"Std 7 / AP 2", notes:"Variants: Flat Green, Jungle, Desert, Snowy"},
+    {name:"Metal Armor", image:"Metal_Armor.png", group:"Light", slots:"4", extra:"Std 15 / AP 5", notes:"Variants: Grey, Silver, White, Green, Red"},
+    {name:"Press Vest", image:"press_vest.jpg", group:"Medium", slots:"5", maxWeight:"12.5 KG", capacity:"1x8+4", extra:"Std 7 / AP 2"},
+    {name:"SWAT Vest", image:"Swat.png", group:"Medium", slots:"6", maxWeight:"15 KG", capacity:"2x8", extra:"Std 7 / AP 3"},
+    {name:"Tech Armor", image:"tech_armor_white.jpg", group:"Full Body", slots:"4", extra:"Std 18 / AP 0", notes:"Variants: Blue, Black, Red, White"},
+    {name:"Tiger Pajama", image:"tiger_pajama_orange.jpg", group:"Full Body", slots:"4", notes:"Variants: Green, Orange"}
+  ];
+
+  mountWikiPage({
+    pageTitle:"Armor",
+    pageSubtitle:"Body armor list. Images are loaded from the official DeadPoly wiki file host.",
+    officialUrl:"https://deadpoly.wiki/Armor",
+    navActive:"armor",
+    filters:["All","Light","Medium","Heavy","Full Body"],
+    data: armor
+  });
+</script>
 </body>
 </html>
