@@ -32,19 +32,24 @@
           <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
           <a class="active" href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
+
+        <div class="note">
+          <b>Cost fields</b> are built-in now.<br>
+          If the official wiki doesn’t list prices, you can fill <span class="code">buy</span> / <span class="code">sell</span> later.
+        </div>
       </div>
 
       <div class="panel main">
         <div class="hero">
           <div>
             <h1>Collectibles</h1>
-            <div class="sub">Official collectibles list + icons.</div>
+            <div class="sub">Neon signs, lamps, posters/signs/paintings, and toys. Images hotlinked from the official wiki.</div>
           </div>
           <div class="badge" id="countBadge">0 items</div>
         </div>
 
         <div class="toolbar">
-          <input id="q" class="search" placeholder="Search collectibles..." />
+          <input id="q" class="search" placeholder="Search Collectibles (ex: neon, poster, skull, lamp)..." />
           <div class="pills" id="pills"></div>
           <div class="viewtoggle">
             <button class="btn" id="gridBtn" type="button">Cards</button>
@@ -60,41 +65,63 @@
             <tbody id="tbody"></tbody>
           </table>
         </div>
+
+        <div class="section">
+          <h2>Notes</h2>
+          <div class="small">
+            Official collectibles page sections include Neon Signs, Lamps, Posters/Signs/Paintings, and Toys. :contentReference[oaicite:0]{index=0}
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
   <script src="wiki-shared.js"></script>
   <script>
-    // From official Collectibles page section we opened
-    const DATA = [
-      { name:"Gold Bar", image:"GoldBar_E.png", tags:["Collectible"] },
-      { name:"Holo Card (1)", image:"HoloCard_1_E.png", tags:["Collectible"] },
-      { name:"Holo Card (2)", image:"HoloCard_2_E.png", tags:["Collectible"] },
-      { name:"Holo Card (3)", image:"HoloCard_3_E.png", tags:["Collectible"] },
-      { name:"Holo Card (4)", image:"HoloCard_4_E.png", tags:["Collectible"] },
-      { name:"Holo Card (5)", image:"HoloCard_5_E.png", tags:["Collectible"] },
-      { name:"Holo Card (6)", image:"HoloCard_6_E.png", tags:["Collectible"] },
-      { name:"Holo Card (7)", image:"HoloCard_7_E.png", tags:["Collectible"] },
-      { name:"Holo Card (8)", image:"HoloCard_8_E.png", tags:["Collectible"] },
-      { name:"Money Clip", image:"MoneyClip_E.png", tags:["Collectible"] },
-      { name:"Necklace", image:"Necklace_E.png", tags:["Collectible"] },
-      { name:"Necklace (2)", image:"Necklace_2_E.png", tags:["Collectible"] },
-      { name:"Silver Coin", image:"SilverCoin_E.png", tags:["Collectible"] },
-      { name:"Silver Coin Stack", image:"SilverCoinStack_E.png", tags:["Collectible"] }
+    const items = [
+      // Neon Signs (from official page layout)
+      { name:"Skull", img:"skull neon.png", tags:["Neon Signs"], notes:"Red", id:"skull-neon", buy:null, sell:null },
+      { name:"Pineapple", img:"pineapple neon.png", tags:["Neon Signs"], notes:"Yellow/Green", id:"pineapple-neon", buy:null, sell:null  },
+      { name:"Kitty", img:"kitty neon.png", tags:["Neon Signs"], notes:"Pink", id:"kitty-neon", buy:null, sell:null  },
+      { name:"Dinosaur", img:"dinosaur neon.png", tags:["Neon Signs"], notes:"Green", id:"dinosaur-neon", buy:null, sell:null  },
+      { name:"Dragon", img:"dragon neon.png", tags:["Neon Signs"], notes:"Green/Red/Yellow", id:"dragon-neon", buy:null, sell:null  },
+
+      // Lamps
+      { name:"Desk Lamp", img:"desk lamp.png", tags:["Lamps"], notes:"Green", id:"desk-lamp", buy:null, sell:null  },
+      { name:"Cactus Nightlight", img:"cactus nightlight.png", tags:["Lamps"], notes:"Green", id:"cactus-nightlight", buy:null, sell:null  },
+      { name:"Spooky Lamp", img:"spooky lamp.png", tags:["Lamps"], notes:"Red", id:"spooky-lamp", buy:null, sell:null  },
+      { name:"Luxo Lamp", img:"luxo lamp.png", tags:["Lamps"], notes:"White", id:"luxo-lamp", buy:null, sell:null  },
+
+      // Posters, Signs & Paintings
+      { name:"QR Sign", img:"qr sign.png", tags:["Posters, Signs & Paintings"], notes:"Scannable QR code", id:"qr-sign", buy:null, sell:null  },
+      { name:"Small Sign", img:"small sign.png", tags:["Posters, Signs & Paintings"], notes:'"Face Mask Required"', id:"small-sign", buy:null, sell:null  },
+      { name:"No Firearms Sign", img:"no firearms sign.png", tags:["Posters, Signs & Paintings"], notes:'"No Firearms or Weapons Permitted On This Property"', id:"no-firearms-sign", buy:null, sell:null  },
+      { name:"Poster (Get Back To Work)", img:"poster1.png", tags:["Posters, Signs & Paintings"], notes:'"Get Back To Work"', id:"poster-get-back-to-work", buy:null, sell:null  },
+      { name:"Poster (Stonks)", img:"poster2.png", tags:["Posters, Signs & Paintings"], notes:'P/L graph of "stonks"', id:"poster-stonks", buy:null, sell:null  },
+      { name:"Poster (Profits)", img:"poster3.png", tags:["Posters, Signs & Paintings"], notes:'"Profits"', id:"poster-profits", buy:null, sell:null  },
+      { name:"Painting (Lonely Tree)", img:"painting1.png", tags:["Posters, Signs & Paintings"], notes:"A single lonely tree", id:"painting-lonely-tree", buy:null, sell:null  },
+      { name:"Painting (Geometric)", img:"painting2.png", tags:["Posters, Signs & Paintings"], notes:"Geometric shapes/triangles", id:"painting-geometric", buy:null, sell:null  },
+      { name:"Painting (Umbrella)", img:"painting3.png", tags:["Posters, Signs & Paintings"], notes:"Two people under an umbrella", id:"painting-umbrella", buy:null, sell:null  },
+
+      // Toys section exists on official page; items not shown in the snippet we pulled.
+      { name:"Toys (section)", img:"", tags:["Toys"], notes:"Official page has a Toys section (add items here).", id:"toys-section" }
     ];
 
-    const COLUMNS = [
-      { key:"image", label:"Image" },
+    const columns = [
+      { key:"img", label:"Image" },
       { key:"name", label:"Name" },
-      { key:"notes", label:"Notes" }
+      { key:"notes", label:"Notes" },
+      { key:"buy", label:"Buy" },
+      { key:"sell", label:"Sell" }
     ];
 
-    renderPage({
-      title: "Collectibles",
-      data: DATA,
-      columns: COLUMNS,
-      defaultView: "cards"
+    wirePage({
+      title:"Collectibles",
+      items,
+      columns,
+      activeHref:"collectibles.html",
+      placeholderText:"Search Collectibles..."
     });
   </script>
 </body>
