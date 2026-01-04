@@ -32,19 +32,23 @@
           <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
           <a href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
+
+        <div class="note">
+          Official crafting stations list includes Workbench/Anvil/Mortar &amp; Pestle/Bullet Press and Production stations. :contentReference[oaicite:1]{index=1}
+        </div>
       </div>
 
       <div class="panel main">
         <div class="hero">
           <div>
-            <h1>Crafting Stations</h1>
-            <div class="sub">Local copy of the station list + requirements + uses.</div>
+            <h1>Crafting</h1>
+            <div class="sub">Crafting stations and production stations. Costs are optional fields you can fill later.</div>
           </div>
           <div class="badge" id="countBadge">0 items</div>
         </div>
 
         <div class="toolbar">
-          <input id="q" class="search" placeholder="Search stations..." />
+          <input id="q" class="search" placeholder="Search Crafting (ex: anvil, press, generator)..." />
           <div class="pills" id="pills"></div>
           <div class="viewtoggle">
             <button class="btn" id="gridBtn" type="button">Cards</button>
@@ -62,44 +66,79 @@
         </div>
 
         <div class="section">
-          <h2>Tip</h2>
-          <div class="small muted">If you want station icons: give me the official wiki file names for each station image and I’ll wire them in.</div>
+          <h2>Source</h2>
+          <div class="small">
+            Data mirrored from the official Crafting Stations page (station, how to get, requirements, uses). :contentReference[oaicite:2]{index=2}
+          </div>
         </div>
+
       </div>
     </div>
   </div>
 
   <script src="wiki-shared.js"></script>
   <script>
-    // Structured from official Crafting_Stations table text.
-    const DATA = [
+    const items = [
       // Crafting Stations
-      { name:"Workbench", image:null, tags:["Crafting"], sub:"How to get: Craft in Inventory", notes:"Req: 100x Wood, 50x Metal. Uses: Primarily crafts Anvil + Mortar & Pestle." },
-      { name:"Anvil", image:null, tags:["Crafting"], sub:"How to get: Craft with Workbench", notes:"Req: 150x Metal. Uses: Crates/benches; ONLY way to make Refined Metal." },
-      { name:"Mortar & Pestle", image:null, tags:["Crafting"], sub:"How to get: Craft with Workbench", notes:"Req: 25x Stone. Uses: Cornmeal for Distiller." },
-      { name:"Bullet Press", image:null, tags:["Crafting"], sub:"How to get: Craft with Anvil", notes:"Req: 50x Metal. Uses: Craft Ammo." },
+      { name:"Workbench", tags:["Station","Crafting Stations"], id:"workbench",
+        notes:"Craft In Inventory",
+        kv:[{k:"Requirements",v:"100x Wood, 50x Metal"},{k:"Uses",v:"Craft Anvil + Mortar & Pestle"}],
+        buy:null, sell:null
+      },
+      { name:"Anvil", tags:["Station","Crafting Stations"], id:"anvil",
+        notes:"Craft With Workbench",
+        kv:[{k:"Requirements",v:"150x Metal"},{k:"Uses",v:"Crates/benches + Refined Metal"}]
+      },
+      { name:"Mortar & Pestle", tags:["Station","Crafting Stations"], id:"mortar-pestle",
+        notes:"Craft With Workbench",
+        kv:[{k:"Requirements",v:"25x Stone"},{k:"Uses",v:"Craft Cornmeal (Distiller)"}]
+      },
+      { name:"Bullet Press", tags:["Station","Crafting Stations"], id:"bullet-press",
+        notes:"Craft with Anvil",
+        kv:[{k:"Requirements",v:"50x Metal"},{k:"Uses",v:"Craft Ammo"}]
+      },
 
       // Production
-      { name:"Distiller", image:null, tags:["Production"], sub:"How to get: Crafted at Anvil", notes:"Req: 100x Metal. Uses: Make Ethanol using Cornmeal + Water." },
-      { name:"Generator (Home-Made)", image:null, tags:["Production"], sub:"How to get: Crafted at Anvil", notes:"Req: 75x Metal, 25x Plastic, 10x Wire, 2x Sparkplugs, 1x Circuit Board. Uses: Powers structures; uses Ethanol." },
-      { name:"Generator (Found)", image:null, tags:["Production"], sub:"How to get: Found in world", notes:"Req: N/A. Uses: Powers structures; uses Propane." },
-      { name:"Dew Collector", image:null, tags:["Production"], sub:"How to get: Crafted in Build Menu", notes:"Req: 40x Fiber, 30x Wood, 30x Metal. Uses: Slowly refills water bottles placed inside." },
-      { name:"Crop Plot", image:null, tags:["Production"], sub:"How to get: Crafted in Build Menu", notes:"Req: 20x Wood. Uses: When watered, produces Corn or Potatoes at random." },
-      { name:"Salvager", image:null, tags:["Production"], sub:"How to get: Crafted in Build Menu", notes:"Req: 50x Metal. Uses: Scrap items for resources." }
+      { name:"Distiller", tags:["Production"], id:"distiller",
+        notes:"Crafted at Anvil",
+        kv:[{k:"Requirements",v:"x100 Metal"},{k:"Uses",v:"Produce Ethanol (Cornmeal + Water)"}]
+      },
+      { name:"Generator (Home-Made)", tags:["Production"], id:"generator-home-made",
+        notes:"Crafted at anvil",
+        kv:[{k:"Requirements",v:"x75 Metal, x25 Plastic, x10 Wire, x2 Sparkplugs, x1 Circuit Board"},
+            {k:"Uses",v:"Powers structures; uses Ethanol"}]
+      },
+      { name:"Generator (Found)", tags:["Production"], id:"generator-found",
+        notes:"Found in the world",
+        kv:[{k:"Requirements",v:"N/A"},{k:"Uses",v:"Runs off Propane"}]
+      },
+      { name:"Dew Collector", tags:["Production"], id:"dew-collector",
+        notes:"Crafted in Build Menu",
+        kv:[{k:"Requirements",v:"x40 Fiber, x30 Wood, x30 Metal"},{k:"Uses",v:"Refills water bottles placed in inventory"}]
+      },
+      { name:"Crop Plot", tags:["Production"], id:"crop-plot",
+        notes:"Crafted in Build Menu",
+        kv:[{k:"Requirements",v:"x20 Wood"},{k:"Uses",v:"When watered, produces Corn or Potatoes at random"}]
+      },
+      { name:"Salvager", tags:["Production"], id:"salvager",
+        notes:"Crafted in Build Menu",
+        kv:[{k:"Requirements",v:"x50 Metal"},{k:"Uses",v:"Scrap unwanted items for resources"}]
+      }
     ];
 
-    const COLUMNS = [
-      { key:"image", label:"Image" },
+    const columns = [
       { key:"name", label:"Station" },
-      { key:"sub", label:"How to get" },
-      { key:"notes", label:"Requirements / Uses" }
+      { key:"notes", label:"How to Get" },
+      { key:"buy", label:"Buy" },
+      { key:"sell", label:"Sell" }
     ];
 
-    renderPage({
-      title: "Crafting Stations",
-      data: DATA,
-      columns: COLUMNS,
-      defaultView: "cards"
+    wirePage({
+      title:"Crafting",
+      items,
+      columns,
+      activeHref:"crafting.html",
+      placeholderText:"Search Crafting..."
     });
   </script>
 </body>
