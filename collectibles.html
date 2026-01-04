@@ -25,16 +25,12 @@
         <h2>Wiki Categories</h2>
         <div class="muted">Local pages (fast) + one official button above.</div>
         <div class="nav">
-          <a class="" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
-<a class="" href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
-<a class="" href="masks.html"><span>Masks</span><span class="small">→</span></a>
-<a class="" href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
-<a class="" href="armor.html"><span>Armor</span><span class="small">→</span></a>
-<a class="" href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
-<a class="" href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
-<a class="" href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
-<a class="" href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
-<a class="active" href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
+          <a href="wiki.html"><span>Hub</span><span class="small">→</span></a>
+          <a href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
+          <a href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
+          <a href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
+          <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
+          <a class="active" href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
       </div>
 
@@ -42,13 +38,13 @@
         <div class="hero">
           <div>
             <h1>Collectibles</h1>
-            <div class="sub">This page is wired up and styled; content will be filled next.</div>
+            <div class="sub">Official collectibles list + icons.</div>
           </div>
           <div class="badge" id="countBadge">0 items</div>
         </div>
 
         <div class="toolbar">
-          <input id="q" class="search" placeholder="Search Collectibles..." />
+          <input id="q" class="search" placeholder="Search collectibles..." />
           <div class="pills" id="pills"></div>
           <div class="viewtoggle">
             <button class="btn" id="gridBtn" type="button">Cards</button>
@@ -64,29 +60,42 @@
             <tbody id="tbody"></tbody>
           </table>
         </div>
-
-        <div id="extras"></div>
       </div>
     </div>
   </div>
 
   <script src="wiki-shared.js"></script>
-  <!-- page script -->
   <script>
+    // From official Collectibles page section we opened
+    const DATA = [
+      { name:"Gold Bar", image:"GoldBar_E.png", tags:["Collectible"] },
+      { name:"Holo Card (1)", image:"HoloCard_1_E.png", tags:["Collectible"] },
+      { name:"Holo Card (2)", image:"HoloCard_2_E.png", tags:["Collectible"] },
+      { name:"Holo Card (3)", image:"HoloCard_3_E.png", tags:["Collectible"] },
+      { name:"Holo Card (4)", image:"HoloCard_4_E.png", tags:["Collectible"] },
+      { name:"Holo Card (5)", image:"HoloCard_5_E.png", tags:["Collectible"] },
+      { name:"Holo Card (6)", image:"HoloCard_6_E.png", tags:["Collectible"] },
+      { name:"Holo Card (7)", image:"HoloCard_7_E.png", tags:["Collectible"] },
+      { name:"Holo Card (8)", image:"HoloCard_8_E.png", tags:["Collectible"] },
+      { name:"Money Clip", image:"MoneyClip_E.png", tags:["Collectible"] },
+      { name:"Necklace", image:"Necklace_E.png", tags:["Collectible"] },
+      { name:"Necklace (2)", image:"Necklace_2_E.png", tags:["Collectible"] },
+      { name:"Silver Coin", image:"SilverCoin_E.png", tags:["Collectible"] },
+      { name:"Silver Coin Stack", image:"SilverCoinStack_E.png", tags:["Collectible"] }
+    ];
 
-document.getElementById("countBadge").textContent = "0 items";
-document.getElementById("grid").innerHTML = `
-  <div class="section">
-    <h2>Collectibles</h2>
-    <div class="small">No local data loaded yet for this page. Use the <b>Official Wiki</b> button up top.</div>
-  </div>
-`;
-document.getElementById("table").style.display = "none";
-document.getElementById("gridBtn").style.display = "none";
-document.getElementById("tableBtn").style.display = "none";
-document.getElementById("q").style.display = "none";
-document.getElementById("pills").style.display = "none";
+    const COLUMNS = [
+      { key:"image", label:"Image" },
+      { key:"name", label:"Name" },
+      { key:"notes", label:"Notes" }
+    ];
 
+    renderPage({
+      title: "Collectibles",
+      data: DATA,
+      columns: COLUMNS,
+      defaultView: "cards"
+    });
   </script>
 </body>
 </html>
