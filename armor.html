@@ -93,11 +93,12 @@ FILE: armor.html
       { name:"Tiger Pajama", image:"tiger_pajama_orange.jpg", tags:["Full Body"], sub:"Hotbar 4", id:"tiger-paja",notes:"Colors: Green, Orange", buy:null, sell:--   }
     ];
 
-    const COLUMNS = [
-      { key:"image", label:"Image" },
+    const columns = [
+      { key:"img", label:"Image" },
       { key:"name", label:"Name" },
-      { key:"sub", label:"Type / Capacity" },
-      { key:"notes", label:"Stats / Notes" }
+      { key:"notes", label:"Slots / Notes" },
+      { key:"buy", label:"Buy" },
+      { key:"sell", label:"Sell" }
     ];
 
     renderPage({ title:"Armor", data:DATA, columns:COLUMNS, defaultView:"cards" });
