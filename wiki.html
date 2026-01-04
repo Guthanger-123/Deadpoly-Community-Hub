@@ -1,90 +1,93 @@
+<!-- =========================
+FILE: wiki.html
+Put this in the same folder as:
+- wiki-shared.css
+- wiki-shared.js
+========================= -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DeadPoly Community Hub — Wiki</title>
-  <link rel="stylesheet" href="wiki-shared.css">
+  <title>DeadPoly Hub — Wiki</title>
+  <link rel="stylesheet" href="wiki-shared.css" />
 </head>
 <body>
-
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="topbar-left">
-      <a class="btn" href="index.html">← Menu</a>
-      <span class="pilltitle">Wiki</span>
-      <span class="pilltitle">Wiki Hub</span>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="top-left">
+        <a class="btn" href="index.html">← Menu</a>
+        <div class="brand">Wiki <span class="badge">Hub</span></div>
+      </div>
+      <div class="top-right">
+        <a class="btn" href="https://deadpoly.wiki/Main_Page" target="_blank" rel="noopener">Official Wiki ↗</a>
+      </div>
     </div>
-    <a id="officialBtn" class="btn" href="https://deadpoly.wiki/Main_Page" target="_blank" rel="noopener">Official Wiki ↗</a>
   </div>
-</div>
 
-<div class="shell">
-  <div class="layout">
-
-    <aside class="panel sidebar">
-      <h3>Wiki Categories</h3>
-      <div class="muted">Local pages (fast) + one official button above.</div>
-
-      <div class="navlist">
-        <a class="navbtn" href="wiki.html" data-nav="hub"><span class="label">Hub</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="helmets.html" data-nav="helmets"><span class="label">Helmets</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="masks.html" data-nav="masks"><span class="label">Masks</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="weapons.html" data-nav="weapons"><span class="label">Weapons</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="armor.html" data-nav="armor"><span class="label">Armor</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="ammo.html" data-nav="ammo"><span class="label">Ammo</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="backpacks.html" data-nav="backpacks"><span class="label">Backpacks</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="consumables.html" data-nav="consumables"><span class="label">Consumables</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="crafting.html" data-nav="crafting"><span class="label">Crafting</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="collectibles.html" data-nav="collectibles"><span class="label">Collectibles</span><span class="arrow">→</span></a>
-      </div>
-    </aside>
-
-    <main class="panel main">
-      <div class="head">
-        <div>
-          <h1 id="pageTitle">Wiki Hub</h1>
-          <div id="pageSubtitle" class="sub">Pick a category. Every page keeps the same look + pulls images from the official DeadPoly wiki.</div>
+  <div class="container">
+    <div class="shell">
+      <div class="panel side">
+        <h2>Wiki Categories</h2>
+        <div class="muted">Local pages (fast) + one official button above.</div>
+        <div class="nav">
+          <a class="active" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
+          <a href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
+          <a href="masks.html"><span>Masks</span><span class="small">→</span></a>
+          <a href="armor.html"><span>Armor</span><span class="small">→</span></a>
+          <a href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
+          <a href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
+          <a href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
+          <a href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
+          <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
+          <a href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
-        <div class="badge"><span class="dot"></span><span id="countBadge">9 pages</span></div>
       </div>
 
-      <div class="controls">
-        <input id="q" class="search" placeholder="Search pages..." />
-        <div class="filters" id="filters"></div>
+      <div class="panel main">
+        <div class="hero">
+          <div>
+            <h1>Community Wiki Hub</h1>
+            <div class="sub">Pick a category on the left. Pages are local + images hotlinked from the official DeadPoly wiki.</div>
+          </div>
+          <div class="badge">v1</div>
+        </div>
+
+        <div class="section">
+          <h2>Quick links</h2>
+          <div class="grid" style="margin-top:10px">
+            <a class="card" href="weapons.html" style="text-decoration:none">
+              <div class="thumb"><img referrerpolicy="no-referrer" src="https://deadpoly.wiki/Special:FilePath/DpAkm.png" alt="Weapons"></div>
+              <div><h3>Weapons</h3><div class="meta">Melee + firearms + utility</div></div>
+            </a>
+
+            <a class="card" href="masks.html" style="text-decoration:none">
+              <div class="thumb"><img referrerpolicy="no-referrer" src="https://deadpoly.wiki/Special:FilePath/TM_PlagueMask_E.png" alt="Masks"></div>
+              <div><h3>Masks</h3><div class="meta">Masks + glasses/goggles + emotional masks</div></div>
+            </a>
+
+            <a class="card" href="armor.html" style="text-decoration:none">
+              <div class="thumb"><img referrerpolicy="no-referrer" src="https://deadpoly.wiki/Special:FilePath/apoc_black.png" alt="Armor"></div>
+              <div><h3>Armor</h3><div class="meta">Body armor list</div></div>
+            </a>
+
+            <a class="card" href="ammo.html" style="text-decoration:none">
+              <div class="thumb"><img referrerpolicy="no-referrer" src="https://deadpoly.wiki/Special:FilePath/TM_556x45_E.png" alt="Ammo"></div>
+              <div><h3>Ammo</h3><div class="meta">Ammo types + crafting requirements</div></div>
+            </a>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>How images work</h2>
+          <div class="small muted">
+            These pages use <b>Special:FilePath</b> on the official wiki to display images.
+            If an image doesn’t load, it usually means the filename on the official wiki changed.
+          </div>
+        </div>
+
       </div>
-
-      <div id="cards" class="grid"></div>
-
-      <div class="note">
-        If images don’t show: you likely have a mixed-content blocker or you’re offline.
-        These pages load images from <b>deadpoly.wiki</b> using MediaWiki <code>Special:FilePath</code>.
-      </div>
-    </main>
-
+    </div>
   </div>
-</div>
-
-<script src="wiki-shared.js"></script>
-<script>
-  mountWikiPage({
-    pageTitle: "Wiki Hub",
-    pageSubtitle: "Pick a category. Every page keeps the same look + pulls images from the official DeadPoly wiki.",
-    officialUrl: "https://deadpoly.wiki/Main_Page",
-    navActive: "hub",
-    filters: ["All"],
-    data: [
-      { name:"Helmets", group:"Page", notes:"Open local page", link:"helmets.html" },
-      { name:"Masks", group:"Page", notes:"Open local page", link:"masks.html" },
-      { name:"Weapons", group:"Page", notes:"Open local page", link:"weapons.html" },
-      { name:"Armor", group:"Page", notes:"Open local page", link:"armor.html" },
-      { name:"Ammo", group:"Page", notes:"Open local page", link:"ammo.html" },
-      { name:"Backpacks", group:"Page", notes:"Open local page", link:"backpacks.html" },
-      { name:"Consumables", group:"Page", notes:"Open local page", link:"consumables.html" },
-      { name:"Crafting Stations", group:"Page", notes:"Open local page", link:"crafting.html" },
-      { name:"Collectibles", group:"Page", notes:"Open local page", link:"collectibles.html" }
-    ]
-  });
-</script>
 </body>
 </html>
