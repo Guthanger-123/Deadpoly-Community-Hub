@@ -14,7 +14,7 @@
         <div class="brand">Wiki <span class="badge">Crafting</span></div>
       </div>
       <div class="top-right">
-        <a class="btn" href="https://deadpoly.wiki/Crafting" target="_blank" rel="noopener">Official Wiki ↗</a>
+        <a class="btn" href="https://deadpoly.wiki/Crafting_Stations" target="_blank" rel="noopener">Official Wiki ↗</a>
       </div>
     </div>
   </div>
@@ -25,30 +25,26 @@
         <h2>Wiki Categories</h2>
         <div class="muted">Local pages (fast) + one official button above.</div>
         <div class="nav">
-          <a class="" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
-<a class="" href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
-<a class="" href="masks.html"><span>Masks</span><span class="small">→</span></a>
-<a class="" href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
-<a class="" href="armor.html"><span>Armor</span><span class="small">→</span></a>
-<a class="" href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
-<a class="" href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
-<a class="" href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
-<a class="active" href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
-<a class="" href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
+          <a href="wiki.html"><span>Hub</span><span class="small">→</span></a>
+          <a href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
+          <a href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
+          <a class="active" href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
+          <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
+          <a href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
       </div>
 
       <div class="panel main">
         <div class="hero">
           <div>
-            <h1>Crafting</h1>
-            <div class="sub">This page is wired up and styled; content will be filled next.</div>
+            <h1>Crafting Stations</h1>
+            <div class="sub">Local copy of the station list + requirements + uses.</div>
           </div>
           <div class="badge" id="countBadge">0 items</div>
         </div>
 
         <div class="toolbar">
-          <input id="q" class="search" placeholder="Search Crafting..." />
+          <input id="q" class="search" placeholder="Search stations..." />
           <div class="pills" id="pills"></div>
           <div class="viewtoggle">
             <button class="btn" id="gridBtn" type="button">Cards</button>
@@ -65,28 +61,46 @@
           </table>
         </div>
 
-        <div id="extras"></div>
+        <div class="section">
+          <h2>Tip</h2>
+          <div class="small muted">If you want station icons: give me the official wiki file names for each station image and I’ll wire them in.</div>
+        </div>
       </div>
     </div>
   </div>
 
   <script src="wiki-shared.js"></script>
-  <!-- page script -->
   <script>
+    // Structured from official Crafting_Stations table text.
+    const DATA = [
+      // Crafting Stations
+      { name:"Workbench", image:null, tags:["Crafting"], sub:"How to get: Craft in Inventory", notes:"Req: 100x Wood, 50x Metal. Uses: Primarily crafts Anvil + Mortar & Pestle." },
+      { name:"Anvil", image:null, tags:["Crafting"], sub:"How to get: Craft with Workbench", notes:"Req: 150x Metal. Uses: Crates/benches; ONLY way to make Refined Metal." },
+      { name:"Mortar & Pestle", image:null, tags:["Crafting"], sub:"How to get: Craft with Workbench", notes:"Req: 25x Stone. Uses: Cornmeal for Distiller." },
+      { name:"Bullet Press", image:null, tags:["Crafting"], sub:"How to get: Craft with Anvil", notes:"Req: 50x Metal. Uses: Craft Ammo." },
 
-document.getElementById("countBadge").textContent = "0 items";
-document.getElementById("grid").innerHTML = `
-  <div class="section">
-    <h2>Crafting</h2>
-    <div class="small">No local data loaded yet for this page. Use the <b>Official Wiki</b> button up top.</div>
-  </div>
-`;
-document.getElementById("table").style.display = "none";
-document.getElementById("gridBtn").style.display = "none";
-document.getElementById("tableBtn").style.display = "none";
-document.getElementById("q").style.display = "none";
-document.getElementById("pills").style.display = "none";
+      // Production
+      { name:"Distiller", image:null, tags:["Production"], sub:"How to get: Crafted at Anvil", notes:"Req: 100x Metal. Uses: Make Ethanol using Cornmeal + Water." },
+      { name:"Generator (Home-Made)", image:null, tags:["Production"], sub:"How to get: Crafted at Anvil", notes:"Req: 75x Metal, 25x Plastic, 10x Wire, 2x Sparkplugs, 1x Circuit Board. Uses: Powers structures; uses Ethanol." },
+      { name:"Generator (Found)", image:null, tags:["Production"], sub:"How to get: Found in world", notes:"Req: N/A. Uses: Powers structures; uses Propane." },
+      { name:"Dew Collector", image:null, tags:["Production"], sub:"How to get: Crafted in Build Menu", notes:"Req: 40x Fiber, 30x Wood, 30x Metal. Uses: Slowly refills water bottles placed inside." },
+      { name:"Crop Plot", image:null, tags:["Production"], sub:"How to get: Crafted in Build Menu", notes:"Req: 20x Wood. Uses: When watered, produces Corn or Potatoes at random." },
+      { name:"Salvager", image:null, tags:["Production"], sub:"How to get: Crafted in Build Menu", notes:"Req: 50x Metal. Uses: Scrap items for resources." }
+    ];
 
+    const COLUMNS = [
+      { key:"image", label:"Image" },
+      { key:"name", label:"Station" },
+      { key:"sub", label:"How to get" },
+      { key:"notes", label:"Requirements / Uses" }
+    ];
+
+    renderPage({
+      title: "Crafting Stations",
+      data: DATA,
+      columns: COLUMNS,
+      defaultView: "cards"
+    });
   </script>
 </body>
 </html>
