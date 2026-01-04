@@ -1,150 +1,196 @@
-// Shared helpers for all wiki pages
+// Shared helpers for all local wiki pages
 
-function dpFileUrl(fileName){
-  // Pull images from OFFICIAL wiki via Special:FilePath
-  // Works well for hotlinking without downloading assets.
-  return "https://deadpoly.wiki/Special:FilePath/" + encodeURIComponent(fileName);
+const OFFICIAL_FILEPATH = "https://deadpoly.wiki/Special:FilePath/";
+
+function imgUrl(fileName){
+  if(!fileName) return "";
+  // MediaWiki Special:FilePath expects exact file name
+  return OFFICIAL_FILEPATH + encodeURIComponent(fileName);
 }
 
-function escapeHtml(s){
-  return String(s ?? "").replace(/[&<>"']/g, m => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[m]));
+function slugId(s){
+  return String(s || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,"-")
+    .replace(/(^-|-$)/g,"");
 }
 
-function buildPills(pillsEl, tags, onPick){
-  pillsEl.innerHTML = "";
-  const all = ["All", ...tags];
-  all.forEach((t, i) => {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "pill" + (i === 0 ? " active" : "");
-    b.textContent = t;
-    b.onclick = () => {
-      [...pillsEl.children].forEach(x => x.classList.remove("active"));
-      b.classList.add("active");
-      onPick(t);
-    };
-    pillsEl.appendChild(b);
+function setActiveNav(activeHref){
+  document.querySelectorAll(".nav a").forEach(a=>{
+    if(a.getAttribute("href") === activeHref) a.classList.add("active");
+    else a.classList.remove("active");
   });
 }
 
-function renderPage({
-  title,
-  data,
-  columns,
-  defaultView = "cards",
-  countBadgeId = "countBadge",
-  qId = "q",
-  pillsId = "pills",
-  gridId = "grid",
-  tableId = "table",
-  theadId = "thead",
-  tbodyId = "tbody",
-  gridBtnId = "gridBtn",
-  tableBtnId = "tableBtn",
-}){
-  const countBadge = document.getElementById(countBadgeId);
-  const qEl = document.getElementById(qId);
-  const pillsEl = document.getElementById(pillsId);
-  const gridEl = document.getElementById(gridId);
-  const tableWrap = document.getElementById(tableId);
-  const theadEl = document.getElementById(theadId);
-  const tbodyEl = document.getElementById(tbodyId);
-  const gridBtn = document.getElementById(gridBtnId);
-  const tableBtn = document.getElementById(tableBtnId);
+function buildPills(items, pillsEl, onChange){
+  const tags = [...new Set(items.flatMap(i => i.tags || []))].sort();
+  pillsEl.innerHTML = "";
+  let active = "All";
 
-  let activeTag = "All";
-  let view = defaultView;
-
-  const allTags = [...new Set(data.flatMap(x => x.tags || []))].sort();
-  buildPills(pillsEl, allTags, (t) => { activeTag = t; draw(); });
-
-  function matches(item, q){
-    if(!q) return true;
-    const hay = (item.name + " " + (item.notes||"") + " " + (item.tags||[]).join(" ") + " " + Object.values(item).join(" "))
-      .toLowerCase();
-    return hay.includes(q.toLowerCase());
+  function make(label){
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "pill" + (label===active ? " active" : "");
+    b.textContent = label;
+    b.onclick = ()=>{
+      active = label;
+      pillsEl.querySelectorAll(".pill").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      onChange(active);
+    };
+    return b;
   }
 
-  function filtered(){
-    const q = qEl.value.trim();
-    return data
-      .filter(x => activeTag === "All" ? true : (x.tags || []).includes(activeTag))
-      .filter(x => matches(x, q));
-  }
+  pillsEl.appendChild(make("All"));
+  tags.forEach(t=>pillsEl.appendChild(make(t)));
 
-  function drawCards(rows){
-    gridEl.innerHTML = "";
-    rows.forEach(x => {
-      const div = document.createElement("div");
-      div.className = "card";
+  return ()=>active;
+}
 
-      const imgHtml = x.image
-        ? `<img referrerpolicy="no-referrer" loading="lazy" src="${dpFileUrl(x.image)}" alt="${escapeHtml(x.name)}">`
-        : `<div class="muted small">no image</div>`;
+function matchesQuery(item, q){
+  if(!q) return true;
+  const hay = [
+    item.name,
+    item.notes,
+    ...(item.tags||[]),
+    ...(item.search||[])
+  ].join(" ").toLowerCase();
+  return hay.includes(q.toLowerCase());
+}
 
-      div.innerHTML = `
-        <div class="thumb">${imgHtml}</div>
+function renderGrid(items, gridEl){
+  gridEl.innerHTML = "";
+  items.forEach(it=>{
+    const id = it.id || slugId(it.name);
+    const div = document.createElement("div");
+    div.className = "card";
+    div.id = id;
+
+    const tagsHtml = (it.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join("");
+    const img = it.img ? `<img alt="" src="${imgUrl(it.img)}" onerror="this.style.display='none'">` : "";
+
+    const kvPairs = [];
+    // Cost block (optional)
+    if(it.buy != null || it.sell != null){
+      kvPairs.push({k:"Buy", v: it.buy ?? "—"});
+      kvPairs.push({k:"Sell", v: it.sell ?? "—"});
+    }
+    // Any extra kv fields
+    (it.kv||[]).forEach(p=>kvPairs.push(p));
+
+    const kvHtml = kvPairs.length ? `
+      <div class="kv">
+        ${kvPairs.map(p=>`<div><b>${escapeHtml(p.k)}</b><br>${escapeHtml(String(p.v))}</div>`).join("")}
+      </div>` : "";
+
+    div.innerHTML = `
+      <div class="row">
+        <div class="thumb">${img || `<div class="small">no img</div>`}</div>
         <div style="min-width:0">
-          <h3>${escapeHtml(x.name)}</h3>
-          ${x.sub ? `<div class="meta">${escapeHtml(x.sub)}</div>` : ""}
-          ${x.notes ? `<div class="meta">${escapeHtml(x.notes)}</div>` : ""}
-          ${(x.tags && x.tags.length) ? `<div class="tags">${x.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>` : ""}
+          <h3>${escapeHtml(it.name)}</h3>
+          ${it.notes ? `<div class="small">${escapeHtml(it.notes)}</div>` : `<div class="small muted">—</div>`}
+          ${tagsHtml ? `<div class="meta">${tagsHtml}</div>` : ""}
+          ${kvHtml}
         </div>
-      `;
-      gridEl.appendChild(div);
+      </div>
+    `;
+    gridEl.appendChild(div);
+  });
+}
+
+function renderTable(items, tableHeadEl, tableBodyEl, columns){
+  tableHeadEl.innerHTML = "";
+  tableBodyEl.innerHTML = "";
+
+  // header
+  const trh = document.createElement("tr");
+  columns.forEach(c=>{
+    const th = document.createElement("th");
+    th.textContent = c.label;
+    trh.appendChild(th);
+  });
+  tableHeadEl.appendChild(trh);
+
+  // rows
+  items.forEach(it=>{
+    const tr = document.createElement("tr");
+    const id = it.id || slugId(it.name);
+    tr.id = id;
+
+    columns.forEach(c=>{
+      const td = document.createElement("td");
+      if(c.key === "img"){
+        td.innerHTML = it.img
+          ? `<div class="timg"><img alt="" src="${imgUrl(it.img)}" onerror="this.style.display='none'"></div>`
+          : `<div class="timg"></div>`;
+      } else if(c.key === "name"){
+        td.innerHTML = `<b>${escapeHtml(it.name)}</b>`;
+      } else {
+        const val = (it[c.key] ?? "");
+        td.textContent = String(val || "—");
+      }
+      tr.appendChild(td);
     });
-  }
 
-  function drawTable(rows){
-    theadEl.innerHTML = `<tr>${columns.map(c => `<th>${escapeHtml(c.label)}</th>`).join("")}</tr>`;
-    tbodyEl.innerHTML = rows.map(x => {
-      return `<tr>${
-        columns.map(c => {
-          if(c.key === "image"){
-            return `<td style="width:92px">
-              ${x.image ? `<img referrerpolicy="no-referrer" loading="lazy" src="${dpFileUrl(x.image)}" style="width:72px;height:72px;object-fit:contain;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25)">` : `<span class="muted small">—</span>`}
-            </td>`;
-          }
-          return `<td>${escapeHtml(x[c.key] ?? "—")}</td>`;
-        }).join("")
-      }</tr>`;
-    }).join("");
-  }
+    tableBodyEl.appendChild(tr);
+  });
+}
 
-  function setView(next){
-    view = next;
-    if(view === "cards"){
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function wirePage(opts){
+  // opts: { title, items, columns, activeHref, placeholderText }
+  setActiveNav(opts.activeHref);
+
+  const qEl = document.getElementById("q");
+  const pillsEl = document.getElementById("pills");
+  const gridEl = document.getElementById("grid");
+  const tableWrap = document.getElementById("table");
+  const thead = document.getElementById("thead");
+  const tbody = document.getElementById("tbody");
+  const countBadge = document.getElementById("countBadge");
+  const gridBtn = document.getElementById("gridBtn");
+  const tableBtn = document.getElementById("tableBtn");
+
+  let mode = "grid";
+  function setMode(m){
+    mode = m;
+    if(mode === "grid"){
+      gridEl.style.display = "";
       tableWrap.style.display = "none";
-      gridEl.style.display = "grid";
-      gridBtn.classList.add("active");
-      tableBtn.classList.remove("active");
-    }else{
+    } else {
       gridEl.style.display = "none";
-      tableWrap.style.display = "block";
-      tableBtn.classList.add("active");
-      gridBtn.classList.remove("active");
+      tableWrap.style.display = "";
     }
-    draw();
+    render();
+  }
+  gridBtn.onclick = ()=>setMode("grid");
+  tableBtn.onclick = ()=>setMode("table");
+
+  const getActive = buildPills(opts.items, pillsEl, ()=>render());
+
+  function render(){
+    const q = (qEl.value || "").trim();
+    const tag = getActive();
+
+    const filtered = opts.items
+      .filter(it => tag === "All" ? true : (it.tags||[]).includes(tag))
+      .filter(it => matchesQuery(it, q));
+
+    countBadge.textContent = `${filtered.length} items`;
+
+    if(mode === "grid"){
+      renderGrid(filtered, gridEl);
+    } else {
+      renderTable(filtered, thead, tbody, opts.columns);
+    }
   }
 
-  function draw(){
-    const rows = filtered();
-    countBadge.textContent = `${rows.length} items`;
-
-    if(view === "cards"){
-      drawCards(rows);
-    }else{
-      drawTable(rows);
-    }
-  }
-
-  // wire controls
-  qEl.addEventListener("input", draw);
-  gridBtn.onclick = () => setView("cards");
-  tableBtn.onclick = () => setView("table");
+  qEl.placeholder = opts.placeholderText || "Search...";
+  qEl.addEventListener("input", render);
 
   // initial
-  setView(view);
+  setMode("grid");
 }
