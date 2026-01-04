@@ -25,16 +25,12 @@
         <h2>Wiki Categories</h2>
         <div class="muted">Local pages (fast) + one official button above.</div>
         <div class="nav">
-          <a class="" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
-<a class="" href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
-<a class="" href="masks.html"><span>Masks</span><span class="small">→</span></a>
-<a class="" href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
-<a class="" href="armor.html"><span>Armor</span><span class="small">→</span></a>
-<a class="" href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
-<a class="active" href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
-<a class="" href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
-<a class="" href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
-<a class="" href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
+          <a href="wiki.html"><span>Hub</span><span class="small">→</span></a>
+          <a href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
+          <a href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
+          <a href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
+          <a class="active" href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
+          <a href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
       </div>
 
@@ -42,13 +38,13 @@
         <div class="hero">
           <div>
             <h1>Backpacks</h1>
-            <div class="sub">Backpack tiers, total slots, and nesting rules. Click an item to open the official page.</div>
+            <div class="sub">Tier list with official images.</div>
           </div>
           <div class="badge" id="countBadge">0 items</div>
         </div>
 
         <div class="toolbar">
-          <input id="q" class="search" placeholder="Search Backpacks..." />
+          <input id="q" class="search" placeholder="Search backpacks..." />
           <div class="pills" id="pills"></div>
           <div class="viewtoggle">
             <button class="btn" id="gridBtn" type="button">Cards</button>
@@ -64,171 +60,43 @@
             <tbody id="tbody"></tbody>
           </table>
         </div>
-
-        <div id="extras"></div>
       </div>
     </div>
   </div>
 
   <script src="wiki-shared.js"></script>
-  <!-- page script -->
   <script>
+    // From official Backpacks table we opened
+    const DATA = [
+      // Tier 3
+      { name:"Raid Backpack", image:"TM_BackpackRaid_1_E.png", tags:["Tier 3"], notes:"Main 120 / Extra 32 / Total 152" },
+      { name:"Rush Backpack (Gold)", image:"TM_BackpackRushGold_E.png", tags:["Tier 3"], notes:"Main 64 / Extra 24 / Total 88" },
+      { name:"Overland Backpack", image:"TM_BackpackOverlandWhite_E.png", tags:["Tier 3"], notes:"Main 64 / Extra 23 / Total 87" },
+      { name:"Nomad Backpack", image:"TM_BackpackNomad1_E.png", tags:["Tier 3"], notes:"Main 48 / Extra 31 / Total 79" },
+      { name:"Rush Backpack (Normal)", image:"TM_BackpackRush_E.png", tags:["Tier 3"], notes:"Main 48 / Extra 16 / Total 64" },
 
-const DATA = [{"tier": "Tier 3", "name": "Raid Backpack", "file": "TM_BackpackRaid_1_E.png", "main": "120", "extra": "32", "total": "152"}, {"tier": "Tier 3", "name": "Rush Backpack (Gold Variant)", "file": "TM_BackpackRushGold_E.png", "main": "64", "extra": "24", "total": "88"}, {"tier": "Tier 3", "name": "Overland Backpack", "file": "TM_BackpackOverlandWhite_E.png", "main": "64", "extra": "23", "total": "87"}, {"tier": "Tier 3", "name": "Nomad Backpack", "file": "TM_BackpackNomad1_E.png", "main": "48", "extra": "31", "total": "79"}, {"tier": "Tier 3", "name": "Rush Backpack (Normal Variant)", "file": "TM_BackpackRush_E.png", "main": "48", "extra": "16", "total": "64"}, {"tier": "Tier 3", "name": "Expedition Backpack", "file": "Backpack_Expedition_Red.png", "main": "48", "extra": "8", "total": "56"}, {"tier": "Tier 2", "name": "Hunting Backpack", "file": "Backpack_Hunting_LightGreen.png", "main": "42", "extra": "0", "total": "42"}, {"tier": "Tier 2", "name": "Topload Backpack", "file": "Backpack_Topload_1.png", "main": "42", "extra": "0", "total": "42"}, {"tier": "Tier 1", "name": "Cute Backpack", "file": "Backpack_Buzzy.png", "main": "16", "extra": "0", "total": "16"}, {"tier": "Tier 1", "name": "School Backpack", "file": "Backpack_School_Blue.png", "main": "16", "extra": "0", "total": "16"}, {"tier": "Tier 1", "name": "Bag", "file": "TM_Bag_E.png", "main": "9", "extra": "0", "total": "9"}];
+      // Tier 2
+      { name:"Hunting Backpack", image:"Backpack_Hunting_LightGreen.png", tags:["Tier 2"], notes:"Main 42 / Extra 0 / Total 42" },
+      { name:"Topload Backpack", image:"Backpack_Topload_1.png", tags:["Tier 2"], notes:"Main 42 / Extra 0 / Total 42" },
 
-const pillsEl = document.getElementById("pills");
-const qEl = document.getElementById("q");
-const gridEl = document.getElementById("grid");
-const tableEl = document.getElementById("table");
-const theadEl = document.getElementById("thead");
-const tbodyEl = document.getElementById("tbody");
-const countBadge = document.getElementById("countBadge");
+      // Tier 1
+      { name:"Cute Backpack", image:"Backpack_Buzzy.png", tags:["Tier 1"], notes:"Main 16 / Extra 0 / Total 16" },
+      { name:"School Backpack", image:"Backpack_School_Blue.png", tags:["Tier 1"], notes:"Main 16 / Extra 0 / Total 16" },
+      { name:"Bag", image:"TM_Bag_E.png", tags:["Tier 1"], notes:"Main 9 / Extra 0 / Total 9" }
+    ];
 
-let mode = "grid";
-let tier = "all";
+    const COLUMNS = [
+      { key:"image", label:"Image" },
+      { key:"name", label:"Backpack" },
+      { key:"notes", label:"Capacity" }
+    ];
 
-makePills(pillsEl, [
-  {label:"All", value:"all", selected:true},
-  {label:"Tier 3", value:"Tier 3"},
-  {label:"Tier 2", value:"Tier 2"},
-  {label:"Tier 1", value:"Tier 1"},
-], v => { tier=v; render(); });
-
-document.getElementById("gridBtn").addEventListener("click", ()=>{ mode="grid"; render(); });
-document.getElementById("tableBtn").addEventListener("click", ()=>{ mode="table"; render(); });
-qEl.addEventListener("input", render);
-
-function matches(item, q){
-  const hay = (item.name + " " + item.tier).toLowerCase();
-  if (q && !hay.includes(q)) return false;
-  if (tier !== "all" && item.tier !== tier) return false;
-  return true;
-}
-
-function render(){
-  const q = qEl.value.trim().toLowerCase();
-  const items = DATA.filter(it => matches(it, q));
-  countBadge.textContent = items.length + " items";
-
-  if (mode === "table") {
-    gridEl.style.display = "none";
-    tableEl.style.display = "block";
-    theadEl.innerHTML = `<tr>
-      <th style="width:64px">Img</th>
-      <th>Name</th>
-      <th>Tier</th>
-      <th>Main</th>
-      <th>Extra</th>
-      <th>Total</th>
-    </tr>`;
-    tbodyEl.innerHTML = items.map(it => {
-      const img = officialFileUrl(it.file);
-      const href = officialPageUrl(it.name);
-      return `<tr>
-        <td><img src="${img}" alt="" style="width:44px;height:44px;object-fit:contain"/></td>
-        <td><a href="${href}" target="_blank" rel="noopener">${escapeHtml(it.name)}</a></td>
-        <td>${escapeHtml(it.tier)}</td>
-        <td>${escapeHtml(it.main)}</td>
-        <td>${escapeHtml(it.extra)}</td>
-        <td>${escapeHtml(it.total)}</td>
-      </tr>`;
-    }).join("");
-  } else {
-    tableEl.style.display = "none";
-    gridEl.style.display = "grid";
-    gridEl.innerHTML = items.map(it => {
-      const img = officialFileUrl(it.file);
-      const href = officialPageUrl(it.name);
-      return `<a class="card" href="${href}" target="_blank" rel="noopener">
-        <div class="thumb"><img src="${img}" alt=""/></div>
-        <div>
-          <h3>${escapeHtml(it.name)}</h3>
-          <div class="meta">${escapeHtml(it.tier)} • Main ${escapeHtml(it.main)} • Extra ${escapeHtml(it.extra)}</div>
-          <div class="kv">
-            <span>Total ${escapeHtml(it.total)}</span>
-          </div>
-        </div>
-      </a>`;
-    }).join("");
-  }
-}
-
-render();
-
-/* Variants gallery + nesting graph */
-const galleries = [
-  {title:"Rush Backpacks", items:[
-    {cap:"Black", file:"TM_BackpackRush_E.png"},
-    {cap:"Gold", file:"TM_BackpackRushGold_E.png"},
-    {cap:"Tan", file:"TM_BackpackRushTan_E.png"},
-  ]},
-  {title:"Raid Backpacks", items:[
-    {cap:"Dark Green", file:"TM_BackpackRaid_1_E.png"},
-    {cap:"Camo Green", file:"TM_BackpackRaid_2_E.png"},
-    {cap:"Tan / Brown", file:"TM_BackpackRaid_3_E.png"},
-    {cap:"Red / Black", file:"TM_BackpackRaid_4_E.png"},
-    {cap:"Grey / Black", file:"TM_BackpackRaid_5_E.png"},
-    {cap:"Purple / Blue", file:"TM_BackpackRaid_6_E.png"},
-  ]},
-  {title:"Nomad Backpack", items:[{cap:"Nomad", file:"TM_BackpackNomad1_E.png"}]},
-  {title:"Expedition Backpacks", items:[
-    {cap:"Blue", file:"Backpack_Expedition_Blue.png"},
-    {cap:"Green", file:"Backpack_Expedition_Green.png"},
-    {cap:"Orange", file:"Backpack_Expedition_Orange.png"},
-    {cap:"Purple", file:"Backpack_Expedition_Purple.png"},
-    {cap:"Red", file:"Backpack_Expedition_Red.png"},
-  ]},
-  {title:"Hunting Backpacks", items:[
-    {cap:"Light Green", file:"Backpack_Hunting_LightGreen.png"},
-    {cap:"Dark Green", file:"Backpack_Hunting_DarkGreen.png"},
-    {cap:"Black", file:"Backpack_Hunting_Black.png"},
-    {cap:"Tan", file:"Backpack_Hunting_Tan.png"},
-  ]},
-  {title:"Topload Backpack", items:[{cap:"Topload", file:"Backpack_Topload_1.png"}]},
-  {title:"Cute Packs & Animal Packs", items:[
-    {cap:"Buzzy", file:"Backpack_Buzzy.png"},
-    {cap:"Black", file:"Backpack_Cute_Black.png"},
-    {cap:"Blue", file:"Backpack_Cute_Blue.png"},
-    {cap:"Pink", file:"Backpack_Cute_Pink.png"},
-    {cap:"Purple", file:"Backpack_Cute_Purple.png"},
-    {cap:"White", file:"Backpack_Cute_White.png"},
-  ]},
-  {title:"School Backpacks", items:[
-    {cap:"Blue", file:"Backpack_School_Blue.png"},
-    {cap:"Green", file:"Backpack_School_Green.png"},
-    {cap:"Orange", file:"Backpack_School_Orange.png"},
-    {cap:"Pink", file:"Backpack_School_Pink.png"},
-    {cap:"Purple", file:"Backpack_School_Purple.png"},
-    {cap:"Red", file:"Backpack_School_Red.png"},
-    {cap:"Teal", file:"Backpack_School_Teal.png"},
-  ]},
-  {title:"Handmade Bag", items:[{cap:"Bag", file:"TM_Bag_E.png"}]},
-];
-
-const extras = document.getElementById("extras");
-extras.innerHTML = `
-  <div class="section">
-    <h2>Nesting Rules</h2>
-    <div class="small">You can store lower-capacity backpacks inside larger ones, but not same-size bags inside each other.</div>
-    <div style="margin-top:10px" class="panel" >
-      <img src="${officialFileUrl("Bag_Nesting_Graph.png")}" alt="Nesting rules" style="width:100%;display:block;border-radius:14px"/>
-    </div>
-  </div>
-  ${galleries.map(g => `
-    <div class="section">
-      <h2>${escapeHtml(g.title)}</h2>
-      <div class="gallery">
-        ${g.items.map(it => `
-          <div class="gitem">
-            <img src="${officialFileUrl(it.file)}" alt=""/>
-            <div class="cap">${escapeHtml(it.cap)}</div>
-          </div>
-        `).join("")}
-      </div>
-    </div>
-  `).join("")}
-`;
-
+    renderPage({
+      title: "Backpacks",
+      data: DATA,
+      columns: COLUMNS,
+      defaultView: "cards"
+    });
   </script>
 </body>
 </html>
