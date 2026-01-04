@@ -1,15 +1,9 @@
-<!-- =========================
-FILE: wiki.html
-Put this in the same folder as:
-- wiki-shared.css
-- wiki-shared.js
-========================= -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DeadPoly Hub — Wiki</title>
+  <title>DeadPoly Hub — Wiki Hub</title>
   <link rel="stylesheet" href="wiki-shared.css" />
 </head>
 <body>
@@ -30,17 +24,22 @@ Put this in the same folder as:
       <div class="panel side">
         <h2>Wiki Categories</h2>
         <div class="muted">Local pages (fast) + one official button above.</div>
+
         <div class="nav">
           <a class="active" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
-          <a href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
-          <a href="masks.html"><span>Masks</span><span class="small">→</span></a>
-          <a href="armor.html"><span>Armor</span><span class="small">→</span></a>
-          <a href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
           <a href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
           <a href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
           <a href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
           <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
           <a href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
+        </div>
+
+        <div class="note">
+          <b>Global search</b> looks through your local pages and links you straight to the matching item.
+          <div class="small" style="margin-top:6px">
+            If images don’t show: you’re offline or a mixed-content blocker is on. Images are hotlinked from
+            <span class="code">deadpoly.wiki/Special:FilePath</span>.
+          </div>
         </div>
       </div>
 
@@ -48,46 +47,153 @@ Put this in the same folder as:
         <div class="hero">
           <div>
             <h1>Community Wiki Hub</h1>
-            <div class="sub">Pick a category on the left. Pages are local + images hotlinked from the official DeadPoly wiki.</div>
+            <div class="sub">
+              Pick a category on the left, or search the whole hub.
+              Results jump to the exact item on its page.
+            </div>
           </div>
-          <div class="badge">v1</div>
+          <div class="badge" id="countBadge">0 results</div>
         </div>
+
+        <div class="toolbar">
+          <input id="q" class="search" placeholder="Search everything (ex: Raid Backpack, Water Bottle, Workbench, Neon, Helmet)..." />
+          <div class="viewtoggle">
+            <button class="btn" id="clearBtn" type="button">Clear</button>
+          </div>
+        </div>
+
+        <div id="results" class="grid"></div>
 
         <div class="section">
           <h2>Quick links</h2>
+          <div class="small">Fast jump to local pages:</div>
           <div class="grid" style="margin-top:10px">
-            <a class="card" href="weapons.html" style="text-decoration:none">
-              <div class="thumb"><img referrerpolicy="no-referrer" src="https://deadpoly.wiki/Special:FilePath/DpAkm.png" alt="Weapons"></div>
-              <div><h3>Weapons</h3><div class="meta">Melee + firearms + utility</div></div>
+            <a class="card" href="helmets.html" style="text-decoration:none">
+              <div class="row">
+                <div class="thumb"><img alt="" src="https://deadpoly.wiki/Special:FilePath/TM_HelmOfMight_E.png" onerror="this.style.display='none'"></div>
+                <div><h3>Helmets</h3><div class="small">Head protection + variants</div></div>
+              </div>
             </a>
 
-            <a class="card" href="masks.html" style="text-decoration:none">
-              <div class="thumb"><img referrerpolicy="no-referrer" src="https://deadpoly.wiki/Special:FilePath/TM_PlagueMask_E.png" alt="Masks"></div>
-              <div><h3>Masks</h3><div class="meta">Masks + glasses/goggles + emotional masks</div></div>
+            <a class="card" href="backpacks.html" style="text-decoration:none">
+              <div class="row">
+                <div class="thumb"><img alt="" src="https://deadpoly.wiki/Special:FilePath/TM_BackpackRaid_1_E.png" onerror="this.style.display='none'"></div>
+                <div><h3>Backpacks</h3><div class="small">Tiers + nesting rules</div></div>
+              </div>
             </a>
 
-            <a class="card" href="armor.html" style="text-decoration:none">
-              <div class="thumb"><img referrerpolicy="no-referrer" src="https://deadpoly.wiki/Special:FilePath/apoc_black.png" alt="Armor"></div>
-              <div><h3>Armor</h3><div class="meta">Body armor list</div></div>
+            <a class="card" href="consumables.html" style="text-decoration:none">
+              <div class="row">
+                <div class="thumb"><img alt="" src="https://deadpoly.wiki/Special:FilePath/TM_WaterBottle_B_E.png" onerror="this.style.display='none'"></div>
+                <div><h3>Consumables</h3><div class="small">Food + drinks + medicines</div></div>
+              </div>
             </a>
 
-            <a class="card" href="ammo.html" style="text-decoration:none">
-              <div class="thumb"><img referrerpolicy="no-referrer" src="https://deadpoly.wiki/Special:FilePath/TM_556x45_E.png" alt="Ammo"></div>
-              <div><h3>Ammo</h3><div class="meta">Ammo types + crafting requirements</div></div>
+            <a class="card" href="crafting.html" style="text-decoration:none">
+              <div class="row">
+                <div class="thumb"><div class="small">Station</div></div>
+                <div><h3>Crafting</h3><div class="small">Stations + production</div></div>
+              </div>
             </a>
-          </div>
-        </div>
 
-        <div class="section">
-          <h2>How images work</h2>
-          <div class="small muted">
-            These pages use <b>Special:FilePath</b> on the official wiki to display images.
-            If an image doesn’t load, it usually means the filename on the official wiki changed.
+            <a class="card" href="collectibles.html" style="text-decoration:none">
+              <div class="row">
+                <div class="thumb"><img alt="" src="https://deadpoly.wiki/Special:FilePath/Skull%20neon.png" onerror="this.style.display='none'"></div>
+                <div><h3>Collectibles</h3><div class="small">Neons + lamps + posters</div></div>
+              </div>
+            </a>
           </div>
         </div>
 
       </div>
     </div>
   </div>
+
+  <script src="wiki-shared.js"></script>
+  <script>
+    // Minimal search index for the pages you currently have.
+    // Add items anytime. Format:
+    // { name, page, id, img, tags, notes, buy, sell, search:[] }
+    const INDEX = [
+      // Helmets (sample anchors used in helmets.html)
+      { name:"Crown of the Trickster", page:"helmets.html", id:"crown-of-the-trickster", img:"TM_LokiHelm_I.png", tags:["Helmets"], notes:"Helmet / head item" },
+      { name:"Neck Collar", page:"helmets.html", id:"neck-collar", img:"TM_HelmOfMight_E.png", tags:["Helmets"], notes:"Mask/neck (listed on wiki under masks sometimes)" },
+
+      // Backpacks
+      { name:"Raid Backpack", page:"backpacks.html", id:"raid-backpack", img:"TM_BackpackRaid_1_E.png", tags:["Backpacks","Tier 3"], notes:"152 slots total" },
+      { name:"Rush Backpack (Gold Variant)", page:"backpacks.html", id:"rush-backpack-gold-variant", img:"TM_BackpackRushGold_E.png", tags:["Backpacks","Tier 3"] },
+      { name:"Bag", page:"backpacks.html", id:"bag", img:"TM_Bag_E.png", tags:["Backpacks","Tier 1"] },
+
+      // Consumables
+      { name:"Water Bottle", page:"consumables.html", id:"water-bottle", img:"TM_WaterBottle_B_E.png", tags:["Consumables","Beverages"], notes:"Refillable bottle" },
+      { name:"Medical Kit", page:"consumables.html", id:"medical-kit", img:"", tags:["Consumables","Medicines"], buy:"$1,000", sell:"$500" },
+
+      // Crafting
+      { name:"Workbench", page:"crafting.html", id:"workbench", tags:["Crafting","Station"], notes:"Craft in inventory" },
+      { name:"Anvil", page:"crafting.html", id:"anvil", tags:["Crafting","Station"] },
+      { name:"Distiller", page:"crafting.html", id:"distiller", tags:["Crafting","Production"] },
+
+      // Collectibles
+      { name:"Skull Neon", page:"collectibles.html", id:"skull-neon", img:"Skull neon.png", tags:["Collectibles","Neon Signs"], notes:"Red" },
+      { name:"QR Sign", page:"collectibles.html", id:"qr-sign", img:"Qr sign.png", tags:["Collectibles","Posters"] }
+    ];
+
+    const qEl = document.getElementById("q");
+    const resultsEl = document.getElementById("results");
+    const countBadge = document.getElementById("countBadge");
+    document.getElementById("clearBtn").onclick = ()=>{ qEl.value=""; render(); qEl.focus(); };
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+    function imgUrl(fileName){
+      if(!fileName) return "";
+      return "https://deadpoly.wiki/Special:FilePath/" + encodeURIComponent(fileName);
+    }
+    function match(it, q){
+      if(!q) return true;
+      const hay = [it.name, it.notes, ...(it.tags||[]), ...(it.search||[])].join(" ").toLowerCase();
+      return hay.includes(q.toLowerCase());
+    }
+
+    function render(){
+      const q = qEl.value.trim();
+      const hits = INDEX.filter(it => match(it,q));
+      countBadge.textContent = `${hits.length} results`;
+      resultsEl.innerHTML = "";
+
+      hits.slice(0, 48).forEach(it=>{
+        const a = document.createElement("a");
+        a.className = "card";
+        a.href = `${it.page}#${it.id}`;
+        a.style.textDecoration = "none";
+        const img = it.img ? `<img alt="" src="${imgUrl(it.img)}" onerror="this.style.display='none'">` : "";
+        a.innerHTML = `
+          <div class="row">
+            <div class="thumb">${img || `<div class="small">page</div>`}</div>
+            <div style="min-width:0">
+              <h3>${escapeHtml(it.name)}</h3>
+              <div class="small">${escapeHtml(it.page)}${it.notes ? " • " + escapeHtml(it.notes) : ""}</div>
+              <div class="meta">${(it.tags||[]).slice(0,3).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>
+            </div>
+          </div>
+        `;
+        resultsEl.appendChild(a);
+      });
+
+      if(!q){
+        resultsEl.innerHTML = `
+          <div class="section">
+            <h2>Search the hub</h2>
+            <div class="small">Type a name to jump to the exact item on a page.</div>
+          </div>
+        `;
+        countBadge.textContent = "0 results";
+      }
+    }
+
+    qEl.addEventListener("input", render);
+    render();
+  </script>
 </body>
 </html>
