@@ -1,151 +1,170 @@
+<!-- =========================
+FILE: weapons.html
+Filtering pills: All, Melee, Assault Rifles, Sniper Rifles, Submachine Guns, Shotguns, Bows, Power Tools, Non-Weapons, Utility
+Images hotlinked via Special:FilePath
+========================= -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DeadPoly Wiki — Weapons</title>
-  <link rel="stylesheet" href="wiki-shared.css">
+  <title>DeadPoly Hub — Weapons</title>
+  <link rel="stylesheet" href="wiki-shared.css" />
 </head>
 <body>
-
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="topbar-left">
-      <a class="btn" href="wiki.html">← Wiki Hub</a>
-      <span class="pilltitle">Wiki</span>
-      <span class="pilltitle">Weapons</span>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="top-left">
+        <a class="btn" href="index.html">← Menu</a>
+        <div class="brand">Wiki <span class="badge">Weapons</span></div>
+      </div>
+      <div class="top-right">
+        <a class="btn" href="https://deadpoly.wiki/Weapons" target="_blank" rel="noopener">Official Wiki ↗</a>
+      </div>
     </div>
-    <a id="officialBtn" class="btn" href="https://deadpoly.wiki/Weapons" target="_blank" rel="noopener">Official Wiki ↗</a>
   </div>
-</div>
 
-<div class="shell">
-  <div class="layout">
-
-    <aside class="panel sidebar">
-      <h3>Wiki Categories</h3>
-      <div class="muted">Local pages (fast) + one official button above.</div>
-
-      <div class="navlist">
-        <a class="navbtn" href="wiki.html" data-nav="hub"><span class="label">Hub</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="helmets.html" data-nav="helmets"><span class="label">Helmets</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="masks.html" data-nav="masks"><span class="label">Masks</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="weapons.html" data-nav="weapons"><span class="label">Weapons</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="armor.html" data-nav="armor"><span class="label">Armor</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="ammo.html" data-nav="ammo"><span class="label">Ammo</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="backpacks.html" data-nav="backpacks"><span class="label">Backpacks</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="consumables.html" data-nav="consumables"><span class="label">Consumables</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="crafting.html" data-nav="crafting"><span class="label">Crafting</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="collectibles.html" data-nav="collectibles"><span class="label">Collectibles</span><span class="arrow">→</span></a>
-      </div>
-    </aside>
-
-    <main class="panel main">
-      <div class="head">
-        <div>
-          <h1 id="pageTitle">Weapons</h1>
-          <div id="pageSubtitle" class="sub">Pulled from the official DeadPoly wiki list. Filter by Melee / Firearm / Utility.</div>
+  <div class="container">
+    <div class="shell">
+      <div class="panel side">
+        <h2>Wiki Categories</h2>
+        <div class="muted">Local pages (fast) + one official button above.</div>
+        <div class="nav">
+          <a href="wiki.html"><span>Hub</span><span class="small">→</span></a>
+          <a class="active" href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
+          <a href="masks.html"><span>Masks</span><span class="small">→</span></a>
+          <a href="armor.html"><span>Armor</span><span class="small">→</span></a>
+          <a href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
+          <a href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
+          <a href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
+          <a href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
+          <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
+          <a href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
-        <div class="badge"><span class="dot"></span><span id="countBadge">0 items</span></div>
       </div>
 
-      <div class="controls">
-        <input id="q" class="search" placeholder="Search weapons (ex: AKM, MP5, Fireaxe, Crossbow)..." />
-        <div class="filters" id="filters"></div>
+      <div class="panel main">
+        <div class="hero">
+          <div>
+            <h1>Weapons</h1>
+            <div class="sub">Local list with category filters. Images hotlinked from official wiki file names.</div>
+          </div>
+          <div class="badge" id="countBadge">0 items</div>
+        </div>
+
+        <div class="toolbar">
+          <input id="q" class="search" placeholder="Search weapons..." />
+          <div class="pills" id="pills"></div>
+          <div class="viewtoggle">
+            <button class="btn" id="gridBtn" type="button">Cards</button>
+            <button class="btn" id="tableBtn" type="button">Table</button>
+          </div>
+        </div>
+
+        <div id="grid" class="grid"></div>
+
+        <div id="table" class="tablewrap" style="display:none">
+          <table>
+            <thead id="thead"></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <h2>Note</h2>
+          <div class="small muted">If a specific weapon image doesn't load, it usually means the official wiki renamed that file.</div>
+        </div>
+
       </div>
-
-      <div id="cards" class="grid"></div>
-
-      <div class="note">
-        Images come from <b>deadpoly.wiki</b>. If you see blank tiles, check your browser console for blocked requests.
-      </div>
-    </main>
-
+    </div>
   </div>
-</div>
 
-<script src="wiki-shared.js"></script>
-<script>
-  // Based on official https://deadpoly.wiki/Weapons (names + image filenames)
-  const melee = [
-    {name:"Broom", image:"DpBroom.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N"},
-    {name:"Carnival Bat", image:"DpCarnivalBat-Blue.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N", notes:"Multiple variations exist"},
-    {name:"Crowbar", image:"DpCrowbar.png", group:"Melee", damage:"11–17", woodcutting:"Y", mining:"Y"},
-    {name:"Crutch", image:"DpCrutch.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N"},
-    {name:"Dead End Sign", image:"DpDeadEndSign.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N"},
-    {name:"Dustpan", image:"Dpdustpan.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N"},
-    {name:"Eternal Sky", image:"DpEternalSky.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N"},
-    {name:"Fireaxe", image:"DpFireAxe.png", group:"Melee", damage:"N/A", woodcutting:"Y", mining:"N"},
-    {name:"Fireaxe (Modified)", image:"DpFireAxeModded.png", group:"Melee", damage:"14–15", woodcutting:"Y", mining:"Y"},
-    {name:"Flamberge", image:"Dpflamberge.png", group:"Melee", damage:"20–", woodcutting:"Y", mining:"Y"},
-    {name:"Glaive", image:"Dp glaive.png", group:"Melee", damage:"N/A", woodcutting:"Y", mining:"N", notes:"Red/Silver & Purple/Green variants exist"},
-    {name:"Golf Club", image:"DpGolfClub.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N"},
-    {name:"Hockey Stick", image:"DpHockeyStickRed.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N", notes:"Multiple variations exist"},
-    {name:"Hunter's Hatchet", image:"DpHunterHatchetGreen.png", group:"Melee", damage:"N/A", woodcutting:"Y", mining:"N", notes:"Multiple variations exist"},
-    {name:"Ice Pick", image:"DpIcePickRed.png", group:"Melee", damage:"12–15", woodcutting:"Y", mining:"N", notes:"Multiple variations exist"},
-    {name:"Knife (Standard)", image:"DpKnifeBlack.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N", notes:"Multiple variations exist"},
-    {name:"Knife (Butcher's)", image:"DpKnifeButcher.png", group:"Melee", damage:"11–13", woodcutting:"N", mining:"N"},
-    {name:"Knife (Kitchen)", image:"DpKnifeKitchen.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N"},
-    {name:"Knuckles", image:"DpKnucklesStandard.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N", notes:"Spiked knuckle variant exists"},
-    {name:"Looseal", image:"DpLooseal.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N"},
-    {name:"Machete", image:"DpMachete.png", group:"Melee", damage:"N/A", woodcutting:"Y", mining:"N"},
-    {name:"MasterSword", image:"DpMasterSword.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N"},
-    {name:"Peel", image:"DpPeel.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N"},
-    {name:"SkullCrusher", image:"DpSkullCrusher.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N", notes:"Pink “SkullShusher” variant exists"},
-    {name:"Sledgehammer", image:"DpSledgehammer.png", group:"Melee", damage:"11–15", woodcutting:"Y", mining:"Y"},
-    {name:"Stop Sign", image:"DpStopSign.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N"},
-    {name:"Traffic Light Whacker", image:"DpTrafficLightWhacker.png", group:"Melee", damage:"N/A", woodcutting:"N", mining:"N"},
-    {name:"Wakizashi", image:"DpWakizashiPurple.png", group:"Melee", damage:"12–", woodcutting:"Y", mining:"N", notes:"Multiple variants exist"},
-    {name:"Waraxe", image:"DpWaraxe.png", group:"Melee", damage:"N/A", woodcutting:"Y", mining:"N"},
-    {name:"WarHammer", image:"DpWarhammerRed.png", group:"Melee", damage:"N/A", woodcutting:"Y", mining:"Y"},
-    {name:"Will of the Emperor", image:"DpEmperorsWill.png", group:"Melee", damage:"13–", woodcutting:"Y", mining:"N"}
-  ];
+  <script src="wiki-shared.js"></script>
+  <script>
+    // From your provided Weapons wiki markup
+    const DATA = [
+      // --- Melee Weapons ---
+      { name:"Broom", image:"dpBroom.png", tags:["Melee"], notes:"Damage: N/A • Woodcut: N • Mining: N" },
+      { name:"Carnival Bat", image:"dpCarnivalBat-Blue.png", tags:["Melee"], notes:"Damage: N/A • Variations exist" },
+      { name:"Crowbar", image:"dpCrowbar.png", tags:["Melee"], notes:"Damage: 11-17 • Woodcut: Y • Mining: Y" },
+      { name:"Crutch", image:"dpCrutch.png", tags:["Melee"], notes:"Damage: N/A" },
+      { name:"Dead End Sign", image:"dpDeadEndSign.png", tags:["Melee"], notes:"Damage: N/A" },
+      { name:"Dustpan", image:"dpdustpan.png", tags:["Melee"], notes:"Damage: N/A" },
+      { name:"Eternal Sky", image:"DpEternalSky.png", tags:["Melee"], notes:"Damage: N/A" },
+      { name:"Fireaxe", image:"dpFireAxe.png", tags:["Melee","Utility"], notes:"Damage: N/A • Woodcut: Y" },
+      { name:"Fireaxe (Modified)", image:"dpFireAxeModded.png", tags:["Melee","Utility"], notes:"Damage: 14-15 • Woodcut: Y • Mining: Y" },
+      { name:"Flamberge", image:"dpflamberge.png", tags:["Melee"], notes:"Damage: 20- • Woodcut: Y • Mining: Y" },
+      { name:"Glaive", image:"dp_glaive.png", tags:["Melee"], notes:"Damage: N/A • Woodcut: Y • Variants exist" },
+      { name:"Golf Club", image:"dpGolfClub.png", tags:["Melee"], notes:"Damage: N/A" },
+      { name:"Hockey Stick", image:"dpHockeyStickRed.png", tags:["Melee"], notes:"Damage: N/A • Variations exist" },
+      { name:"Hunter's Hatchet", image:"dpHunterHatchetGreen.png", tags:["Melee","Utility"], notes:"Damage: N/A • Woodcut: Y • Variations exist" },
+      { name:"Ice Pick", image:"dpIcePickRed.png", tags:["Melee","Utility"], notes:"Damage: 12-15 • Woodcut: Y • Variations exist" },
+      { name:"Knife (Standard)", image:"dpKnifeBlack.png", tags:["Melee"], notes:"Damage: N/A • Variations exist" },
+      { name:"Knife (Butcher's)", image:"dpKnifeButcher.png", tags:["Melee"], notes:"Damage: 11-13" },
+      { name:"Knife (Kitchen)", image:"dpKnifeKitchen.png", tags:["Melee"], notes:"Damage: N/A" },
+      { name:"Knuckles", image:"dpKnucklesStandard.png", tags:["Melee"], notes:"Damage: N/A • Spiked variant exists" },
+      { name:"Looseal", image:"dpLooseal.png", tags:["Melee"], notes:"Damage: N/A" },
+      { name:"Machete", image:"dpMachete.png", tags:["Melee","Utility"], notes:"Damage: N/A • Woodcut: Y" },
+      { name:"MasterSword", image:"dpMasterSword.png", tags:["Melee"], notes:"Damage: N/A" },
+      { name:"Peel", image:"dpPeel.png", tags:["Melee"], notes:"Damage: N/A" },
+      { name:"SkullCrusher", image:"dpSkullCrusher.png", tags:["Melee"], notes:"Damage: N/A • Pink variant exists" },
+      { name:"Sledgehammer", image:"dpSledgehammer.png", tags:["Melee","Utility"], notes:"Damage: 11-15 • Woodcut: Y • Mining: Y" },
+      { name:"Stop Sign", image:"dpStopSign.png", tags:["Melee"], notes:"Damage: N/A" },
+      { name:"Traffic Light Whacker", image:"dpTrafficLightWhacker.png", tags:["Melee"], notes:"Damage: N/A" },
+      { name:"Wakizashi", image:"dpWakizashiPurple.png", tags:["Melee"], notes:"Damage: 12- • Woodcut: Y • Variations exist" },
+      { name:"Waraxe", image:"dpWaraxe.png", tags:["Melee","Utility"], notes:"Damage: N/A • Woodcut: Y" },
+      { name:"WarHammer", image:"dpWarhammerRed.png", tags:["Melee","Utility"], notes:"Damage: N/A • Woodcut: Y • Mining: Y" },
+      { name:"Will of the Emperor", image:"DpEmperorsWill.png", tags:["Melee"], notes:"Damage: 13- • Woodcut: Y" },
 
-  const firearms = [
-    // Assault Rifles
-    {name:"AKM", image:"DpAkm.png", group:"Firearm", caliber:"7.62x39mm"},
-    {name:"AUG", image:"DpAUGTan.png", group:"Firearm", caliber:"5.56x45mm"},
-    {name:"FAMAS", image:"dpfamas.png", group:"Firearm", caliber:"5.56x45mm"},
-    {name:"FN FAL", image:"dpFNFAL.png", group:"Firearm", caliber:"7.62x39mm"},
-    {name:"G36C", image:"DPg36c.png", group:"Firearm", caliber:"5.56x45mm"},
-    {name:"Groza", image:"DPGroza.png", group:"Firearm", caliber:"7.62x39mm", notes:"Integrally suppressed"},
-    {name:"M4", image:"DpM4A1.png", group:"Firearm", caliber:"5.56x45mm"},
-    {name:"Mini-14", image:"DpMini14.png", group:"Firearm", caliber:"5.56x45mm"},
-    {name:"MDR (Black)", image:"DpMDR762.png", group:"Firearm", caliber:"7.62x39mm", notes:"Black MDR = 7.62mm"},
-    {name:"MDR (Tan)", image:"DpMDR556.png", group:"Firearm", caliber:"5.56x45mm", notes:"Tan MDR = 5.56mm"},
-    {name:"Mutant", image:"dpMutant.png", group:"Firearm", caliber:"7.62x39mm"},
-    {name:"SCAR-H", image:"DPscar-h.png", group:"Firearm", caliber:"7.62x39mm"},
-    {name:"SCAR-L", image:"dpscar-l.png", group:"Firearm", caliber:"5.56x45mm"},
-    // Snipers
-    {name:"Karabiner 98k", image:"Dpkar98k.png", group:"Firearm", caliber:"7.62mm"},
-    {name:"M24", image:"DpM24.png", group:"Firearm", caliber:"7.62mm"},
-    {name:"VSS Vintorez", image:"DpVSS.png", group:"Firearm", caliber:"7.62mm"},
-    // SMGs
-    {name:"Vector", image:"DPvector.png", group:"Firearm", caliber:"9x19mm"},
-    {name:"MP5", image:"DpMP5.png", group:"Firearm", caliber:"9x19mm"},
-    {name:"UMP", image:"DpUmp.png", group:"Firearm", caliber:"9x19mm"},
-    {name:"MP7", image:"DpMP7Tan.png", group:"Firearm", caliber:"5.56mm"},
-    // Shotguns
-    {name:"Model 12", image:"DpModel2.png", group:"Firearm", caliber:"12-Ga Buckshot"}
-  ];
+      // --- Assault Rifles ---
+      { name:"AKM", image:"DpAkm.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 7.62x39mm" },
+      { name:"AUG", image:"DpAUGTan.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56x45mm" },
+      { name:"FAMAS", image:"dpfamas.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56x45mm" },
+      { name:"FN FAL", image:"dpFNFAL.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 7.62x39mm" },
+      { name:"G36C", image:"DPg36c.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56x45mm" },
+      { name:"Groza", image:"DPGroza.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 7.62x39mm • Integrally suppressed" },
+      { name:"M4", image:"DpM4A1.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56x45mm" },
+      { name:"Mini-14", image:"DpMini14.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56x45mm" },
+      { name:"MDR (Black)", image:"DpMDR762.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 7.62mm" },
+      { name:"MDR (Tan)", image:"DpMDR556.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56mm" },
+      { name:"Mutant", image:"dpMutant.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 7.62x39mm" },
+      { name:"SCAR-H", image:"DPscar-h.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 7.62x39mm" },
+      { name:"SCAR-L", image:"dpscar-l.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56x45mm" },
 
-  const utility = [
-    {name:"Crossbow", image:"Crossbow.png", group:"Utility", notes:"Bows", caliber:"Arrows (Bolts)"},
-    {name:"Compound Crossbow", image:"Compound.png", group:"Utility", notes:"Bows", caliber:"Arrows (Bolts)"},
-    {name:"Nail Gun", image:"Nailgun.png", group:"Utility", notes:"Power Tool", caliber:"Nails"},
-    {name:"Maglite Flashlight", image:"Maglite Flashlight.png", group:"Utility", notes:"Non-Weapon", extra:"1 KG"},
-    {name:"Lantern Flashlight", image:"Lantern flashlight.png", group:"Utility", notes:"Non-Weapon", extra:"2 KG"},
-    {name:"Red Devil Flashlight", image:"Red devil flashlight.png", group:"Utility", notes:"Non-Weapon", extra:"0.25 KG"}
-  ];
+      // --- Sniper Rifles ---
+      { name:"Karabiner 98k", image:"dpkar98k.png", tags:["Sniper Rifles","Firearm"], notes:"Caliber: 7.62mm" },
+      { name:"M24", image:"dpM24.png", tags:["Sniper Rifles","Firearm"], notes:"Caliber: 7.62mm" },
+      { name:"VSS Vintorez", image:"dpVSS.png", tags:["Sniper Rifles","Firearm"], notes:"Caliber: 7.62mm" },
 
-  mountWikiPage({
-    pageTitle: "Weapons",
-    pageSubtitle: "Pulled from the official DeadPoly wiki list. Filter by Melee / Firearm / Utility.",
-    officialUrl: "https://deadpoly.wiki/Weapons",
-    navActive: "weapons",
-    filters: ["All","Melee","Firearm","Utility"],
-    data: [...melee, ...firearms, ...utility]
-  });
-</script>
+      // --- SMGs ---
+      { name:"Vector", image:"DPvector.png", tags:["Submachine Guns","Firearm"], notes:"Caliber: 9x19mm" },
+      { name:"MP5", image:"DpMP5.png", tags:["Submachine Guns","Firearm"], notes:"Caliber: 9x19mm" },
+      { name:"UMP", image:"DpUmp.png", tags:["Submachine Guns","Firearm"], notes:"Caliber: 9x19mm" },
+      { name:"MP7", image:"DpMP7Tan.png", tags:["Submachine Guns","Firearm"], notes:"Caliber: 5.56mm" },
+
+      // --- Shotguns ---
+      { name:"Model 12", image:"DpModel2.png", tags:["Shotguns","Firearm"], notes:"Caliber: 12-Ga Buckshot" },
+
+      // --- Bows ---
+      { name:"Crossbow", image:"crossbow.png", tags:["Bows","Utility"], notes:"Ammo: Arrows (Bolts)" },
+      { name:"Compound Crossbow", image:"compound.png", tags:["Bows","Utility"], notes:"Ammo: Arrows (Bolts)" },
+
+      // --- Power Tools ---
+      { name:"Nail Gun", image:"nailgun.png", tags:["Power Tools","Utility"], notes:"Ammo: Nails" },
+
+      // --- Non-Weapons ---
+      { name:"Maglite Flashlight", image:"Maglite Flashlight.png", tags:["Non-Weapons","Utility"], notes:"Weight: 1kg • Small hand-held flashlight" },
+      { name:"Lantern Flashlight", image:"lantern flashlight.png", tags:["Non-Weapons","Utility"], notes:"Weight: 2kg • Large hand-held flashlight" },
+      { name:"Red Devil Flashlight", image:"red devil flashlight.png", tags:["Non-Weapons","Utility"], notes:"Weight: 0.25kg • Small hand-held flashlight" }
+    ];
+
+    const COLUMNS = [
+      { key:"image", label:"Image" },
+      { key:"name", label:"Weapon" },
+      { key:"notes", label:"Details" }
+    ];
+
+    renderPage({ title:"Weapons", data:DATA, columns:COLUMNS, defaultView:"cards" });
+  </script>
 </body>
 </html>
