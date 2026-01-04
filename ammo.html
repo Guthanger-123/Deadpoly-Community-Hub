@@ -1,86 +1,101 @@
+<!-- =========================
+FILE: ammo.html
+========================= -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DeadPoly Wiki — Ammo</title>
-  <link rel="stylesheet" href="wiki-shared.css">
+  <title>DeadPoly Hub — Ammo</title>
+  <link rel="stylesheet" href="wiki-shared.css" />
 </head>
 <body>
-
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="topbar-left">
-      <a class="btn" href="wiki.html">← Wiki Hub</a>
-      <span class="pilltitle">Wiki</span>
-      <span class="pilltitle">Ammo</span>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="top-left">
+        <a class="btn" href="index.html">← Menu</a>
+        <div class="brand">Wiki <span class="badge">Ammo</span></div>
+      </div>
+      <div class="top-right">
+        <a class="btn" href="https://deadpoly.wiki/Ammo" target="_blank" rel="noopener">Official Wiki ↗</a>
+      </div>
     </div>
-    <a id="officialBtn" class="btn" href="https://deadpoly.wiki/Ammo" target="_blank" rel="noopener">Official Wiki ↗</a>
   </div>
-</div>
 
-<div class="shell">
-  <div class="layout">
-
-    <aside class="panel sidebar">
-      <h3>Wiki Categories</h3>
-      <div class="muted">Local pages (fast) + one official button above.</div>
-
-      <div class="navlist">
-        <a class="navbtn" href="wiki.html" data-nav="hub"><span class="label">Hub</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="helmets.html" data-nav="helmets"><span class="label">Helmets</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="masks.html" data-nav="masks"><span class="label">Masks</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="weapons.html" data-nav="weapons"><span class="label">Weapons</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="armor.html" data-nav="armor"><span class="label">Armor</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="ammo.html" data-nav="ammo"><span class="label">Ammo</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="backpacks.html" data-nav="backpacks"><span class="label">Backpacks</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="consumables.html" data-nav="consumables"><span class="label">Consumables</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="crafting.html" data-nav="crafting"><span class="label">Crafting</span><span class="arrow">→</span></a>
-        <a class="navbtn" href="collectibles.html" data-nav="collectibles"><span class="label">Collectibles</span><span class="arrow">→</span></a>
-      </div>
-    </aside>
-
-    <main class="panel main">
-      <div class="head">
-        <div>
-          <h1 id="pageTitle">Ammo</h1>
-          <div id="pageSubtitle" class="sub">Ammo types + crafting requirements (Bullet Press required).</div>
+  <div class="container">
+    <div class="shell">
+      <div class="panel side">
+        <h2>Wiki Categories</h2>
+        <div class="muted">Local pages (fast) + one official button above.</div>
+        <div class="nav">
+          <a href="wiki.html"><span>Hub</span><span class="small">→</span></a>
+          <a href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
+          <a href="masks.html"><span>Masks</span><span class="small">→</span></a>
+          <a href="armor.html"><span>Armor</span><span class="small">→</span></a>
+          <a class="active" href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
+          <a href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
+          <a href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
+          <a href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
+          <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
+          <a href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
-        <div class="badge"><span class="dot"></span><span id="countBadge">0 items</span></div>
       </div>
 
-      <div class="controls">
-        <input id="q" class="search" placeholder="Search ammo (ex: 5.56, 7.62, 9mm, 12ga)..." />
-        <div class="filters" id="filters"></div>
+      <div class="panel main">
+        <div class="hero">
+          <div>
+            <h1>Ammo Types</h1>
+            <div class="sub">Remember: a Bullet Press is required to craft ammunition.</div>
+          </div>
+          <div class="badge" id="countBadge">0 items</div>
+        </div>
+
+        <div class="toolbar">
+          <input id="q" class="search" placeholder="Search ammo..." />
+          <div class="pills" id="pills"></div>
+          <div class="viewtoggle">
+            <button class="btn" id="gridBtn" type="button">Cards</button>
+            <button class="btn" id="tableBtn" type="button">Table</button>
+          </div>
+        </div>
+
+        <div id="grid" class="grid"></div>
+
+        <div id="table" class="tablewrap" style="display:none">
+          <table>
+            <thead id="thead"></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <h2>Other</h2>
+          <div class="small muted"><b>Nails</b> are used as ammunition in the Nail Gun, and also used for crafting.</div>
+        </div>
       </div>
-
-      <div id="cards" class="grid"></div>
-    </main>
-
+    </div>
   </div>
-</div>
 
-<script src="wiki-shared.js"></script>
-<script>
-  const ammo = [
-    {name:"5.56x45mm", image:"TM_556x45_E.png", group:"Available", crafting:"2x Refined Metal, 2x Gunpowder"},
-    {name:"7.62x39mm", image:"TM_762x39_E.png", group:"Available", crafting:"2x Refined Metal, 2x Gunpowder"},
-    {name:"9mm", image:"TM_9mm_E.png", group:"Available", crafting:"1x Refined Metal, 1x Gunpowder"},
-    {name:"12Ga", image:"TM_12ga_E.png", group:"Available", crafting:"1x Refined Metal, 4x Gunpowder, 4x Plastic"},
-    {name:".22 LR", image:"TM_22lr_E.png", group:"Unavailable", crafting:"??"},
-    {name:".45 ACP", image:"TM_45acp_E.png", group:"Unavailable", crafting:"??"},
-    {name:".50 BMG", image:"TM_50bmg_E.png", group:"Unavailable", crafting:"??"},
-    {name:"Nails", group:"Other", notes:"Used as ammo in the Nail Gun; commonly used for crafting. Unavailable"}
-  ];
+  <script src="wiki-shared.js"></script>
+  <script>
+    const DATA = [
+      { name:"5.56x45mm", image:"TM_556x45_E.png", tags:["Available"], notes:"Craft: 2x Refined Metal, 2x Gunpowder" },
+      { name:"7.62x39mm", image:"TM_762x39_E.png", tags:["Available"], notes:"Craft: 2x Refined Metal, 2x Gunpowder" },
+      { name:"9mm", image:"TM_9mm_E.png", tags:["Available"], notes:"Craft: 1x Refined Metal, 1x Gunpowder" },
+      { name:"12Ga", image:"TM_12ga_E.png", tags:["Available"], notes:"Craft: 1x Refined Metal, 4x Gunpowder, 4x Plastic" },
 
-  mountWikiPage({
-    pageTitle:"Ammo",
-    pageSubtitle:"Ammo types + crafting requirements (Bullet Press required).",
-    officialUrl:"https://deadpoly.wiki/Ammo",
-    navActive:"ammo",
-    filters:["All","Available","Unavailable","Other"],
-    data: ammo
-  });
-</script>
+      { name:".22 LR", image:"TM_22lr_E.png", tags:["Unavailable"], notes:"Craft: ??" },
+      { name:".45 ACP", image:"TM_45acp_E.png", tags:["Unavailable"], notes:"Craft: ??" },
+      { name:".50 BMG", image:"TM_50bmg_E.png", tags:["Unavailable"], notes:"Craft: ??" }
+    ];
+
+    const COLUMNS = [
+      { key:"image", label:"Image" },
+      { key:"name", label:"Ammo Type" },
+      { key:"notes", label:"Crafting Requirements" }
+    ];
+
+    renderPage({ title:"Ammo", data:DATA, columns:COLUMNS, defaultView:"cards" });
+  </script>
 </body>
 </html>
