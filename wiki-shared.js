@@ -1,78 +1,150 @@
+// Shared helpers for all wiki pages
+
+function dpFileUrl(fileName){
+  // Pull images from OFFICIAL wiki via Special:FilePath
+  // Works well for hotlinking without downloading assets.
+  return "https://deadpoly.wiki/Special:FilePath/" + encodeURIComponent(fileName);
+}
+
 function escapeHtml(s){
-  return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  return String(s ?? "").replace(/[&<>"']/g, m => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[m]));
 }
-function cleanCell(s){
-  if (!s) return "";
-  return String(s)
-    .replace(/\[\[File:[^\]]+\]\]/gi, "")       // remove file blocks inside cell
-    .replace(/\[\[file:[^\]]+\]\]/gi, "")
-    .replace(/\[\[|\]\]/g, "")
-    .replace(/<\s*br\s*\/?>/gi, " ")
-    .replace(/<[^>]*>/g, "")                   // remove html tags like <b>
-    .replace(/\s+/g, " ")
-    .replace(/\|\|+/g, "|")
-    .trim();
-}
-function parseFirstWikiLink(cell){
-  // returns {page, label} from a cell containing [[Page|Label]] or [[Page]]
-  const m = String(cell).match(/\[\[([^\]]+)\]\]/);
-  if (!m) return { page:"", label: cleanCell(cell) };
-  const inner = m[1];
-  const parts = inner.split("|").map(x => x.trim()).filter(Boolean);
-  const page = parts[0] ?? "";
-  const label = parts[1] ?? parts[0] ?? "";
-  return { page: page.replace(/^:/,""), label };
-}
-function parseFirstFileName(cell){
-  // handles [[File:Name.png]] or [[file:name.png | 250px]]
-  const m = String(cell).match(/\[\[\s*(?:File|file)\s*:\s*([^|\]]+)/);
-  return m ? m[1].trim() : "";
-}
-function officialFileUrl(fileName){
-  if (!fileName) return "";
-  return "https://deadpoly.wiki/wiki/Special:Redirect/file/" + encodeURIComponent(fileName.trim());
-}
-function officialPageUrl(page){
-  if (!page) return "https://deadpoly.wiki/Main_Page";
-  // deadpoly.wiki uses pretty paths like /Helmets not /wiki/Helmets
-  const slug = page.trim().replace(/\s+/g, "_");
-  return "https://deadpoly.wiki/" + encodeURIComponent(slug);
-}
-function parseWikitableRows(raw){
-  // returns array of row arrays (cells), ignoring headers and captions
-  const lines = String(raw).split(/\r?\n/).map(l => l.trim());
-  const rows = [];
-  for (const line of lines){
-    if (!line) continue;
-    if (line.startsWith("{|") || line.startsWith("|}") || line.startsWith("!")) continue;
-    if (line.startsWith("|+")) continue;
-    if (line === "|-" ) continue;
-    if (line.startsWith("|-")) continue;
-    if (!line.startsWith("|")) continue;
 
-    // Remove leading "|"
-    const body = line.replace(/^\|\s*/,"");
-
-    // rows are generally "cell || cell || cell"
-    const parts = body.split("||").map(p => p.trim()).filter(p => p.length>0 || body.includes("||"));
-    if (parts.length >= 2) rows.push(parts);
-  }
-  return rows;
-}
-function makePills(container, values, onPick){
-  container.innerHTML = "";
-  const buttons = [];
-  for (const v of values){
+function buildPills(pillsEl, tags, onPick){
+  pillsEl.innerHTML = "";
+  const all = ["All", ...tags];
+  all.forEach((t, i) => {
     const b = document.createElement("button");
-    b.className = "pill" + (v.selected ? " active" : "");
     b.type = "button";
-    b.textContent = v.label;
-    b.addEventListener("click", () => {
-      buttons.forEach(x => x.classList.remove("active"));
+    b.className = "pill" + (i === 0 ? " active" : "");
+    b.textContent = t;
+    b.onclick = () => {
+      [...pillsEl.children].forEach(x => x.classList.remove("active"));
       b.classList.add("active");
-      onPick(v.value);
-    });
-    container.appendChild(b);
-    buttons.push(b);
+      onPick(t);
+    };
+    pillsEl.appendChild(b);
+  });
+}
+
+function renderPage({
+  title,
+  data,
+  columns,
+  defaultView = "cards",
+  countBadgeId = "countBadge",
+  qId = "q",
+  pillsId = "pills",
+  gridId = "grid",
+  tableId = "table",
+  theadId = "thead",
+  tbodyId = "tbody",
+  gridBtnId = "gridBtn",
+  tableBtnId = "tableBtn",
+}){
+  const countBadge = document.getElementById(countBadgeId);
+  const qEl = document.getElementById(qId);
+  const pillsEl = document.getElementById(pillsId);
+  const gridEl = document.getElementById(gridId);
+  const tableWrap = document.getElementById(tableId);
+  const theadEl = document.getElementById(theadId);
+  const tbodyEl = document.getElementById(tbodyId);
+  const gridBtn = document.getElementById(gridBtnId);
+  const tableBtn = document.getElementById(tableBtnId);
+
+  let activeTag = "All";
+  let view = defaultView;
+
+  const allTags = [...new Set(data.flatMap(x => x.tags || []))].sort();
+  buildPills(pillsEl, allTags, (t) => { activeTag = t; draw(); });
+
+  function matches(item, q){
+    if(!q) return true;
+    const hay = (item.name + " " + (item.notes||"") + " " + (item.tags||[]).join(" ") + " " + Object.values(item).join(" "))
+      .toLowerCase();
+    return hay.includes(q.toLowerCase());
   }
+
+  function filtered(){
+    const q = qEl.value.trim();
+    return data
+      .filter(x => activeTag === "All" ? true : (x.tags || []).includes(activeTag))
+      .filter(x => matches(x, q));
+  }
+
+  function drawCards(rows){
+    gridEl.innerHTML = "";
+    rows.forEach(x => {
+      const div = document.createElement("div");
+      div.className = "card";
+
+      const imgHtml = x.image
+        ? `<img referrerpolicy="no-referrer" loading="lazy" src="${dpFileUrl(x.image)}" alt="${escapeHtml(x.name)}">`
+        : `<div class="muted small">no image</div>`;
+
+      div.innerHTML = `
+        <div class="thumb">${imgHtml}</div>
+        <div style="min-width:0">
+          <h3>${escapeHtml(x.name)}</h3>
+          ${x.sub ? `<div class="meta">${escapeHtml(x.sub)}</div>` : ""}
+          ${x.notes ? `<div class="meta">${escapeHtml(x.notes)}</div>` : ""}
+          ${(x.tags && x.tags.length) ? `<div class="tags">${x.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>` : ""}
+        </div>
+      `;
+      gridEl.appendChild(div);
+    });
+  }
+
+  function drawTable(rows){
+    theadEl.innerHTML = `<tr>${columns.map(c => `<th>${escapeHtml(c.label)}</th>`).join("")}</tr>`;
+    tbodyEl.innerHTML = rows.map(x => {
+      return `<tr>${
+        columns.map(c => {
+          if(c.key === "image"){
+            return `<td style="width:92px">
+              ${x.image ? `<img referrerpolicy="no-referrer" loading="lazy" src="${dpFileUrl(x.image)}" style="width:72px;height:72px;object-fit:contain;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25)">` : `<span class="muted small">—</span>`}
+            </td>`;
+          }
+          return `<td>${escapeHtml(x[c.key] ?? "—")}</td>`;
+        }).join("")
+      }</tr>`;
+    }).join("");
+  }
+
+  function setView(next){
+    view = next;
+    if(view === "cards"){
+      tableWrap.style.display = "none";
+      gridEl.style.display = "grid";
+      gridBtn.classList.add("active");
+      tableBtn.classList.remove("active");
+    }else{
+      gridEl.style.display = "none";
+      tableWrap.style.display = "block";
+      tableBtn.classList.add("active");
+      gridBtn.classList.remove("active");
+    }
+    draw();
+  }
+
+  function draw(){
+    const rows = filtered();
+    countBadge.textContent = `${rows.length} items`;
+
+    if(view === "cards"){
+      drawCards(rows);
+    }else{
+      drawTable(rows);
+    }
+  }
+
+  // wire controls
+  qEl.addEventListener("input", draw);
+  gridBtn.onclick = () => setView("cards");
+  tableBtn.onclick = () => setView("table");
+
+  // initial
+  setView(view);
 }
