@@ -83,46 +83,55 @@
       { name:"Workbench", tags:["Station","Crafting Stations"], id:"workbench",
         notes:"Craft In Inventory",
         kv:[{k:"Requirements",v:"100x Wood, 50x Metal"},{k:"Uses",v:"Craft Anvil + Mortar & Pestle"}],
-        buy:null, sell:null
+        buy:null, sell:--
       },
       { name:"Anvil", tags:["Station","Crafting Stations"], id:"anvil",
         notes:"Craft With Workbench",
         kv:[{k:"Requirements",v:"150x Metal"},{k:"Uses",v:"Crates/benches + Refined Metal"}]
+       buy:null, sell:--
       },
       { name:"Mortar & Pestle", tags:["Station","Crafting Stations"], id:"mortar-pestle",
         notes:"Craft With Workbench",
         kv:[{k:"Requirements",v:"25x Stone"},{k:"Uses",v:"Craft Cornmeal (Distiller)"}]
+       buy:null, sell:--
       },
       { name:"Bullet Press", tags:["Station","Crafting Stations"], id:"bullet-press",
         notes:"Craft with Anvil",
         kv:[{k:"Requirements",v:"50x Metal"},{k:"Uses",v:"Craft Ammo"}]
+       buy:null, sell:--
       },
 
       // Production
       { name:"Distiller", tags:["Production"], id:"distiller",
         notes:"Crafted at Anvil",
         kv:[{k:"Requirements",v:"x100 Metal"},{k:"Uses",v:"Produce Ethanol (Cornmeal + Water)"}]
+      buy:null, sell:--
       },
       { name:"Generator (Home-Made)", tags:["Production"], id:"generator-home-made",
         notes:"Crafted at anvil",
         kv:[{k:"Requirements",v:"x75 Metal, x25 Plastic, x10 Wire, x2 Sparkplugs, x1 Circuit Board"},
             {k:"Uses",v:"Powers structures; uses Ethanol"}]
+      buy:null, sell:--
       },
       { name:"Generator (Found)", tags:["Production"], id:"generator-found",
         notes:"Found in the world",
         kv:[{k:"Requirements",v:"N/A"},{k:"Uses",v:"Runs off Propane"}]
+      buy:null, sell:--
       },
       { name:"Dew Collector", tags:["Production"], id:"dew-collector",
         notes:"Crafted in Build Menu",
         kv:[{k:"Requirements",v:"x40 Fiber, x30 Wood, x30 Metal"},{k:"Uses",v:"Refills water bottles placed in inventory"}]
+      buy:null, sell:--
       },
       { name:"Crop Plot", tags:["Production"], id:"crop-plot",
         notes:"Crafted in Build Menu",
         kv:[{k:"Requirements",v:"x20 Wood"},{k:"Uses",v:"When watered, produces Corn or Potatoes at random"}]
+      buy:null, sell:--
       },
       { name:"Salvager", tags:["Production"], id:"salvager",
         notes:"Crafted in Build Menu",
         kv:[{k:"Requirements",v:"x50 Metal"},{k:"Uses",v:"Scrap unwanted items for resources"}]
+      buy:null, sell:--
       }
     ];
 
