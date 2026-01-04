@@ -32,19 +32,23 @@
           <a class="active" href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
           <a href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
+
+        <div class="note">
+          <b>Nesting rules:</b> you can store lower-tier bags inside higher-tier bags, but not same-size.
+        </div>
       </div>
 
       <div class="panel main">
         <div class="hero">
           <div>
             <h1>Backpacks</h1>
-            <div class="sub">Tier list with official images.</div>
+            <div class="sub">Tier lists + total slots. Buy/Sell fields included for you to fill later if you want.</div>
           </div>
           <div class="badge" id="countBadge">0 items</div>
         </div>
 
         <div class="toolbar">
-          <input id="q" class="search" placeholder="Search backpacks..." />
+          <input id="q" class="search" placeholder="Search Backpacks (ex: raid, rush, expedition)..." />
           <div class="pills" id="pills"></div>
           <div class="viewtoggle">
             <button class="btn" id="gridBtn" type="button">Cards</button>
@@ -60,42 +64,55 @@
             <tbody id="tbody"></tbody>
           </table>
         </div>
+
+        <div class="section">
+          <h2>Nesting graph</h2>
+          <div class="small">If the image exists on the official wiki, it’ll load here automatically.</div>
+          <div class="note" style="margin-top:10px">
+            <img alt="" src="https://deadpoly.wiki/Special:FilePath/Bag_Nesting_Graph.png" onerror="this.style.display='none'">
+            <div class="small" style="margin-top:8px">If this stays blank, the official filename changed.</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
   <script src="wiki-shared.js"></script>
   <script>
-    // From official Backpacks table we opened
-    const DATA = [
+    const items = [
       // Tier 3
-      { name:"Raid Backpack", image:"TM_BackpackRaid_1_E.png", tags:["Tier 3"], notes:"Main 120 / Extra 32 / Total 152" },
-      { name:"Rush Backpack (Gold)", image:"TM_BackpackRushGold_E.png", tags:["Tier 3"], notes:"Main 64 / Extra 24 / Total 88" },
-      { name:"Overland Backpack", image:"TM_BackpackOverlandWhite_E.png", tags:["Tier 3"], notes:"Main 64 / Extra 23 / Total 87" },
-      { name:"Nomad Backpack", image:"TM_BackpackNomad1_E.png", tags:["Tier 3"], notes:"Main 48 / Extra 31 / Total 79" },
-      { name:"Rush Backpack (Normal)", image:"TM_BackpackRush_E.png", tags:["Tier 3"], notes:"Main 48 / Extra 16 / Total 64" },
+      { name:"Raid Backpack", img:"TM_BackpackRaid_1_E.png", tags:["Tier 3"], id:"raid-backpack", notes:"Main 120 • Extra 32 • Total 152" },
+      { name:"Rush Backpack (Gold Variant)", img:"TM_BackpackRushGold_E.png", tags:["Tier 3"], id:"rush-backpack-gold-variant", notes:"Main 64 • Extra 24 • Total 88" },
+      { name:"Overland Backpack", img:"TM_BackpackOverlandWhite_E.png", tags:["Tier 3"], id:"overland-backpack", notes:"Main 64 • Extra 23 • Total 87" },
+      { name:"Nomad Backpack", img:"TM_BackpackNomad1_E.png", tags:["Tier 3"], id:"nomad-backpack", notes:"Main 48 • Extra 31 • Total 79" },
+      { name:"Rush Backpack (Normal Variant)", img:"TM_BackpackRush_E.png", tags:["Tier 3"], id:"rush-backpack-normal-variant", notes:"Main 48 • Extra 16 • Total 64" },
+      { name:"Expedition Backpack", img:"Backpack_Expedition_Red.png", tags:["Tier 3"], id:"expedition-backpack", notes:"Main 48 • Extra 8 • Total 56" },
 
       // Tier 2
-      { name:"Hunting Backpack", image:"Backpack_Hunting_LightGreen.png", tags:["Tier 2"], notes:"Main 42 / Extra 0 / Total 42" },
-      { name:"Topload Backpack", image:"Backpack_Topload_1.png", tags:["Tier 2"], notes:"Main 42 / Extra 0 / Total 42" },
+      { name:"Hunting Backpack", img:"Backpack_Hunting_LightGreen.png", tags:["Tier 2"], id:"hunting-backpack", notes:"Main 42 • Extra 0 • Total 42" },
+      { name:"Topload Backpack", img:"Backpack_Topload_1.png", tags:["Tier 2"], id:"topload-backpack", notes:"Main 42 • Extra 0 • Total 42" },
 
       // Tier 1
-      { name:"Cute Backpack", image:"Backpack_Buzzy.png", tags:["Tier 1"], notes:"Main 16 / Extra 0 / Total 16" },
-      { name:"School Backpack", image:"Backpack_School_Blue.png", tags:["Tier 1"], notes:"Main 16 / Extra 0 / Total 16" },
-      { name:"Bag", image:"TM_Bag_E.png", tags:["Tier 1"], notes:"Main 9 / Extra 0 / Total 9" }
+      { name:"Cute Backpack", img:"Backpack_Buzzy.png", tags:["Tier 1"], id:"cute-backpack", notes:"Main 16 • Extra 0 • Total 16" },
+      { name:"School Backpack", img:"Backpack_School_Blue.png", tags:["Tier 1"], id:"school-backpack", notes:"Main 16 • Extra 0 • Total 16" },
+      { name:"Bag", img:"TM_Bag_E.png", tags:["Tier 1"], id:"bag", notes:"Main 9 • Extra 0 • Total 9" }
     ];
 
-    const COLUMNS = [
-      { key:"image", label:"Image" },
-      { key:"name", label:"Backpack" },
-      { key:"notes", label:"Capacity" }
+    const columns = [
+      { key:"img", label:"Image" },
+      { key:"name", label:"Name" },
+      { key:"notes", label:"Slots / Notes" },
+      { key:"buy", label:"Buy" },
+      { key:"sell", label:"Sell" }
     ];
 
-    renderPage({
-      title: "Backpacks",
-      data: DATA,
-      columns: COLUMNS,
-      defaultView: "cards"
+    wirePage({
+      title:"Backpacks",
+      items,
+      columns,
+      activeHref:"backpacks.html",
+      placeholderText:"Search Backpacks..."
     });
   </script>
 </body>
