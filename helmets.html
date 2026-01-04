@@ -32,19 +32,23 @@
           <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
           <a href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
+
+        <div class="note">
+          Add prices anytime: set <span class="code">buy</span> / <span class="code">sell</span> in the data array.
+        </div>
       </div>
 
       <div class="panel main">
         <div class="hero">
           <div>
             <h1>Helmets</h1>
-            <div class="sub">Pulled from official DeadPoly wiki file names (hotlinked via Special:FilePath).</div>
+            <div class="sub">Local list with official images hotlinked. Expand this list anytime.</div>
           </div>
           <div class="badge" id="countBadge">0 items</div>
         </div>
 
         <div class="toolbar">
-          <input id="q" class="search" placeholder="Search helmets..." />
+          <input id="q" class="search" placeholder="Search Helmets (ex: crown, mask, collar)..." />
           <div class="pills" id="pills"></div>
           <div class="viewtoggle">
             <button class="btn" id="gridBtn" type="button">Cards</button>
@@ -61,51 +65,54 @@
           </table>
         </div>
 
-        <div class="section">
-          <h2>Notes</h2>
-          <div class="small muted">If an image ever shows blank: it usually means the filename changed on the official wiki.</div>
-        </div>
       </div>
     </div>
   </div>
 
   <script src="wiki-shared.js"></script>
   <script>
-    // From official page content (names + files)
-    const DATA = [
-      { name:"Armor Helmet", image:"ArmorHelmet_I.png", tags:["Armor"] },
-      { name:"Baby Bunny Hat", image:"BabyBunnyHat_I.png", tags:["Cosmetic"] },
-      { name:"Barbarian Helmet", image:"BarbarianHelmet_I.png", tags:["Cosmetic"] },
-      { name:"Berserker Helmet", image:"BerserkerHelmet_I.png", tags:["Cosmetic"] },
-      { name:"Bunny Helmet", image:"BunnyHelmet_I.png", tags:["Cosmetic"] },
-      { name:"Chainsaw Helmet", image:"ChainsawHelmet_I.png", tags:["Cosmetic"] },
-      { name:"Combat Helmet", image:"CombatHelmet_I.png", tags:["Armor"] },
-      { name:"Construction Helmet", image:"ConstructionHelmet_I.png", tags:["Utility"] },
-      { name:"Crown of the Trickster", image:"TM_LokiHelm_I.png", tags:["Cosmetic"] },
-      { name:"Devil Helmet", image:"DevilHelmet_I.png", tags:["Cosmetic"] },
-      { name:"Fire Helmet", image:"FireHelmet_I.png", tags:["Utility"] },
-      { name:"Gas Mask Helmet", image:"GasMaskHelmet_I.png", tags:["Utility"] },
-      { name:"Hazmat Helmet", image:"HazmatHelmet_I.png", tags:["Utility"] },
-      { name:"Knight Helmet", image:"KnightHelmet_I.png", tags:["Cosmetic"] },
-      { name:"Metal Helmet", image:"MetalHelmet_I.png", tags:["Armor"] },
-      { name:"Motorcycle Helmet", image:"MotorcycleHelmet_I.png", tags:["Utility"] },
-      { name:"Reaper Hood", image:"ReaperHood_I.png", tags:["Cosmetic"] },
-      { name:"Riot Helmet", image:"RiotHelmet_I.png", tags:["Armor"] },
-      { name:"Samurai Helmet", image:"SamuraiHelmet_I.png", tags:["Cosmetic"] },
-      { name:"SWAT Helmet", image:"SwatHelmet_I.png", tags:["Armor"] }
+    // This is a starter set based on the items you were already using in your UI and earlier wiki snippets.
+    // Add more helmets here as you confirm official filenames.
+    const items = [
+      { name:"Neck Collar", img:"TM_HelmOfMight_E.png", tags:["Helmets"], id:"neck-collar", notes:"", buy:null, sell:null },
+      { name:"Juggernaut Mask", img:"TM_JuggernautMask_I.png", tags:["Helmets"], id:"juggernaut-mask", notes:"", buy:null, sell:null },
+      { name:"Armor Helmet", image:"ArmorHelmet_I.png", tags:["Armor"], id:"armor-helmet", notes:"", buy:null, sell:null   },
+      { name:"Baby Bunny Hat", image:"BabyBunnyHat_I.png", tags:["Cosmetic"], id:"baby-bunny-helmet", notes:"", buy:null, sell:null   },
+      { name:"Barbarian Helmet", image:"BarbarianHelmet_I.png", tags:["Cosmetic"], id:"barbarian-helmet", notes:"", buy:null, sell:null   },
+      { name:"Berserker Helmet", image:"BerserkerHelmet_I.png", tags:["Cosmetic"], id:"beserker-helmet", notes:"", buy:null, sell:null   },
+      { name:"Bunny Helmet", image:"BunnyHelmet_I.png", tags:["Cosmetic"], id:"bunny-helmet", notes:"", buy:null, sell:null   },
+      { name:"Chainsaw Helmet", image:"ChainsawHelmet_I.png", tags:["Cosmetic"], id:"chainsaw-helmet", notes:"", buy:null, sell:null   },
+      { name:"Combat Helmet", image:"CombatHelmet_I.png", tags:["Armor"], id:"combat-helmet", notes:"", buy:null, sell:null   },
+      { name:"Construction Helmet", image:"ConstructionHelmet_I.png", tags:["Utility"], id:"contruction-helmet", notes:"", buy:null, sell:null   },
+      { name:"Crown of the Trickster", image:"TM_LokiHelm_I.png", tags:["Cosmetic"], id:"crown-of-the-trickster", notes:"", buy:null, sell:null   },
+      { name:"Devil Helmet", image:"DevilHelmet_I.png", tags:["Cosmetic"], id:"devil-helmet", notes:"", buy:null, sell:null   },
+      { name:"Fire Helmet", image:"FireHelmet_I.png", tags:["Utility"], id:"fire-helmet", notes:"", buy:null, sell:null   },
+      { name:"Gas Mask Helmet", image:"GasMaskHelmet_I.png", tags:["Utility"], id:"gas-mask-helmet", notes:"", buy:null, sell:null   },
+      { name:"Hazmat Helmet", image:"HazmatHelmet_I.png", tags:["Utility"], id:"hazmat-helmet", notes:"", buy:null, sell:null   },
+      { name:"Knight Helmet", image:"KnightHelmet_I.png", tags:["Cosmetic"], id:"knight-helmet", notes:"", buy:null, sell:null   },
+      { name:"Metal Helmet", image:"MetalHelmet_I.png", tags:["Armor"], id:"metal-helmet", notes:"", buy:null, sell:null   },
+      { name:"Motorcycle Helmet", image:"MotorcycleHelmet_I.png", tags:["Utility"], id:"motorcycle-helmet", notes:"", buy:null, sell:null   },
+      { name:"Reaper Hood", image:"ReaperHood_I.png", tags:["Cosmetic"], id:"reaper-hood", notes:"", buy:null, sell:null   },
+      { name:"Riot Helmet", image:"RiotHelmet_I.png", tags:["Armor"], id:"riot-helmet", notes:"", buy:null, sell:null   },
+      { name:"Samurai Helmet", image:"SamuraiHelmet_I.png", tags:["Cosmetic"], id:"samurai-helmet", notes:"", buy:null, sell:null   },
+      { name:"SWAT Helmet", image:"SwatHelmet_I.png", tags:["Armor"], id:"swat-helmet", notes:"", buy:null, sell:null  },
+      { name:"Plague Doctor Mask", img:"TM_PlagueMask_E.png", tags:["Helmets"], id:"plague-doctor-mask", notes:"", buy:null, sell:null }
     ];
 
-    const COLUMNS = [
-      { key:"image", label:"Image" },
+    const columns = [
+      { key:"img", label:"Image" },
       { key:"name", label:"Name" },
-      { key:"notes", label:"Notes" }
+      { key:"notes", label:"Notes" },
+      { key:"buy", label:"Buy" },
+      { key:"sell", label:"Sell" }
     ];
 
-    renderPage({
-      title: "Helmets",
-      data: DATA,
-      columns: COLUMNS,
-      defaultView: "cards"
+    wirePage({
+      title:"Helmets",
+      items,
+      columns,
+      activeHref:"helmets.html",
+      placeholderText:"Search Helmets..."
     });
   </script>
 </body>
