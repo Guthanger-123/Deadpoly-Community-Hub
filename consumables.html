@@ -1,3 +1,9 @@
+<!-- =========================
+     consumables.html (REDO)
+     - Buy/Sell works
+     - Images work (official wiki hotlink via Special:FilePath)
+     - Consistent item schema: image, buy, sell (no img)
+     ========================= -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -36,13 +42,17 @@
           <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
           <a href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
+
+        <div class="note">
+          <b>Prices:</b> Buy/Sell show when present. Use <span class="code">"—"</span> when unknown.
+        </div>
       </div>
 
       <div class="panel main">
         <div class="hero">
           <div>
             <h1>Consumables</h1>
-            <div class="sub">Food, beverages, and medicines. Prices supported (Buy/Sell) when known.</div>
+            <div class="sub">Food, beverages, and medicines. Images hotlinked from the official wiki.</div>
           </div>
           <div class="badge" id="countBadge">0 items</div>
         </div>
@@ -71,45 +81,50 @@
 
   <script src="wiki-shared.js"></script>
   <script>
+    // IMPORTANT: This page uses a consistent schema:
+    // { name, image, tags, id(optional), notes, buy, sell }
+    // and uses "—" (not null) to avoid render quirks.
+
     const items = [
       // Food
-      { name:"Apple", image:"TM_AppleR_E.png", tags:["Food"], notes:"+HP 0 / +Hunger 20 / +Water 10 / +Stamina 0", buy:null, sell:"—" },
-      { name:"Avocado (Half)", image:"TM_AvocadoHalf.png", tags:["Food"], notes:"stats unknown (official page shows ??)", buy:null, sell:"-" },
-      { name:"Bacon", image:"TM_Bacon.png", tags:["Food"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—" },
-      { name:"Banana", image:"TM_Banana.png", tags:["Food"], notes:"+HP 5 / +Hunger 45 / +Water 15 / +Stamina 0", buy:null, sell:"—" },
-      { name:"Breakfast Bagel", image:"TM_BreakfastBagel.png", tags:["Food"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Canned Beans", image:"TM_CannedBeans_I.png", tags:["Food","Canned"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Canned Molassess", image:"TM_CannedMolassess.png", tags:["Food","Canned"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Canned Peaches", image:"TM_CannedPeaches_I.png", tags:["Food","Canned"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Canned Soup", image:"TM_CannedSoup_I.png", tags:["Food","Canned"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Cheeseburger", image:"TM_Cheeseburger.png", tags:["Food"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Cookie", image:"TM_Cookie1_E.png", tags:["Food"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Croissant", image:"TM_Croissant.png", tags:["Food"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Cupcake", image:"Cupcake_1.png", tags:["Food"], notes:"+HP 1 / +Hunger 25 / +Water 5 / +Stamina 0", buy:null, sell:"—"  },
-      { name:"Waffle", image:"TM_Waffle_E.png", tags:["Food"], notes:"+HP 1 / +Hunger 40 / +Water 7 / +Stamina 0", buy:null, sell:"—"  },
-      { name:"Dragon Fruit", image:"TM_DragonFruit_E.png", tags:["Food"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Raw Egg", image:"TM_EggRaw.png", tags:["Food"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Cooked Meat", image:"TM_MeatCooked_E.png", tags:["Food"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Meat Haunch (Cooked)", image:"TM_MeatHaunchCooked_E.png", tags:["Food"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Meat Haunch (Raw)", image:"TM_MeatHaunchRaw_E.png", tags:["Food"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Raw Meat", image:"TM_MeatRaw_E.png", tags:["Food"], notes:"stats unknown (official page shows ??)", buy:null, sell:"—"  },
-      { name:"Pizza Slice", image:"TM_PizzaSlice_E.png", tags:["Food"], notes:"+HP 0 / +Hunger 20 / +Water 0 / +Stamina 0", buy:null, sell:"—"  },
-      { name:"Donut", image:"TM_Donut_W.png", tags:["Food"], notes:"+HP 1 / +Hunger 25 / +Water 2 / +Stamina 0", buy:null, sell:"—"  },
+      { name:"Apple", image:"TM_AppleR_E.png", tags:["Food"], id:"apple", notes:"+HP 0 / +Hunger 20 / +Water 10 / +Stamina 0", buy:"—", sell:"—" },
+      { name:"Avocado (Half)", image:"TM_AvocadoHalf.png", tags:["Food"], id:"avocado-half", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Bacon", image:"TM_Bacon.png", tags:["Food"], id:"bacon", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Banana", image:"TM_Banana.png", tags:["Food"], id:"banana", notes:"+HP 5 / +Hunger 45 / +Water 15 / +Stamina 0", buy:"—", sell:"—" },
+      { name:"Breakfast Bagel", image:"TM_BreakfastBagel.png", tags:["Food"], id:"breakfast-bagel", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Canned Beans", image:"TM_CannedBeans_I.png", tags:["Food","Canned"], id:"canned-beans", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Canned Molassess", image:"TM_CannedMolassess.png", tags:["Food","Canned"], id:"canned-molassess", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Canned Peaches", image:"TM_CannedPeaches_I.png", tags:["Food","Canned"], id:"canned-peaches", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Canned Soup", image:"TM_CannedSoup_I.png", tags:["Food","Canned"], id:"canned-soup", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Cheeseburger", image:"TM_Cheeseburger.png", tags:["Food"], id:"cheeseburger", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Cookie", image:"TM_Cookie1_E.png", tags:["Food"], id:"cookie", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Croissant", image:"TM_Croissant.png", tags:["Food"], id:"croissant", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Cupcake", image:"Cupcake_1.png", tags:["Food"], id:"cupcake", notes:"+HP 1 / +Hunger 25 / +Water 5 / +Stamina 0", buy:"—", sell:"—" },
+      { name:"Waffle", image:"TM_Waffle_E.png", tags:["Food"], id:"waffle", notes:"+HP 1 / +Hunger 40 / +Water 7 / +Stamina 0", buy:"—", sell:"—" },
+      { name:"Dragon Fruit", image:"TM_DragonFruit_E.png", tags:["Food"], id:"dragon-fruit", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Raw Egg", image:"TM_EggRaw.png", tags:["Food"], id:"raw-egg", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Cooked Meat", image:"TM_MeatCooked_E.png", tags:["Food"], id:"cooked-meat", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Meat Haunch (Cooked)", image:"TM_MeatHaunchCooked_E.png", tags:["Food"], id:"meat-haunch-cooked", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Meat Haunch (Raw)", image:"TM_MeatHaunchRaw_E.png", tags:["Food"], id:"meat-haunch-raw", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Raw Meat", image:"TM_MeatRaw_E.png", tags:["Food"], id:"raw-meat", notes:"Stats unknown (official page shows ??).", buy:"—", sell:"—" },
+      { name:"Pizza Slice", image:"TM_PizzaSlice_E.png", tags:["Food"], id:"pizza-slice", notes:"+HP 0 / +Hunger 20 / +Water 0 / +Stamina 0", buy:"—", sell:"—" },
+      { name:"Donut", image:"TM_Donut_W.png", tags:["Food"], id:"donut", notes:"+HP 1 / +Hunger 25 / +Water 2 / +Stamina 0", buy:"—", sell:"—" },
 
       // Beverages
-      { name:"Water Bottle", image:"TM_WaterBottle_B_E.png", tags:["Beverage"], notes:"+Water up to 100; refillable", buy:null, sell:"—"  },
+      { name:"Water Bottle", image:"TM_WaterBottle_B_E.png", tags:["Beverage"], id:"water-bottle", notes:"+Water up to 100; refillable.", buy:"—", sell:"—" },
 
-      // Medicines (with known buy/sell from your raw)
-      { name:"Medical Kit", img:"", tags:["Medicines"], id:"medical-kit", notes:"+HP 100 • Max Uses 5 • Stamina -100", sell:"$500", buy:"$1,000" },
-      { name:"Epinephrine", img:"", tags:["Medicines"], id:"epinephrine", notes:"+HP 10 • Stamina +100 • Max Uses 1", sell:"$250", buy:"$500" },
-      { name:"Bandage", img:"", tags:["Medicines"], id:"bandage", notes:"+HP 15 • Max Uses 5", sell:"—", buy:"—" }
+      // Medicines
+      // NOTE: Use `image:` (not `img:`) so the shared renderer stays consistent.
+      { name:"Medical Kit", image:"Medical_Kit.png", tags:["Medicines"], id:"medical-kit", notes:"+HP 100 • Max Uses 5 • Stamina -100", buy:"$1,000", sell:"$500" },
+      { name:"Epinephrine", image:"Epinephrine.png", tags:["Medicines"], id:"epinephrine", notes:"+HP 10 • Stamina +100 • Max Uses 1", buy:"$500", sell:"$250" },
+      { name:"Bandage", image:"Bandage.png", tags:["Medicines"], id:"bandage", notes:"+HP 15 • Max Uses 5", buy:"—", sell:"—" }
     ];
 
     const columns = [
-      { key:"img", label:"Image" },
+      { key:"img",  label:"Image" },
       { key:"name", label:"Name" },
-      { key:"notes", label:"Effects / Notes" },
-      { key:"buy", label:"Buy" },
+      { key:"notes",label:"Effects / Notes" },
+      { key:"buy",  label:"Buy" },
       { key:"sell", label:"Sell" }
     ];
 
