@@ -1,3 +1,11 @@
+<!-- =========================
+     collectibles.html (REDO)
+     - Fixed broken JS (your sell:-- was invalid JS and breaks the page)
+     - Fixed img -> image
+     - Fixed nav duplicates + wrong href
+     - Buy/Sell shows ("—" placeholder)
+     - Images hotlink via Special:FilePath with safe filenames (no raw spaces)
+     ========================= -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -30,16 +38,15 @@
           <a href="masks.html"><span>Masks</span><span class="small">→</span></a>
           <a href="armor.html"><span>Armor</span><span class="small">→</span></a>
           <a href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
-          <a href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
+          <a href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
           <a href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
-          <a href="crafting.html"><span>Backpacks</span><span class="small">→</span></a>
+          <a href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
           <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
           <a class="active" href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
 
         <div class="note">
-          <b>Cost fields</b> are built-in now.<br>
-          If the official wiki doesn’t list prices, you can fill <span class="code">buy</span> / <span class="code">sell</span> later.
+          <b>Prices:</b> If the official wiki doesn’t list prices, keep <span class="code">buy</span>/<span class="code">sell</span> as <span class="code">"—"</span>.
         </div>
       </div>
 
@@ -73,7 +80,7 @@
         <div class="section">
           <h2>Notes</h2>
           <div class="small">
-            Official collectibles page sections include Neon Signs, Lamps, Posters/Signs/Paintings, and Toys. :contentReference[oaicite:0]{index=0}
+            Organized like the official page: Neon Signs, Lamps, Posters/Signs/Paintings, Toys.
           </div>
         </div>
 
@@ -83,40 +90,44 @@
 
   <script src="wiki-shared.js"></script>
   <script>
+    // IMPORTANT FIX:
+    // Your prior file had: sell:-- (invalid JS) which breaks the whole page and shows 0 items.
+    // Also your prior file used `img` instead of `image`.
+
     const items = [
-      // Neon Signs (from official page layout)
-      { name:"Skull", img:"skull neon.png", tags:["Neon Signs"], notes:"Red", id:"skull-neon", buy:null, sell:-- },
-      { name:"Pineapple", img:"pineapple neon.png", tags:["Neon Signs"], notes:"Yellow/Green", id:"pineapple-neon", buy:null, sell:--  },
-      { name:"Kitty", img:"kitty neon.png", tags:["Neon Signs"], notes:"Pink", id:"kitty-neon", buy:null, sell:--  },
-      { name:"Dinosaur", img:"dinosaur neon.png", tags:["Neon Signs"], notes:"Green", id:"dinosaur-neon", buy:null, sell:--  },
-      { name:"Dragon", img:"dragon neon.png", tags:["Neon Signs"], notes:"Green/Red/Yellow", id:"dragon-neon", buy:null, sell:--  },
+      // Neon Signs
+      { name:"Skull",      image:"Skull_neon.png",      tags:["Neon Signs"], id:"skull-neon",      notes:"Red",             buy:"—", sell:"—" },
+      { name:"Pineapple",  image:"Pineapple_neon.png",  tags:["Neon Signs"], id:"pineapple-neon",  notes:"Yellow/Green",     buy:"—", sell:"—" },
+      { name:"Kitty",      image:"Kitty_neon.png",      tags:["Neon Signs"], id:"kitty-neon",      notes:"Pink",            buy:"—", sell:"—" },
+      { name:"Dinosaur",   image:"Dinosaur_neon.png",   tags:["Neon Signs"], id:"dinosaur-neon",   notes:"Green",           buy:"—", sell:"—" },
+      { name:"Dragon",     image:"Dragon_neon.png",     tags:["Neon Signs"], id:"dragon-neon",     notes:"Green/Red/Yellow", buy:"—", sell:"—" },
 
       // Lamps
-      { name:"Desk Lamp", img:"desk lamp.png", tags:["Lamps"], notes:"Green", id:"desk-lamp", buy:null, sell:--  },
-      { name:"Cactus Nightlight", img:"cactus nightlight.png", tags:["Lamps"], notes:"Green", id:"cactus-nightlight", buy:null, sell:--  },
-      { name:"Spooky Lamp", img:"spooky lamp.png", tags:["Lamps"], notes:"Red", id:"spooky-lamp", buy:null, sell:--  },
-      { name:"Luxo Lamp", img:"luxo lamp.png", tags:["Lamps"], notes:"White", id:"luxo-lamp", buy:null, sell:--  },
+      { name:"Desk Lamp",         image:"Desk_lamp.png",         tags:["Lamps"], id:"desk-lamp",         notes:"Green", buy:"—", sell:"—" },
+      { name:"Cactus Nightlight", image:"Cactus_nightlight.png", tags:["Lamps"], id:"cactus-nightlight", notes:"Green", buy:"—", sell:"—" },
+      { name:"Spooky Lamp",       image:"Spooky_lamp.png",       tags:["Lamps"], id:"spooky-lamp",       notes:"Red",   buy:"—", sell:"—" },
+      { name:"Luxo Lamp",         image:"Luxo_lamp.png",         tags:["Lamps"], id:"luxo-lamp",         notes:"White", buy:"—", sell:"—" },
 
       // Posters, Signs & Paintings
-      { name:"QR Sign", img:"qr sign.png", tags:["Posters, Signs & Paintings"], notes:"Scannable QR code", id:"qr-sign", buy:null, sell:--  },
-      { name:"Small Sign", img:"small sign.png", tags:["Posters, Signs & Paintings"], notes:'"Face Mask Required"', id:"small-sign", buy:null, sell:--  },
-      { name:"No Firearms Sign", img:"no firearms sign.png", tags:["Posters, Signs & Paintings"], notes:'"No Firearms or Weapons Permitted On This Property"', id:"no-firearms-sign", buy:null, sell:--  },
-      { name:"Poster (Get Back To Work)", img:"poster1.png", tags:["Posters, Signs & Paintings"], notes:'"Get Back To Work"', id:"poster-get-back-to-work", buy:null, sell:--  },
-      { name:"Poster (Stonks)", img:"poster2.png", tags:["Posters, Signs & Paintings"], notes:'P/L graph of "stonks"', id:"poster-stonks", buy:null, sell:--  },
-      { name:"Poster (Profits)", img:"poster3.png", tags:["Posters, Signs & Paintings"], notes:'"Profits"', id:"poster-profits", buy:null, sell:--  },
-      { name:"Painting (Lonely Tree)", img:"painting1.png", tags:["Posters, Signs & Paintings"], notes:"A single lonely tree", id:"painting-lonely-tree", buy:null, sell:--  },
-      { name:"Painting (Geometric)", img:"painting2.png", tags:["Posters, Signs & Paintings"], notes:"Geometric shapes/triangles", id:"painting-geometric", buy:null, sell:--  },
-      { name:"Painting (Umbrella)", img:"painting3.png", tags:["Posters, Signs & Paintings"], notes:"Two people under an umbrella", id:"painting-umbrella", buy:null, sell:--  },
+      { name:"QR Sign",                 image:"QR_sign.png",                    tags:["Posters/Signs/Paintings"], id:"qr-sign",                 notes:"Scannable QR code", buy:"—", sell:"—" },
+      { name:"Small Sign",              image:"Small_sign.png",                 tags:["Posters/Signs/Paintings"], id:"small-sign",              notes:"“Face Mask Required”", buy:"—", sell:"—" },
+      { name:"No Firearms Sign",        image:"No_firearms_sign.png",           tags:["Posters/Signs/Paintings"], id:"no-firearms-sign",        notes:"No firearms/weapons permitted", buy:"—", sell:"—" },
+      { name:"Poster (Get Back To Work)", image:"Poster1.png",                  tags:["Posters/Signs/Paintings"], id:"poster-get-back-to-work", notes:"“Get Back To Work”", buy:"—", sell:"—" },
+      { name:"Poster (Stonks)",         image:"Poster2.png",                    tags:["Posters/Signs/Paintings"], id:"poster-stonks",           notes:"P/L graph “stonks”", buy:"—", sell:"—" },
+      { name:"Poster (Profits)",        image:"Poster3.png",                    tags:["Posters/Signs/Paintings"], id:"poster-profits",          notes:"“Profits”", buy:"—", sell:"—" },
+      { name:"Painting (Lonely Tree)",  image:"Painting1.png",                  tags:["Posters/Signs/Paintings"], id:"painting-lonely-tree",    notes:"A single lonely tree", buy:"—", sell:"—" },
+      { name:"Painting (Geometric)",    image:"Painting2.png",                  tags:["Posters/Signs/Paintings"], id:"painting-geometric",      notes:"Geometric shapes/triangles", buy:"—", sell:"—" },
+      { name:"Painting (Umbrella)",     image:"Painting3.png",                  tags:["Posters/Signs/Paintings"], id:"painting-umbrella",       notes:"Two people under an umbrella", buy:"—", sell:"—" },
 
-      // Toys section exists on official page; items not shown in the snippet we pulled.
-      { name:"Toys (section)", img:"", tags:["Toys"], notes:"Official page has a Toys section (add items here).", id:"toys-section" }
+      // Toys (placeholder – fill with real file names once known on official wiki)
+      { name:"Toys (section)", image:"", tags:["Toys"], id:"toys-section", notes:"Official page includes Toys. Add items when you have filenames.", buy:"—", sell:"—" }
     ];
 
     const columns = [
-      { key:"img", label:"Image" },
+      { key:"img",  label:"Image" },
       { key:"name", label:"Name" },
-      { key:"notes", label:"Notes" },
-      { key:"buy", label:"Buy" },
+      { key:"notes",label:"Notes" },
+      { key:"buy",  label:"Buy" },
       { key:"sell", label:"Sell" }
     ];
 
