@@ -1,3 +1,10 @@
+<!-- =========================
+FILE: crafting.html  (REDO)
+- Fixes: sell:-- (invalid JS), missing commas, consistent schema
+- Adds images from official wiki via Special:FilePath (wirePage handles it)
+- Adds Buy/Sell columns (blank "—" placeholders)
+- Keeps same look as your other pages
+========================= -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -38,7 +45,7 @@
         </div>
 
         <div class="note">
-          Official crafting stations list includes Workbench/Anvil/Mortar &amp; Pestle/Bullet Press and Production stations. :contentReference[oaicite:1]{index=1}
+          <b>Prices:</b> Buy/Sell fields are included; use <span class="code">"—"</span> until you confirm values.
         </div>
       </div>
 
@@ -46,7 +53,7 @@
         <div class="hero">
           <div>
             <h1>Crafting</h1>
-            <div class="sub">Crafting stations and production stations. Costs are optional fields you can fill later.</div>
+            <div class="sub">Crafting stations + production stations. Images hotlinked from the official wiki when filenames match.</div>
           </div>
           <div class="badge" id="countBadge">0 items</div>
         </div>
@@ -69,79 +76,160 @@
           </table>
         </div>
 
-        <div class="section">
-          <h2>Source</h2>
-          <div class="small">
-            Data mirrored from the official Crafting Stations page (station, how to get, requirements, uses). :contentReference[oaicite:2]{index=2}
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
 
   <script src="wiki-shared.js"></script>
   <script>
+    // NOTE:
+    // Your old file was breaking the page because:
+    // 1) sell:-- is invalid JS
+    // 2) missing commas between properties (after kv blocks)
+    //
+    // This version uses the same schema as your working pages:
+    // { name, image, tags, id, notes, kv(optional), buy, sell }
+
     const items = [
       // Crafting Stations
-      { name:"Workbench", tags:["Station","Crafting Stations"], id:"workbench",
-        notes:"Craft In Inventory",
-        kv:[{k:"Requirements",v:"100x Wood, 50x Metal"},{k:"Uses",v:"Craft Anvil + Mortar & Pestle"}],
-        buy:null, sell:--
+      {
+        name:"Workbench",
+        image:"Workbench.png",
+        tags:["Station","Crafting Stations"],
+        id:"workbench",
+        notes:"Craft in inventory.",
+        kv:[
+          {k:"Requirements",v:"100× Wood, 50× Metal"},
+          {k:"Uses",v:"Craft Anvil + Mortar & Pestle"}
+        ],
+        buy:"—",
+        sell:"—"
       },
-      { name:"Anvil", tags:["Station","Crafting Stations"], id:"anvil",
-        notes:"Craft With Workbench",
-        kv:[{k:"Requirements",v:"150x Metal"},{k:"Uses",v:"Crates/benches + Refined Metal"}]
-       buy:null, sell:--
+      {
+        name:"Anvil",
+        image:"Anvil.png",
+        tags:["Station","Crafting Stations"],
+        id:"anvil",
+        notes:"Craft with Workbench.",
+        kv:[
+          {k:"Requirements",v:"150× Metal"},
+          {k:"Uses",v:"Crates/benches + Refined Metal"}
+        ],
+        buy:"—",
+        sell:"—"
       },
-      { name:"Mortar & Pestle", tags:["Station","Crafting Stations"], id:"mortar-pestle",
-        notes:"Craft With Workbench",
-        kv:[{k:"Requirements",v:"25x Stone"},{k:"Uses",v:"Craft Cornmeal (Distiller)"}]
-       buy:null, sell:--
+      {
+        name:"Mortar & Pestle",
+        image:"Mortar_and_Pestle.png",
+        tags:["Station","Crafting Stations"],
+        id:"mortar-pestle",
+        notes:"Craft with Workbench.",
+        kv:[
+          {k:"Requirements",v:"25× Stone"},
+          {k:"Uses",v:"Craft Cornmeal (Distiller)"}
+        ],
+        buy:"—",
+        sell:"—"
       },
-      { name:"Bullet Press", tags:["Station","Crafting Stations"], id:"bullet-press",
-        notes:"Craft with Anvil",
-        kv:[{k:"Requirements",v:"50x Metal"},{k:"Uses",v:"Craft Ammo"}]
-       buy:null, sell:--
+      {
+        name:"Bullet Press",
+        image:"Bullet_Press.png",
+        tags:["Station","Crafting Stations"],
+        id:"bullet-press",
+        notes:"Craft with Anvil.",
+        kv:[
+          {k:"Requirements",v:"50× Metal"},
+          {k:"Uses",v:"Craft Ammo"}
+        ],
+        buy:"—",
+        sell:"—"
       },
 
       // Production
-      { name:"Distiller", tags:["Production"], id:"distiller",
-        notes:"Crafted at Anvil",
-        kv:[{k:"Requirements",v:"x100 Metal"},{k:"Uses",v:"Produce Ethanol (Cornmeal + Water)"}]
-      buy:null, sell:--
+      {
+        name:"Distiller",
+        image:"Distiller.png",
+        tags:["Production"],
+        id:"distiller",
+        notes:"Crafted at Anvil.",
+        kv:[
+          {k:"Requirements",v:"100× Metal"},
+          {k:"Uses",v:"Produce Ethanol (Cornmeal + Water)"}
+        ],
+        buy:"—",
+        sell:"—"
       },
-      { name:"Generator (Home-Made)", tags:["Production"], id:"generator-home-made",
-        notes:"Crafted at anvil",
-        kv:[{k:"Requirements",v:"x75 Metal, x25 Plastic, x10 Wire, x2 Sparkplugs, x1 Circuit Board"},
-            {k:"Uses",v:"Powers structures; uses Ethanol"}]
-      buy:null, sell:--
+      {
+        name:"Generator (Home-Made)",
+        image:"Generator_Home-Made.png",
+        tags:["Production"],
+        id:"generator-home-made",
+        notes:"Crafted at Anvil.",
+        kv:[
+          {k:"Requirements",v:"75× Metal, 25× Plastic, 10× Wire, 2× Sparkplugs, 1× Circuit Board"},
+          {k:"Uses",v:"Powers structures; uses Ethanol"}
+        ],
+        buy:"—",
+        sell:"—"
       },
-      { name:"Generator (Found)", tags:["Production"], id:"generator-found",
-        notes:"Found in the world",
-        kv:[{k:"Requirements",v:"N/A"},{k:"Uses",v:"Runs off Propane"}]
-      buy:null, sell:--
+      {
+        name:"Generator (Found)",
+        image:"Generator_Found.png",
+        tags:["Production"],
+        id:"generator-found",
+        notes:"Found in the world.",
+        kv:[
+          {k:"Requirements",v:"N/A"},
+          {k:"Uses",v:"Runs off Propane"}
+        ],
+        buy:"—",
+        sell:"—"
       },
-      { name:"Dew Collector", tags:["Production"], id:"dew-collector",
-        notes:"Crafted in Build Menu",
-        kv:[{k:"Requirements",v:"x40 Fiber, x30 Wood, x30 Metal"},{k:"Uses",v:"Refills water bottles placed in inventory"}]
-      buy:null, sell:--
+      {
+        name:"Dew Collector",
+        image:"Dew_Collector.png",
+        tags:["Production"],
+        id:"dew-collector",
+        notes:"Crafted in Build Menu.",
+        kv:[
+          {k:"Requirements",v:"40× Fiber, 30× Wood, 30× Metal"},
+          {k:"Uses",v:"Refills water bottles placed in inventory"}
+        ],
+        buy:"—",
+        sell:"—"
       },
-      { name:"Crop Plot", tags:["Production"], id:"crop-plot",
-        notes:"Crafted in Build Menu",
-        kv:[{k:"Requirements",v:"x20 Wood"},{k:"Uses",v:"When watered, produces Corn or Potatoes at random"}]
-      buy:null, sell:--
+      {
+        name:"Crop Plot",
+        image:"Crop_Plot.png",
+        tags:["Production"],
+        id:"crop-plot",
+        notes:"Crafted in Build Menu.",
+        kv:[
+          {k:"Requirements",v:"20× Wood"},
+          {k:"Uses",v:"When watered, produces Corn or Potatoes (random)"}
+        ],
+        buy:"—",
+        sell:"—"
       },
-      { name:"Salvager", tags:["Production"], id:"salvager",
-        notes:"Crafted in Build Menu",
-        kv:[{k:"Requirements",v:"x50 Metal"},{k:"Uses",v:"Scrap unwanted items for resources"}]
-      buy:null, sell:--
+      {
+        name:"Salvager",
+        image:"Salvager.png",
+        tags:["Production"],
+        id:"salvager",
+        notes:"Crafted in Build Menu.",
+        kv:[
+          {k:"Requirements",v:"50× Metal"},
+          {k:"Uses",v:"Scrap unwanted items for resources"}
+        ],
+        buy:"—",
+        sell:"—"
       }
     ];
 
     const columns = [
+      { key:"img", label:"Image" },
       { key:"name", label:"Station" },
-      { key:"notes", label:"How to Get" },
+      { key:"notes", label:"How to Get / Notes" },
       { key:"buy", label:"Buy" },
       { key:"sell", label:"Sell" }
     ];
