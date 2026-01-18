@@ -1,5 +1,9 @@
 <!-- =========================
-FILE: ammo.html
+FILE: ammo.html  (REDO)
+- Fixes: renderPage mismatch, COLUMNS vs columns, image key mismatch
+- Uses wirePage (same as your working pages)
+- Adds Buy/Sell placeholders
+- Images hotlink via Special:FilePath
 ========================= -->
 <!doctype html>
 <html lang="en">
@@ -45,7 +49,7 @@ FILE: ammo.html
         <div class="hero">
           <div>
             <h1>Ammo Types</h1>
-            <div class="sub">Remember: a Bullet Press is required to craft ammunition.</div>
+            <div class="sub">A Bullet Press is required to craft ammunition (when available).</div>
           </div>
           <div class="badge" id="countBadge">0 items</div>
         </div>
@@ -78,24 +82,32 @@ FILE: ammo.html
 
   <script src="wiki-shared.js"></script>
   <script>
-    const DATA = [
-      { name:"5.56x45mm", image:"TM_556x45_E.png", tags:["Available"], notes:"Craft: 2x Refined Metal, 2x Gunpowder" },
-      { name:"7.62x39mm", image:"TM_762x39_E.png", tags:["Available"], notes:"Craft: 2x Refined Metal, 2x Gunpowder" },
-      { name:"9mm", image:"TM_9mm_E.png", tags:["Available"], notes:"Craft: 1x Refined Metal, 1x Gunpowder" },
-      { name:"12Ga", image:"TM_12ga_E.png", tags:["Available"], notes:"Craft: 1x Refined Metal, 4x Gunpowder, 4x Plastic" },
+    const items = [
+      { name:"5.56×45mm", image:"TM_556x45_E.png", tags:["Available"], id:"556x45", notes:"Craft: 2× Refined Metal, 2× Gunpowder", buy:"—", sell:"—" },
+      { name:"7.62×39mm", image:"TM_762x39_E.png", tags:["Available"], id:"762x39", notes:"Craft: 2× Refined Metal, 2× Gunpowder", buy:"—", sell:"—" },
+      { name:"9mm", image:"TM_9mm_E.png", tags:["Available"], id:"9mm", notes:"Craft: 1× Refined Metal, 1× Gunpowder", buy:"—", sell:"—" },
+      { name:"12 Ga", image:"TM_12ga_E.png", tags:["Available"], id:"12ga", notes:"Craft: 1× Refined Metal, 4× Gunpowder, 4× Plastic", buy:"—", sell:"—" },
 
-      { name:".22 LR", image:"TM_22lr_E.png", tags:["Unavailable"], notes:"Craft: ??" },
-      { name:".45 ACP", image:"TM_45acp_E.png", tags:["Unavailable"], notes:"Craft: ??" },
-      { name:".50 BMG", image:"TM_50bmg_E.png", tags:["Unavailable"], notes:"Craft: ??" }
+      { name:".22 LR", image:"TM_22lr_E.png", tags:["Unavailable"], id:"22lr", notes:"Craft: —", buy:"—", sell:"—" },
+      { name:".45 ACP", image:"TM_45acp_E.png", tags:["Unavailable"], id:"45acp", notes:"Craft: —", buy:"—", sell:"—" },
+      { name:".50 BMG", image:"TM_50bmg_E.png", tags:["Unavailable"], id:"50bmg", notes:"Craft: —", buy:"—", sell:"—" }
     ];
 
-    const COLUMNS = [
-      { key:"image", label:"Image" },
+    const columns = [
+      { key:"img", label:"Image" },
       { key:"name", label:"Ammo Type" },
-      { key:"notes", label:"Crafting Requirements" }
+      { key:"notes", label:"Crafting Requirements" },
+      { key:"buy", label:"Buy" },
+      { key:"sell", label:"Sell" }
     ];
 
-    renderPage({ title:"Ammo", data:DATA, columns:COLUMNS, defaultView:"cards" });
+    wirePage({
+      title:"Ammo",
+      items,
+      columns,
+      activeHref:"ammo.html",
+      placeholderText:"Search ammo..."
+    });
   </script>
 </body>
 </html>
