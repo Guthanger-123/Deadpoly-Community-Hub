@@ -38,7 +38,7 @@
         </div>
 
         <div class="note">
-          Add prices anytime: set <span class="code">buy</span> / <span class="code">sell</span> in the data array.
+          <b>Prices</b> are optional. Set <span class="code">buy</span> / <span class="code">sell</span> per item when you learn them.
         </div>
       </div>
 
@@ -46,13 +46,13 @@
         <div class="hero">
           <div>
             <h1>Helmets</h1>
-            <div class="sub">Local list with official images hotlinked. Expand this list anytime.</div>
+            <div class="sub">Mirrors the official Helmets table (filename, name, armor, notes). Images hotlink via Special:FilePath.</div>
           </div>
           <div class="badge" id="countBadge">0 items</div>
         </div>
 
         <div class="toolbar">
-          <input id="q" class="search" placeholder="Search Helmets (ex: crown, mask, collar)..." />
+          <input id="q" class="search" placeholder="Search Helmets (try: spartan, raid, knight, ghillie, ornament)..." />
           <div class="pills" id="pills"></div>
           <div class="viewtoggle">
             <button class="btn" id="gridBtn" type="button">Cards</button>
@@ -75,37 +75,144 @@
 
   <script src="wiki-shared.js"></script>
   <script>
-    // This is a starter set based on the items you were already using in your UI and earlier wiki snippets.
-    // Add more helmets here as you confirm official filenames.
+    // Source: official deadpoly.wiki Helmets table you pasted.
+    // NOTE: Use ONLY `image` (or `img`) with exact filenames. Do NOT put "File:" prefix.
+    // buy/sell intentionally blank (—) until you fill them.
+
     const items = [
-      { name:"Neck Collar", img:"TM_HelmOfMight_E.png", tags:["Helmets"], id:"neck-collar", notes:"", buy:null, sell:null },
-      { name:"Juggernaut Mask", img:"TM_JuggernautMask_I.png", tags:["Helmets"], id:"juggernaut-mask", notes:"", buy:null, sell:null },
-      { name:"Armor Helmet", image:"ArmorHelmet_I.png", tags:["Armor"], id:"armor-helmet", notes:"", buy:null, sell:null   },
-      { name:"Baby Bunny Hat", image:"BabyBunnyHat_I.png", tags:["Cosmetic"], id:"baby-bunny-helmet", notes:"", buy:null, sell:null   },
-      { name:"Barbarian Helmet", image:"BarbarianHelmet_I.png", tags:["Cosmetic"], id:"barbarian-helmet", notes:"", buy:null, sell:null   },
-      { name:"Berserker Helmet", image:"BerserkerHelmet_I.png", tags:["Cosmetic"], id:"beserker-helmet", notes:"", buy:null, sell:null   },
-      { name:"Bunny Helmet", image:"BunnyHelmet_I.png", tags:["Cosmetic"], id:"bunny-helmet", notes:"", buy:null, sell:null   },
-      { name:"Chainsaw Helmet", image:"ChainsawHelmet_I.png", tags:["Cosmetic"], id:"chainsaw-helmet", notes:"", buy:null, sell:null   },
-      { name:"Combat Helmet", image:"CombatHelmet_I.png", tags:["Armor"], id:"combat-helmet", notes:"", buy:null, sell:null   },
-      { name:"Construction Helmet", image:"ConstructionHelmet_I.png", tags:["Utility"], id:"contruction-helmet", notes:"", buy:null, sell:null   },
-      { name:"Crown of the Trickster", image:"TM_LokiHelm_I.png", tags:["Cosmetic"], id:"crown-of-the-trickster", notes:"", buy:null, sell:null   },
-      { name:"Devil Helmet", image:"DevilHelmet_I.png", tags:["Cosmetic"], id:"devil-helmet", notes:"", buy:null, sell:null   },
-      { name:"Fire Helmet", image:"FireHelmet_I.png", tags:["Utility"], id:"fire-helmet", notes:"", buy:null, sell:null   },
-      { name:"Gas Mask Helmet", image:"GasMaskHelmet_I.png", tags:["Utility"], id:"gas-mask-helmet", notes:"", buy:null, sell:null   },
-      { name:"Hazmat Helmet", image:"HazmatHelmet_I.png", tags:["Utility"], id:"hazmat-helmet", notes:"", buy:null, sell:null   },
-      { name:"Knight Helmet", image:"KnightHelmet_I.png", tags:["Cosmetic"], id:"knight-helmet", notes:"", buy:null, sell:null   },
-      { name:"Metal Helmet", image:"MetalHelmet_I.png", tags:["Armor"], id:"metal-helmet", notes:"", buy:null, sell:null   },
-      { name:"Motorcycle Helmet", image:"MotorcycleHelmet_I.png", tags:["Utility"], id:"motorcycle-helmet", notes:"", buy:null, sell:null   },
-      { name:"Reaper Hood", image:"ReaperHood_I.png", tags:["Cosmetic"], id:"reaper-hood", notes:"", buy:null, sell:null   },
-      { name:"Riot Helmet", image:"RiotHelmet_I.png", tags:["Armor"], id:"riot-helmet", notes:"", buy:null, sell:null   },
-      { name:"Samurai Helmet", image:"SamuraiHelmet_I.png", tags:["Cosmetic"], id:"samurai-helmet", notes:"", buy:null, sell:null   },
-      { name:"SWAT Helmet", image:"SwatHelmet_I.png", tags:["Armor"], id:"swat-helmet", notes:"", buy:null, sell:null  },
-      { name:"Plague Doctor Mask", img:"TM_PlagueMask_E.png", tags:["Helmets"], id:"plague-doctor-mask", notes:"", buy:null, sell:null }
+      // Mk V (Spartan)
+      { name:"Mk V Spartan Helmet (Blue)",   image:"TM_HaloMK5_Blue_I.png",  tags:["Mk V","Spartan"], armor:"1-15", notes:"Comes in 2 other colors", buy:null, sell:null },
+      { name:"Mk V Spartan Helmet (Green)",  image:"TM_HaloMK5_Green_I.png", tags:["Mk V","Spartan"], armor:"1-15", notes:"Comes in 2 other colors", buy:null, sell:null },
+      { name:"Mk V Spartan Helmet (Red)",    image:"TM_HaloMK5_Red_I.png",   tags:["Mk V","Spartan"], armor:"1-15", notes:"Comes in 2 other colors", buy:null, sell:null },
+
+      // Misc
+      { name:"Chef Hat",         image:"TM_HatChef_I.png",        tags:["Misc"], armor:"??",   notes:"Its the hat of a chef", buy:null, sell:null },
+      { name:"Heavy Helmet",     image:"TM_HeavyHelmet_I.png",    tags:["Misc"], armor:"1-15", notes:"Pretty gnarly looking viking helmet", buy:null, sell:null },
+
+      // Centurion (1/2/3 + Blue/Red)
+      { name:"Centurion Helmet (Blue) — Variant 1", image:"TM_HelmetCenturion_1_Blue_I.png", tags:["Centurion"], armor:"1-15", notes:"Comes in 1 other color", buy:null, sell:null },
+      { name:"Centurion Helmet (Red) — Variant 1",  image:"TM_HelmetCenturion_1_Red_I.png",  tags:["Centurion"], armor:"1-15", notes:"Comes in 1 other color", buy:null, sell:null },
+      { name:"Centurion Helmet (Blue) — Variant 2", image:"TM_HelmetCenturion_2_Blue_I.png", tags:["Centurion"], armor:"1-15", notes:"Comes in 1 other color", buy:null, sell:null },
+      { name:"Centurion Helmet (Red) — Variant 2",  image:"TM_HelmetCenturion_2_Red_I.png",  tags:["Centurion"], armor:"1-15", notes:"Comes in 1 other color", buy:null, sell:null },
+      { name:"Centurion Helmet (Blue) — Variant 3", image:"TM_HelmetCenturion_3_Blue_I.png", tags:["Centurion"], armor:"1-15", notes:"Comes in 1 other color", buy:null, sell:null },
+      { name:"Centurion Helmet (Red) — Variant 3",  image:"TM_HelmetCenturion_3_Red_I.png",  tags:["Centurion"], armor:"1-15", notes:"Comes in 1 other color", buy:null, sell:null },
+
+      // Classic masks/helmets
+      { name:"Clown Mask", image:"TM_HelmetClown_I.png",  tags:["Mask"],  armor:"1-15", notes:"Hi Georgie!", buy:null, sell:null },
+      { name:"Crown",      image:"TM_HelmetCrown_I.png",  tags:["Crown"], armor:"1-15", notes:"Long live the King!", buy:null, sell:null },
+      { name:"Daft Punk",  image:"TM_HelmetDaft_I.png",   tags:["Mask"],  armor:"1-15", notes:"Like the legend of the Pheonix", buy:null, sell:null },
+      { name:"Dead Mau5",  image:"TM_HelmetDeadmau5_I.png", tags:["Mask"], armor:"1-15", notes:"Marshmello Ripoff?", buy:null, sell:null },
+
+      // Fire Fighter (3 entries in your table)
+      { name:"Fire Fighter Helmet (Red) — Variant 1", image:"TM_HelmetFirefighter_1_I.png", tags:["Fire Fighter"], armor:"1-15", notes:"Comes in 2 other colors", buy:null, sell:null },
+      { name:"Fire Fighter Helmet (Red) — Variant 2", image:"TM_HelmetFirefighter_2_I.png", tags:["Fire Fighter"], armor:"1-15", notes:"Comes in 2 other colors", buy:null, sell:null },
+      { name:"Fire Fighter Helmet (Red) — Variant 3", image:"TM_HelmetFirefighter_3_I.png", tags:["Fire Fighter"], armor:"1-15", notes:"Comes in 2 other colors", buy:null, sell:null },
+
+      // Football
+      { name:"Football Helmet (Red w/ blue stripes)",   image:"TM_HelmetFootball_1_I.png", tags:["Football"], armor:"1-15", notes:"Comes in 3 other colors", buy:null, sell:null },
+      { name:"Football Helmet (Black w/ red stripes)",  image:"TM_HelmetFootball_2_I.png", tags:["Football"], armor:"1-15", notes:"Comes in 3 other colors", buy:null, sell:null },
+      { name:"Football Helmet (White w/ black stripes)",image:"TM_HelmetFootball_3_I.png", tags:["Football"], armor:"1-15", notes:"Comes in 3 other colors", buy:null, sell:null },
+      { name:"Football Helmet (Yellow w/ purple stripes)",image:"TM_HelmetFootball_4_I.png", tags:["Football"], armor:"1-15", notes:"Comes in 3 other colors", buy:null, sell:null },
+
+      // Football Mod
+      { name:"Football Helmet (Purple w/ yellow stripes) — Modded", image:"TM_HelmetFootballMod_1_I.png", tags:["Football Mod"], armor:"1-15", notes:"Modded out apocalypse helmet", buy:null, sell:null },
+      { name:"Football Helmet (Yellow w/ purple stripes) — Modded", image:"TM_HelmetFootballMod_2_I.png", tags:["Football Mod"], armor:"1-15", notes:"Modded out apocalypse helmet", buy:null, sell:null },
+      { name:"Football Helmet (Blue w/ green stripes) — Modded",   image:"TM_HelmetFootballMod_3_I.png", tags:["Football Mod"], armor:"1-15", notes:"Modded out apocalypse helmet", buy:null, sell:null },
+      { name:"Football Helmet (Orange w/ green stripes) — Modded", image:"TM_HelmetFootballMod_4_I.png", tags:["Football Mod"], armor:"1-15", notes:"Modded out apocalypse helmet", buy:null, sell:null },
+      { name:"Football Helmet (Red w/ green stripes) — Modded",    image:"TM_HelmetFootballMod_5_I.png", tags:["Football Mod"], armor:"1-15", notes:"Modded out apocalypse helmet", buy:null, sell:null },
+
+      // Hard Hats
+      { name:"Hard Hat (Orange)", image:"TM_HelmetHardHat_1_E.png", tags:["Hard Hat"], armor:"1-15", notes:"Construction Hat", buy:null, sell:null },
+      { name:"Hard Hat (Blue)",   image:"TM_HelmetHardHat_2_E.png", tags:["Hard Hat"], armor:"1-15", notes:"Construction Hat", buy:null, sell:null },
+      { name:"Hard Hat (Green)",  image:"TM_HelmetHardHat_3_E.png", tags:["Hard Hat"], armor:"1-15", notes:"Construction Hat", buy:null, sell:null },
+      { name:"Hard Hat (White)",  image:"TM_HelmetHardHat_4_E.png", tags:["Hard Hat"], armor:"1-15", notes:"Construction Hat", buy:null, sell:null },
+
+      // Samurai / special
+      { name:"Kabuto Helmet", image:"TM_HelmetKabuto_I.png", tags:["Samurai"], armor:"1-15", notes:"Typical helmet you'd see a samurai wearing", buy:null, sell:null },
+      { name:"Flame of the Fallen King Crown", image:"TM_HelmetKingsFlame.png", tags:["Fallen King","Crown"], armor:"1-15", notes:"A very rare item... (Comes in 6 different colors)", buy:null, sell:null },
+
+      // Knight Helmets
+      { name:"Knight Helmet (Red Striped)",    image:"TM_HelmetKnight_1_I.png", tags:["Knight"], armor:"1-15", notes:"The Helmet worn by a Knight", buy:null, sell:null },
+      { name:"Knight Helmet (Blue Striped)",   image:"TM_HelmetKnight_2_I.png", tags:["Knight"], armor:"1-15", notes:"The Helmet worn by a Knight", buy:null, sell:null },
+      { name:"Knight Helmet (Green Striped)",  image:"TM_HelmetKnight_3_I.png", tags:["Knight"], armor:"1-15", notes:"The Helmet worn by a Knight", buy:null, sell:null },
+      { name:"Knight Helmet (Black)",          image:"TM_HelmetKnight_4_I.png", tags:["Knight"], armor:"1-15", notes:"Not a reference to Fortnite or anything 👀", buy:null, sell:null },
+      { name:"Knight Helmet (Tan)",            image:"TM_HelmetKnight_5_I.png", tags:["Knight"], armor:"1-15", notes:"The Helmet worn by a Knight", buy:null, sell:null },
+      { name:"Knight Helmet (Purple Striped)", image:"TM_HelmetKnight_6_I.png", tags:["Knight"], armor:"1-15", notes:"The Helmet worn by a Knight", buy:null, sell:null },
+
+      // Pop culture
+      { name:"Mandalorian Helmet", image:"TM_HelmetMando_I.png", tags:["Mask"], armor:"1-15", notes:"This is the way, made of the finest Beskar in the galaxy", buy:null, sell:null },
+      { name:"Marshmello Mask",    image:"TM_HelmetMarshmello_I.png", tags:["Mask"], armor:"1-15", notes:"Better than DeadMau5", buy:null, sell:null },
+      { name:"Mega Man Helmet",    image:"TM_HelmetMegaMan_I.png", tags:["Helmet"], armor:"1-15", notes:"Made the foundation of all of our childhoods", buy:null, sell:null },
+
+      // Military
+      { name:"Military Helmet (Black)", image:"TM_MilitaryBlack_I.png", tags:["Military"], armor:"1-15", notes:"A modern military grade helmet.", buy:null, sell:null },
+      { name:"Military Helmet (Green)", image:"TM_MilitaryGreen_I.png", tags:["Military"], armor:"1-15", notes:"A modern military grade helmet.", buy:null, sell:null },
+
+      { name:"Military Helmet Ace (Green)", image:"TM_HelmetMilitaryAce_1_I.png", tags:["Military","Ace"], armor:"1-15", notes:"A helmet that looks like its from the Vietnam Era", buy:null, sell:null },
+      { name:"Military Helmet Ace (Tan)",   image:"TM_HelmetMilitaryAce_2_I.png", tags:["Military","Ace"], armor:"1-15", notes:"A helmet that looks like its from the Vietnam Era", buy:null, sell:null },
+      { name:"Military Helmet Ace (Black)", image:"TM_HelmetMilitaryAce_3_I.png", tags:["Military","Ace"], armor:"1-15", notes:"A helmet that looks like its from the Vietnam Era", buy:null, sell:null },
+
+      { name:"Ghillie Military Helmet (Tan)",        image:"TM_HelmetMilitaryGhillie_1_I.png", tags:["Military","Ghillie"], armor:"1-15", notes:"A helmet meant to camouflage you", buy:null, sell:null },
+      { name:"Ghillie Military Helmet (Black)",      image:"TM_HelmetMilitaryGhillie_2_I.png", tags:["Military","Ghillie"], armor:"1-15", notes:"A helmet meant to camouflage you", buy:null, sell:null },
+      { name:"Ghillie Military Helmet (Grey)",       image:"TM_HelmetMilitaryGhillie_3_I.png", tags:["Military","Ghillie"], armor:"1-15", notes:"A helmet meant to camouflage you", buy:null, sell:null },
+      { name:"Ghillie Military Helmet (Green/Brown)",image:"TM_HelmetMilitaryGhillie_4_I.png", tags:["Military","Ghillie"], armor:"1-15", notes:"A helmet meant to camouflage you", buy:null, sell:null },
+
+      // Offroad
+      { name:"Offroad Helmet (Red)",    image:"TM_HelmetOffroad_1_I.png", tags:["Offroad"], armor:"1-15", notes:"A helmet to protect your head", buy:null, sell:null },
+      { name:"Offroad Helmet (White)",  image:"TM_HelmetOffroad_2_I.png", tags:["Offroad"], armor:"1-15", notes:"A helmet to protect your head", buy:null, sell:null },
+      { name:"Offroad Helmet (Green)",  image:"TM_HelmetOffroad_3_I.png", tags:["Offroad"], armor:"1-15", notes:"A helmet to protect your head", buy:null, sell:null },
+      { name:"Offroad Helmet (Blue)",   image:"TM_HelmetOffroad_4_I.png", tags:["Offroad"], armor:"1-15", notes:"A helmet to protect your head", buy:null, sell:null },
+      { name:"Offroad Helmet (Purple)", image:"TM_HelmetOffroad_5_I.png", tags:["Offroad"], armor:"1-15", notes:"A helmet to protect your head", buy:null, sell:null },
+      { name:"Offroad Helmet (Yellow)", image:"TM_HelmetOffroad_6_I.png", tags:["Offroad"], armor:"1-15", notes:"A helmet to protect your head", buy:null, sell:null },
+
+      // Pumpkin
+      { name:"Pumpkin Head", image:"TM_HelmetPumkin_E.png", tags:["Seasonal"], armor:"1-15", notes:"A pumpkin helmet that comes around every halloween.", buy:null, sell:null },
+
+      // Racer
+      { name:"Racer Helmet (White w/ Red Stripes)",   image:"TM_HelmetRacer_1_I.png", tags:["Racer"], armor:"1-15", notes:"A good helmet for races.", buy:null, sell:null },
+      { name:"Racer Helmet (White w/ Blue Stripes)",  image:"TM_HelmetRacer_2_I.png", tags:["Racer"], armor:"1-15", notes:"A good helmet for races.", buy:null, sell:null },
+      { name:"Racer Helmet (White w/ Green Stripes)", image:"TM_HelmetRacer_3_I.png", tags:["Racer"], armor:"1-15", notes:"A good helmet for races.", buy:null, sell:null },
+      { name:"Racer Helmet (Black w/ Yellow Stripes)",image:"TM_HelmetRacer_4_I.png", tags:["Racer"], armor:"1-15", notes:"A good helmet for races.", buy:null, sell:null },
+
+      // Raid
+      { name:"Raid Helmet (Black)",               image:"TM_HelmetRaidBlack_I.png",   tags:["Raid"], armor:"1-15", notes:"A heavy duty welding face mask, great for deflecting bullets.", buy:null, sell:null },
+      { name:"Raid Helmet (Grey)",                image:"TM_HelmetRaidGray_I.png",    tags:["Raid"], armor:"1-15", notes:"A heavy duty welding face mask, great for deflecting bullets.", buy:null, sell:null },
+      { name:"Raid Helmet (Green)",               image:"TM_HelmetRaidGreen_I.png",   tags:["Raid"], armor:"1-15", notes:"A heavy duty welding face mask, great for deflecting bullets.", buy:null, sell:null },
+      { name:"Raid Helmet (Tan)",                 image:"TM_HelmetRaidTan_I.png",     tags:["Raid"], armor:"1-15", notes:"A heavy duty welding face mask, great for deflecting bullets.", buy:null, sell:null },
+      { name:"Raid Helmet (Black w/ Gold Spikes)",image:"TM_HelmetRaidBlack_2_I.png", tags:["Raid"], armor:"1-15", notes:"A heavy duty welding face mask, great for deflecting bullets.", buy:null, sell:null },
+      { name:"Raid Helmet (Red w/ Black Spikes)", image:"TM_HelmetRaidRed_I.png",     tags:["Raid"], armor:"1-15", notes:"A heavy duty welding face mask, great for deflecting bullets.", buy:null, sell:null },
+      { name:"Raid Helmet (Tan w/ Gold Spikes)",  image:"TM_HelmetRaidTan_2_I.png",   tags:["Raid"], armor:"1-15", notes:"A heavy duty welding face mask, great for deflecting bullets.", buy:null, sell:null },
+      { name:"Raid Helmet (Silver w/ Black Spikes)",image:"TM_HelmetRaidSilver_I.png",tags:["Raid"], armor:"1-15", notes:"A heavy duty welding face mask, great for deflecting bullets.", buy:null, sell:null },
+
+      // Other
+      { name:"Robo Helmet", image:"TM_HelmetRobo_I.png", tags:["Misc"], armor:"1-15", notes:"Probably from a movie about a cop that is a robot?", buy:null, sell:null },
+      { name:"Scary Bunny Helmet", image:"TM_HelmetScaryBunny_E.png", tags:["Seasonal","Mask"], armor:"1-15", notes:"This is a very scary bunny", buy:null, sell:null },
+      { name:"Transmitter Helmet", image:"TM_HelmetTransmitter_E.png", tags:["Quest"], armor:"1-15", notes:"Reward after completing an NPC task; can also be found as a random spawn.", buy:null, sell:null },
+
+      // Trooper
+      { name:"Trooper Helmet",        image:"TM_HelmetTrooper_I.png",      tags:["Trooper"], armor:"1-15", notes:"Comes in 1 other higher value variant", buy:null, sell:null },
+      { name:"Trooper Helmet (Blood)",image:"TM_HelmetTrooperBlood_I.png", tags:["Trooper"], armor:"1-15", notes:"Comes in 1 other lower value variant", buy:null, sell:null },
+
+      // Fun
+      { name:"Unicorn Helmet", image:"TM_HelmetUnicorn_I.png", tags:["Fun"], armor:"1-15", notes:"", buy:null, sell:null },
+      { name:"Urukhai Helmet", image:"TM_HelmetUrukhai_I.png", tags:["Misc"], armor:"1-15", notes:"Honestly this helmet is just weird, not sure where its from", buy:null, sell:null },
+      { name:"Metalhead",      image:"TM_Metalhead_E.png",     tags:["Misc"], armor:"1-15", notes:"This helmet is also weird.", buy:null, sell:null },
+
+      // Ornament
+      { name:"Ornament Helmet (Blue)",  image:"TM_OrnamentHeadBlue.png",  tags:["Ornament","Seasonal"], armor:"1-15", notes:"Comes in 3 other color varients", buy:null, sell:null },
+      { name:"Ornament Helmet (Green)", image:"TM_OrnamentHeadGreen.png", tags:["Ornament","Seasonal"], armor:"1-15", notes:"Comes in 3 other color varients", buy:null, sell:null },
+      { name:"Ornament Helmet (Red)",   image:"TM_OrnamentHeadRed.png",   tags:["Ornament","Seasonal"], armor:"1-15", notes:"Comes in 3 other color varients", buy:null, sell:null },
+      { name:"Ornament Helmet (White)", image:"TM_OrnamentHeadWhite.png", tags:["Ornament","Seasonal"], armor:"1-15", notes:"Comes in 3 other color varients", buy:null, sell:null },
+
+      // Safari / Scrap
+      { name:"Safari Helmet", image:"TM_SafariHelmet_I.png", tags:["Utility"], armor:"1-15", notes:"The helmet you'd wear while you explore the wild", buy:null, sell:null },
+      { name:"Scrap Hat",     image:"TM_ScrapHat_I.png",     tags:["Scrap"],   armor:"1-15", notes:"A metal rice sifting hat", buy:null, sell:null }
     ];
 
     const columns = [
       { key:"img", label:"Image" },
       { key:"name", label:"Name" },
+      { key:"armor", label:"Armor" },
       { key:"notes", label:"Notes" },
       { key:"buy", label:"Buy" },
       { key:"sell", label:"Sell" }
