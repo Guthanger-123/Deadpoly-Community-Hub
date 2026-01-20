@@ -1,8 +1,3 @@
-<!-- =========================
-FILE: weapons.html
-Filtering pills: All, Melee, Assault Rifles, Sniper Rifles, Submachine Guns, Shotguns, Bows, Power Tools, Non-Weapons, Utility
-Images hotlinked via Special:FilePath
-========================= -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -41,19 +36,23 @@ Images hotlinked via Special:FilePath
           <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
           <a href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
         </div>
+
+        <div class="note">
+          <b>Prices</b> are optional. Set <span class="code">buy</span> / <span class="code">sell</span> anytime.
+        </div>
       </div>
 
       <div class="panel main">
         <div class="hero">
           <div>
             <h1>Weapons</h1>
-            <div class="sub">Local list with category filters. Images hotlinked from official wiki file names.</div>
+            <div class="sub">Mirrors the official Weapons sections. Images hotlinked via Special:FilePath.</div>
           </div>
           <div class="badge" id="countBadge">0 items</div>
         </div>
 
         <div class="toolbar">
-          <input id="q" class="search" placeholder="Search weapons..." />
+          <input id="q" class="search" placeholder="Search weapons (try: m24, groza, crowbar, mp5)..." />
           <div class="pills" id="pills"></div>
           <div class="viewtoggle">
             <button class="btn" id="gridBtn" type="button">Cards</button>
@@ -72,99 +71,136 @@ Images hotlinked via Special:FilePath
 
         <div class="section">
           <h2>Note</h2>
-          <div class="small muted">If a specific weapon image doesn't load, it usually means the official wiki renamed that file.</div>
+          <div class="small muted">
+            If an image fails, it’s almost always a filename mismatch on the official wiki. Keep filenames exact.
+          </div>
         </div>
-
       </div>
     </div>
   </div>
 
   <script src="wiki-shared.js"></script>
   <script>
-    // From your provided Weapons wiki markup
-    const DATA = [
-      // --- Melee Weapons ---
-      { name:"Broom", image:"dpBroom.png", tags:["Melee"], notes:"Damage: N/A • Woodcut: N • Mining: N" },
-      { name:"Carnival Bat", image:"dpCarnivalBat-Blue.png", tags:["Melee"], notes:"Damage: N/A • Variations exist" },
-      { name:"Crowbar", image:"dpCrowbar.png", tags:["Melee"], notes:"Damage: 11-17 • Woodcut: Y • Mining: Y" },
-      { name:"Crutch", image:"dpCrutch.png", tags:["Melee"], notes:"Damage: N/A" },
-      { name:"Dead End Sign", image:"dpDeadEndSign.png", tags:["Melee"], notes:"Damage: N/A" },
-      { name:"Dustpan", image:"dpdustpan.png", tags:["Melee"], notes:"Damage: N/A" },
-      { name:"Eternal Sky", image:"DpEternalSky.png", tags:["Melee"], notes:"Damage: N/A" },
-      { name:"Fireaxe", image:"dpFireAxe.png", tags:["Melee","Utility"], notes:"Damage: N/A • Woodcut: Y" },
-      { name:"Fireaxe (Modified)", image:"dpFireAxeModded.png", tags:["Melee","Utility"], notes:"Damage: 14-15 • Woodcut: Y • Mining: Y" },
-      { name:"Flamberge", image:"dpflamberge.png", tags:["Melee"], notes:"Damage: 20- • Woodcut: Y • Mining: Y" },
-      { name:"Glaive", image:"dp_glaive.png", tags:["Melee"], notes:"Damage: N/A • Woodcut: Y • Variants exist" },
-      { name:"Golf Club", image:"dpGolfClub.png", tags:["Melee"], notes:"Damage: N/A" },
-      { name:"Hockey Stick", image:"dpHockeyStickRed.png", tags:["Melee"], notes:"Damage: N/A • Variations exist" },
-      { name:"Hunter's Hatchet", image:"dpHunterHatchetGreen.png", tags:["Melee","Utility"], notes:"Damage: N/A • Woodcut: Y • Variations exist" },
-      { name:"Ice Pick", image:"dpIcePickRed.png", tags:["Melee","Utility"], notes:"Damage: 12-15 • Woodcut: Y • Variations exist" },
-      { name:"Knife (Standard)", image:"dpKnifeBlack.png", tags:["Melee"], notes:"Damage: N/A • Variations exist" },
-      { name:"Knife (Butcher's)", image:"dpKnifeButcher.png", tags:["Melee"], notes:"Damage: 11-13" },
-      { name:"Knife (Kitchen)", image:"dpKnifeKitchen.png", tags:["Melee"], notes:"Damage: N/A" },
-      { name:"Knuckles", image:"dpKnucklesStandard.png", tags:["Melee"], notes:"Damage: N/A • Spiked variant exists" },
-      { name:"Looseal", image:"dpLooseal.png", tags:["Melee"], notes:"Damage: N/A" },
-      { name:"Machete", image:"dpMachete.png", tags:["Melee","Utility"], notes:"Damage: N/A • Woodcut: Y" },
-      { name:"MasterSword", image:"dpMasterSword.png", tags:["Melee"], notes:"Damage: N/A" },
-      { name:"Peel", image:"dpPeel.png", tags:["Melee"], notes:"Damage: N/A" },
-      { name:"SkullCrusher", image:"dpSkullCrusher.png", tags:["Melee"], notes:"Damage: N/A • Pink variant exists" },
-      { name:"Sledgehammer", image:"dpSledgehammer.png", tags:["Melee","Utility"], notes:"Damage: 11-15 • Woodcut: Y • Mining: Y" },
-      { name:"Stop Sign", image:"dpStopSign.png", tags:["Melee"], notes:"Damage: N/A" },
-      { name:"Traffic Light Whacker", image:"dpTrafficLightWhacker.png", tags:["Melee"], notes:"Damage: N/A" },
-      { name:"Wakizashi", image:"dpWakizashiPurple.png", tags:["Melee"], notes:"Damage: 12- • Woodcut: Y • Variations exist" },
-      { name:"Waraxe", image:"dpWaraxe.png", tags:["Melee","Utility"], notes:"Damage: N/A • Woodcut: Y" },
-      { name:"WarHammer", image:"dpWarhammerRed.png", tags:["Melee","Utility"], notes:"Damage: N/A • Woodcut: Y • Mining: Y" },
-      { name:"Will of the Emperor", image:"DpEmperorsWill.png", tags:["Melee"], notes:"Damage: 13- • Woodcut: Y" },
+    // Source: official deadpoly.wiki Weapons markup you pasted.
+    // Use ONLY `image` with exact filenames (no "File:" prefix).
+    // buy/sell left blank until you populate.
 
-      // --- Assault Rifles ---
-      { name:"AKM", image:"DpAkm.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 7.62x39mm" },
-      { name:"AUG", image:"DpAUGTan.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56x45mm" },
-      { name:"FAMAS", image:"dpfamas.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56x45mm" },
-      { name:"FN FAL", image:"dpFNFAL.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 7.62x39mm" },
-      { name:"G36C", image:"DPg36c.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56x45mm" },
-      { name:"Groza", image:"DPGroza.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 7.62x39mm • Integrally suppressed" },
-      { name:"M4", image:"DpM4A1.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56x45mm" },
-      { name:"Mini-14", image:"DpMini14.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56x45mm" },
-      { name:"MDR (Black)", image:"DpMDR762.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 7.62mm" },
-      { name:"MDR (Tan)", image:"DpMDR556.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56mm" },
-      { name:"Mutant", image:"dpMutant.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 7.62x39mm" },
-      { name:"SCAR-H", image:"DPscar-h.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 7.62x39mm" },
-      { name:"SCAR-L", image:"dpscar-l.png", tags:["Assault Rifles","Firearm"], notes:"Caliber: 5.56x45mm" },
+    const items = [
+      // ======================
+      // Melee Weapons
+      // ======================
+      { name:"Broom", image:"dpBroom.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Carnival Bat", image:"dpCarnivalBat-Blue.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"Multiple Variations Exist", buy:null, sell:null },
+      { name:"Crowbar", image:"dpCrowbar.png", tags:["Melee Weapons","Melee"], damage:"11-17", woodcut:"Y", mining:"Y", notes:"", buy:null, sell:null },
+      { name:"Crutch", image:"dpCrutch.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Dead End Sign", image:"dpDeadEndSign.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Dustpan", image:"dpdustpan.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Eternal Sky", image:"DpEternalSky.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Fireaxe", image:"dpFireAxe.png", tags:["Melee Weapons","Melee","Utility"], damage:"N/A", woodcut:"Y", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Fireaxe (Modified)", image:"dpFireAxeModded.png", tags:["Melee Weapons","Melee","Utility"], damage:"14-15", woodcut:"Y", mining:"Y", notes:"", buy:null, sell:null },
+      { name:"Flamberge", image:"dpflamberge.png", tags:["Melee Weapons","Melee"], damage:"20-", woodcut:"Y", mining:"Y", notes:"", buy:null, sell:null },
+      { name:"Glaive", image:"dp_glaive.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"Y", mining:"N", notes:"Red/Silver and Purple/Green Variations also exist", buy:null, sell:null },
+      { name:"Golf Club", image:"dpGolfClub.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Hockey Stick", image:"dpHockeyStickRed.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"Multiple Variations Exist", buy:null, sell:null },
+      { name:"Hunter's Hatchet", image:"dpHunterHatchetGreen.png", tags:["Melee Weapons","Melee","Utility"], damage:"N/A", woodcut:"Y", mining:"N", notes:"Multiple Variations Exist", buy:null, sell:null },
+      { name:"Ice Pick", image:"dpIcePickRed.png", tags:["Melee Weapons","Melee","Utility"], damage:"12-15", woodcut:"Y", mining:"N", notes:"Multiple Variations Exist", buy:null, sell:null },
+      { name:"Knife (Standard)", image:"dpKnifeBlack.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"Multiple Variations Exist", buy:null, sell:null },
+      { name:"Knife (Butcher's)", image:"dpKnifeButcher.png", tags:["Melee Weapons","Melee"], damage:"11-13", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Knife (Kitchen)", image:"dpKnifeKitchen.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Knuckles", image:"dpKnucklesStandard.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"Spiked Knuckle Variant Exists", buy:null, sell:null },
+      { name:"Looseal", image:"dpLooseal.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Machete", image:"dpMachete.png", tags:["Melee Weapons","Melee","Utility"], damage:"N/A", woodcut:"Y", mining:"N", notes:"", buy:null, sell:null },
+      { name:"MasterSword", image:"dpMasterSword.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Peel", image:"dpPeel.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"SkullCrusher", image:"dpSkullCrusher.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"Pink 'SkullShusher' variant exists", buy:null, sell:null },
+      { name:"Sledgehammer", image:"dpSledgehammer.png", tags:["Melee Weapons","Melee","Utility"], damage:"11-15", woodcut:"Y", mining:"Y", notes:"", buy:null, sell:null },
+      { name:"Stop Sign", image:"dpStopSign.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Traffic Light Whacker", image:"dpTrafficLightWhacker.png", tags:["Melee Weapons","Melee"], damage:"N/A", woodcut:"N", mining:"N", notes:"", buy:null, sell:null },
+      { name:"Wakizashi", image:"dpWakizashiPurple.png", tags:["Melee Weapons","Melee"], damage:"12-", woodcut:"Y", mining:"N", notes:"Multiple Variants Exist", buy:null, sell:null },
+      { name:"Waraxe", image:"dpWaraxe.png", tags:["Melee Weapons","Melee","Utility"], damage:"N/A", woodcut:"Y", mining:"N", notes:"", buy:null, sell:null },
+      { name:"WarHammer", image:"dpWarhammerRed.png", tags:["Melee Weapons","Melee","Utility"], damage:"N/A", woodcut:"Y", mining:"Y", notes:"", buy:null, sell:null },
+      { name:"Will of the Emperor", image:"DpEmperorsWill.png", tags:["Melee Weapons","Melee"], damage:"13-", woodcut:"Y", mining:"N", notes:"", buy:null, sell:null },
 
-      // --- Sniper Rifles ---
-      { name:"Karabiner 98k", image:"dpkar98k.png", tags:["Sniper Rifles","Firearm"], notes:"Caliber: 7.62mm" },
-      { name:"M24", image:"dpM24.png", tags:["Sniper Rifles","Firearm"], notes:"Caliber: 7.62mm" },
-      { name:"VSS Vintorez", image:"dpVSS.png", tags:["Sniper Rifles","Firearm"], notes:"Caliber: 7.62mm" },
+      // ======================
+      // Assault Rifles
+      // ======================
+      { name:"AKM", image:"DpAkm.png", tags:["Assault Rifles","Firearm"], caliber:"7.62x39mm", notes:"", buy:null, sell:null },
+      { name:"AUG", image:"DpAUGTan.png", tags:["Assault Rifles","Firearm"], caliber:"5.56x45mm", notes:"", buy:null, sell:null },
+      { name:"FAMAS", image:"dpfamas.png", tags:["Assault Rifles","Firearm"], caliber:"5.56x45mm", notes:"", buy:null, sell:null },
+      { name:"FN FAL", image:"dpFNFAL.png", tags:["Assault Rifles","Firearm"], caliber:"7.62x39mm", notes:"", buy:null, sell:null },
+      { name:"G36C", image:"DPg36c.png", tags:["Assault Rifles","Firearm"], caliber:"5.56x45mm", notes:"", buy:null, sell:null },
+      { name:"Groza", image:"DPGroza.png", tags:["Assault Rifles","Firearm"], caliber:"7.62x39mm", notes:"Integrally suppressed; good for new characters without suppressor attachments.", buy:null, sell:null },
+      { name:"M4", image:"DpM4A1.png", tags:["Assault Rifles","Firearm"], caliber:"5.56x45mm", notes:"", buy:null, sell:null },
+      { name:"Mini-14", image:"DpMini14.png", tags:["Assault Rifles","Firearm"], caliber:"5.56x45mm", notes:"", buy:null, sell:null },
+      { name:"MDR (Black)", image:"DpMDR762.png", tags:["Assault Rifles","Firearm"], caliber:"7.62x39mm", notes:"The Black MDR is chambered in 7.62mm.", buy:null, sell:null },
+      { name:"MDR (Tan)", image:"DpMDR556.png", tags:["Assault Rifles","Firearm"], caliber:"5.56x45mm", notes:"The Tan MDR is chambered in 5.56mm.", buy:null, sell:null },
+      { name:"Mutant", image:"dpMutant.png", tags:["Assault Rifles","Firearm"], caliber:"7.62x39mm", notes:"", buy:null, sell:null },
+      { name:"SCAR-H", image:"DPscar-h.png", tags:["Assault Rifles","Firearm"], caliber:"7.62x39mm", notes:"", buy:null, sell:null },
+      { name:"SCAR-L", image:"dpscar-l.png", tags:["Assault Rifles","Firearm"], caliber:"5.56x45mm", notes:"", buy:null, sell:null },
 
-      // --- SMGs ---
-      { name:"Vector", image:"DPvector.png", tags:["Submachine Guns","Firearm"], notes:"Caliber: 9x19mm" },
-      { name:"MP5", image:"DpMP5.png", tags:["Submachine Guns","Firearm"], notes:"Caliber: 9x19mm" },
-      { name:"UMP", image:"DpUmp.png", tags:["Submachine Guns","Firearm"], notes:"Caliber: 9x19mm" },
-      { name:"MP7", image:"DpMP7Tan.png", tags:["Submachine Guns","Firearm"], notes:"Caliber: 5.56mm" },
+      // ======================
+      // Sniper Rifles
+      // ======================
+      { name:"Karabiner 98k", image:"dpkar98k.png", tags:["Sniper Rifles","Firearm"], caliber:"7.62mm", notes:"", buy:null, sell:null },
+      { name:"M24", image:"dpM24.png", tags:["Sniper Rifles","Firearm"], caliber:"7.62mm", notes:"", buy:null, sell:null },
+      { name:"VSS Vintorez", image:"dpVSS.png", tags:["Sniper Rifles","Firearm"], caliber:"7.62mm", notes:"", buy:null, sell:null },
 
-      // --- Shotguns ---
-      { name:"Model 12", image:"DpModel2.png", tags:["Shotguns","Firearm"], notes:"Caliber: 12-Ga Buckshot" },
+      // ======================
+      // Submachine Guns
+      // ======================
+      { name:"Vector", image:"DPvector.png", tags:["Submachine Guns","Firearm"], caliber:"9x19mm", notes:"", buy:null, sell:null },
+      { name:"MP5", image:"DpMP5.png", tags:["Submachine Guns","Firearm"], caliber:"9x19mm", notes:"", buy:null, sell:null },
+      { name:"UMP", image:"DpUmp.png", tags:["Submachine Guns","Firearm"], caliber:"9x19mm", notes:"", buy:null, sell:null },
+      { name:"MP7", image:"DpMP7Tan.png", tags:["Submachine Guns","Firearm"], caliber:"5.56mm", notes:"", buy:null, sell:null },
 
-      // --- Bows ---
-      { name:"Crossbow", image:"crossbow.png", tags:["Bows","Utility"], notes:"Ammo: Arrows (Bolts)" },
-      { name:"Compound Crossbow", image:"compound.png", tags:["Bows","Utility"], notes:"Ammo: Arrows (Bolts)" },
+      // ======================
+      // Shotguns
+      // ======================
+      { name:"Model 12", image:"DpModel2.png", tags:["Shotguns","Firearm"], caliber:"12-Ga Buckshot", notes:"", buy:null, sell:null },
 
-      // --- Power Tools ---
-      { name:"Nail Gun", image:"nailgun.png", tags:["Power Tools","Utility"], notes:"Ammo: Nails" },
+      // ======================
+      // Bows
+      // ======================
+      { name:"Crossbow", image:"crossbow.png", tags:["Bows","Utility"], weight:"KG", caliber:"Arrows (Bolts)", notes:"", buy:null, sell:null },
+      { name:"Compound Crossbow", image:"compound.png", tags:["Bows","Utility"], weight:"KG", caliber:"Arrows (Bolts)", notes:"", buy:null, sell:null },
 
-      // --- Non-Weapons ---
-      { name:"Maglite Flashlight", image:"Maglite Flashlight.png", tags:["Non-Weapons","Utility"], notes:"Weight: 1kg • Small hand-held flashlight" },
-      { name:"Lantern Flashlight", image:"lantern flashlight.png", tags:["Non-Weapons","Utility"], notes:"Weight: 2kg • Large hand-held flashlight" },
-      { name:"Red Devil Flashlight", image:"red devil flashlight.png", tags:["Non-Weapons","Utility"], notes:"Weight: 0.25kg • Small hand-held flashlight" }
+      // ======================
+      // Power Tools
+      // ======================
+      { name:"Nail Gun", image:"nailgun.png", tags:["Power Tools","Utility"], weight:"KG", caliber:"Nails", notes:"", buy:null, sell:null },
+
+      // ======================
+      // Non-Weapons
+      // ======================
+      { name:"Maglite Flashlight", image:"Maglite Flashlight.png", tags:["Non-Weapons","Utility"], weight:"1 KG", notes:"Small hand-held flashlight", buy:null, sell:null },
+      { name:"Lantern Flashlight", image:"lantern flashlight.png", tags:["Non-Weapons","Utility"], weight:"2 KG", notes:"Large hand-held flashlight", buy:null, sell:null },
+      { name:"Red Devil Flashlight", image:"red devil flashlight.png", tags:["Non-Weapons","Utility"], weight:"0.25 KG", notes:"Small hand-held flashlight", buy:null, sell:null }
     ];
 
-    const COLUMNS = [
-      { key:"image", label:"Image" },
+    const columns = [
+      { key:"img", label:"Image" },
       { key:"name", label:"Weapon" },
-      { key:"notes", label:"Details" }
+
+      // These show where relevant; otherwise they display "—"
+      { key:"damage", label:"Damage" },
+      { key:"woodcut", label:"Woodcut" },
+      { key:"mining", label:"Mining" },
+
+      { key:"caliber", label:"Caliber" },
+      { key:"weight", label:"Weight" },
+
+      { key:"notes", label:"Notes" },
+      { key:"buy", label:"Buy" },
+      { key:"sell", label:"Sell" }
     ];
 
-    renderPage({ title:"Weapons", data:DATA, columns:COLUMNS, defaultView:"cards" });
+    wirePage({
+      title:"Weapons",
+      items,
+      columns,
+      activeHref:"weapons.html",
+      placeholderText:"Search Weapons..."
+    });
   </script>
 </body>
 </html>
