@@ -1,0 +1,316 @@
+<!-- =========================
+FILE: controls.html
+DeadPoly Hub — Controls
+Source: https://deadpoly.fandom.com/wiki/Controls
+- Global search filters all rows
+- Section pills: All / Character / Building / Vehicle
+- Styled to match your wiki-shared.css layout
+========================= -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeadPoly Hub — Controls</title>
+  <link rel="stylesheet" href="wiki-shared.css" />
+  <style>
+    /* Tiny extras without touching shared css */
+    .pillbar { margin-top: 10px; display:flex; gap:8px; flex-wrap:wrap; }
+    .pillbar .pill { padding:8px 12px; }
+    .section-title{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin:14px 0 8px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      background:rgba(255,255,255,.02);
+    }
+    .section-title h2{ margin:0; font-size:14px; }
+    .section-title .small{ margin:0; }
+    .hidden{ display:none !important; }
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      padding:2px 6px; border-radius:8px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      display:inline-block;
+      white-space:nowrap;
+    }
+    td .kbd + .kbd { margin-left: 6px; }
+    td .muted { color: rgba(255,255,255,.70); }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="top-left">
+        <a class="btn" href="index.html">← Menu</a>
+        <div class="brand">Wiki <span class="badge">Controls</span></div>
+      </div>
+      <div class="top-right">
+        <!-- If you also want to link your deadpoly.wiki later, swap this href -->
+        <a class="btn" href="https://deadpoly.fandom.com/wiki/Controls" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="shell">
+      <div class="panel side">
+        <h2>Wiki Categories</h2>
+        <div class="muted">Local pages (fast) + source button above.</div>
+        <div class="nav">
+          <a href="wiki.html"><span>Hub</span><span class="small">→</span></a>
+          <a href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
+          <a href="masks.html"><span>Masks</span><span class="small">→</span></a>
+          <a href="armor.html"><span>Armor</span><span class="small">→</span></a>
+          <a href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
+          <a href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
+          <a href="consumables.html"><span>Consumables</span><span class="small">→</span></a>
+          <a href="crafting.html"><span>Crafting</span><span class="small">→</span></a>
+          <a href="backpacks.html"><span>Backpacks</span><span class="small">→</span></a>
+          <a href="collectibles.html"><span>Collectibles</span><span class="small">→</span></a>
+
+          <!-- Add this link into your Tips N Tricks page too (see note at bottom) -->
+          <a class="active" href="controls.html"><span>Controls</span><span class="small">→</span></a>
+          <!-- If you already have a Tips page file, add it here and on that page too:
+          <a href="tips.html"><span>Tips N Tricks</span><span class="small">→</span></a>
+          -->
+        </div>
+
+        <div class="note">
+          Tip: the search matches <span class="code">Action</span> and all platforms (PC/PlayStation/Xbox).
+        </div>
+      </div>
+
+      <div class="panel main">
+        <div class="hero">
+          <div>
+            <h1>Controls</h1>
+            <div class="sub">Basic keybinds (PC / PlayStation / Xbox). Console binds marked “Unknown” where not listed.</div>
+          </div>
+          <div class="badge" id="countBadge">0 rows</div>
+        </div>
+
+        <div class="toolbar">
+          <input id="q" class="search" placeholder="Search controls (ex: inventory, reload, crouch, build mode, headlights)..." />
+          <div class="pillbar" id="pillbar"></div>
+        </div>
+
+        <!-- CHARACTER -->
+        <div class="section-title" data-section="Character">
+          <h2>Character Keybinds</h2>
+          <p class="small muted" id="count-character">0 rows</p>
+        </div>
+        <div class="tablewrap" data-section="Character">
+          <table>
+            <thead>
+              <tr>
+                <th>Computer</th>
+                <th>PlayStation</th>
+                <th>Xbox</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-character"></tbody>
+          </table>
+        </div>
+
+        <!-- BUILDING -->
+        <div class="section-title" data-section="Building">
+          <h2>Building Keybinds</h2>
+          <p class="small muted" id="count-building">0 rows</p>
+        </div>
+        <div class="tablewrap" data-section="Building">
+          <table>
+            <thead>
+              <tr>
+                <th>Computer</th>
+                <th>PlayStation</th>
+                <th>Xbox</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-building"></tbody>
+          </table>
+        </div>
+
+        <!-- VEHICLE -->
+        <div class="section-title" data-section="Vehicle">
+          <h2>Vehicle Keybinds</h2>
+          <p class="small muted" id="count-vehicle">0 rows</p>
+        </div>
+        <div class="tablewrap" data-section="Vehicle">
+          <table>
+            <thead>
+              <tr>
+                <th>Computer</th>
+                <th>PlayStation</th>
+                <th>Xbox</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-vehicle"></tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <h2>Add this page to Tips N Tricks</h2>
+          <div class="small muted">
+            On your Tips page, add a button/link to <span class="code">controls.html</span> (and optionally include it in the left nav like the other pages).
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Data (from fandom Controls page) ----------
+    const ROWS = [
+      // Character
+      { section:"Character", pc:"W", ps:"Left Joystick Up", xbox:"—", action:"Forward" },
+      { section:"Character", pc:"A", ps:"Left Joystick Left", xbox:"—", action:"Left" },
+      { section:"Character", pc:"S", ps:"Left Joystick Down", xbox:"—", action:"Backwards" },
+      { section:"Character", pc:"D", ps:"Left Joystick Right", xbox:"—", action:"Right" },
+      { section:"Character", pc:"Right Click", ps:"LT", xbox:"—", action:"Hit / Drag / Use" },
+      { section:"Character", pc:"Left Click", ps:"RT", xbox:"—", action:"Aim / Options Menu" },
+      { section:"Character", pc:"Scroll Wheel", ps:"Up D-Pad or Down D-Pad", xbox:"—", action:"When given multiple options, cycle through" },
+      { section:"Character", pc:"Mouse", ps:"Right Joystick", xbox:"—", action:"Camera" },
+      { section:"Character", pc:"Escape", ps:"Menu Button (3 lines)", xbox:"—", action:"Menu" },
+      { section:"Character", pc:"R (holding gun)", ps:"B (holding gun)", xbox:"—", action:"Reload" },
+      { section:"Character", pc:"Z", ps:"LB + Right D-Pad", xbox:"—", action:"Flashlight" },
+      { section:"Character", pc:"B", ps:"LB + Left D-Pad", xbox:"—", action:"Build Mode" },
+      { section:"Character", pc:"V", ps:"LB + RB + Up D-Pad", xbox:"—", action:"Change Viewport" },
+      { section:"Character", pc:"Tab", ps:"Y", xbox:"—", action:"Inventory" },
+      { section:"Character", pc:"F", ps:"X", xbox:"—", action:"Interact" },
+      { section:"Character", pc:"1–4", ps:"LB + A, B, Y, X", xbox:"—", action:"Hotbar Buttons" },
+      { section:"Character", pc:"5–8", ps:"RB + A, B, Y, X", xbox:"—", action:"Hotbar Buttons" },
+      { section:"Character", pc:"Space", ps:"A", xbox:"—", action:"Jump" },
+      { section:"Character", pc:"Ctrl", ps:"Down D-Pad", xbox:"—", action:"Crouch" },
+      { section:"Character", pc:"Alt", ps:"R3 (press right stick)", xbox:"—", action:"Roll" },
+      { section:"Character", pc:"I", ps:"Unknown", xbox:"—", action:"Whistle" },
+      { section:"Character", pc:"M", ps:"RB + Right D-Pad", xbox:"—", action:"Map" },
+      { section:"Character", pc:"Shift", ps:"L3 (press left stick)", xbox:"—", action:"Sprint" },
+      { section:"Character", pc:"Hold V (3rd person)", ps:"Unknown", xbox:"—", action:"Swap Shoulder View" },
+      { section:"Character", pc:"R (dragging item)", ps:"LT + RB", xbox:"—", action:"Rotate Item" },
+      { section:"Character", pc:"Ctrl + Left Click (in storage)", ps:"Unknown", xbox:"—", action:"Quick Transfer Items" },
+      { section:"Character", pc:"Ctrl + Dragging Item", ps:"Unknown", xbox:"—", action:"Split Stack" },
+      { section:"Character", pc:"Ctrl + Left Click (crafting)", ps:"Unknown", xbox:"—", action:"Bulk Crafting" },
+      { section:"Character", pc:"Aiming + E", ps:"Unknown", xbox:"—", action:"Left Lean" },
+      { section:"Character", pc:"Aiming + Q", ps:"Unknown", xbox:"—", action:"Right Lean" },
+
+      // Building
+      { section:"Building", pc:"B", ps:"LB + Left D-Pad", xbox:"—", action:"Building Menu" },
+      { section:"Building", pc:"L", ps:"Unknown", xbox:"—", action:"Grid Mode" },
+      { section:"Building", pc:"U", ps:"Unknown", xbox:"—", action:"Snap Mode" },
+      { section:"Building", pc:"F", ps:"X", xbox:"—", action:"Interact" },
+      { section:"Building", pc:"Left Click", ps:"LT", xbox:"—", action:"Place Part" },
+      { section:"Building", pc:"Right Click", ps:"RT", xbox:"—", action:"Cancel Part" },
+      { section:"Building", pc:"Shift + Scroll Wheel", ps:"Unknown", xbox:"—", action:"Raise / Lower Foundation" },
+      { section:"Building", pc:"Scroll Wheel", ps:"Right D-Pad or Left D-Pad", xbox:"—", action:"Rotate Building Part" },
+
+      // Vehicle
+      { section:"Vehicle", pc:"W", ps:"Left Joystick Up", xbox:"—", action:"Accelerate" },
+      { section:"Vehicle", pc:"A", ps:"Left Joystick Left", xbox:"—", action:"Left Turn" },
+      { section:"Vehicle", pc:"S", ps:"Left Joystick Down", xbox:"—", action:"Reverse" },
+      { section:"Vehicle", pc:"D", ps:"Left Joystick Right", xbox:"—", action:"Right Turn" },
+      { section:"Vehicle", pc:"F", ps:"X (to hop in) / B (to climb out)", xbox:"—", action:"Interact" },
+      { section:"Vehicle", pc:"R", ps:"X", xbox:"—", action:"Ignition" },
+      { section:"Vehicle", pc:"Space", ps:"A", xbox:"—", action:"E-Brake" },
+      { section:"Vehicle", pc:"None", ps:"Unknown", xbox:"—", action:"Headlights" },
+      { section:"Vehicle", pc:"None", ps:"Unknown", xbox:"—", action:"Horn" },
+    ];
+
+    // ---------- UI helpers ----------
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
+
+    function escapeHtml(s){
+      return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    function kbdize(text){
+      const t = String(text ?? "").trim();
+      if(!t || t === "—") return `<span class="muted">—</span>`;
+      // Split on " / " for combined controller notes
+      const parts = t.split(" / ").map(x => x.trim()).filter(Boolean);
+      return parts.map(p => `<span class="kbd">${escapeHtml(p)}</span>`).join("");
+    }
+
+    function rowToTr(r){
+      const hay = `${r.section} ${r.pc} ${r.ps} ${r.xbox} ${r.action}`.toLowerCase();
+      return `
+        <tr data-section="${escapeHtml(r.section)}" data-hay="${escapeHtml(hay)}">
+          <td>${kbdize(r.pc)}</td>
+          <td>${kbdize(r.ps)}</td>
+          <td>${kbdize(r.xbox)}</td>
+          <td>${escapeHtml(r.action)}</td>
+        </tr>
+      `;
+    }
+
+    function renderSection(sectionName, tbodyId, countId){
+      const rows = ROWS.filter(r => r.section === sectionName);
+      const tbody = document.getElementById(tbodyId);
+      tbody.innerHTML = rows.map(rowToTr).join("");
+      document.getElementById(countId).textContent = `${rows.length} rows`;
+    }
+
+    function setActivePill(label){
+      $$("#pillbar .pill").forEach(b => b.classList.remove("active"));
+      const btn = $$("#pillbar .pill").find(b => b.dataset.pill === label);
+      if(btn) btn.classList.add("active");
+    }
+
+    function applyFilter(){
+      const q = ($("#q").value || "").trim().toLowerCase();
+      const active = $("#pillbar .pill.active")?.dataset.pill || "All";
+
+      const rows = $$("tbody tr");
+      let visible = 0;
+
+      rows.forEach(tr => {
+        const sec = tr.dataset.section;
+        const hay = tr.dataset.hay || "";
+        const okSection = (active === "All") ? true : (sec === active);
+        const okQuery = !q ? true : hay.includes(q);
+        const show = okSection && okQuery;
+        tr.classList.toggle("hidden", !show);
+        if(show) visible++;
+      });
+
+      // Hide empty sections (title + table) when filtered
+      ["Character","Building","Vehicle"].forEach(sec => {
+        const secRows = $$(`tbody tr[data-section="${sec}"]`).filter(tr => !tr.classList.contains("hidden"));
+        const showSec = (active === "All" || active === sec) && secRows.length > 0;
+        $$(`[data-section="${sec}"]`).forEach(el => el.classList.toggle("hidden", !showSec));
+      });
+
+      $("#countBadge").textContent = `${visible} rows`;
+    }
+
+    function buildPills(){
+      const pillbar = $("#pillbar");
+      const pills = ["All","Character","Building","Vehicle"];
+      pillbar.innerHTML = pills.map(p => `<button type="button" class="pill" data-pill="${p}">${p}</button>`).join("");
+      $$("#pillbar .pill").forEach(btn => {
+        btn.addEventListener("click", () => {
+          setActivePill(btn.dataset.pill);
+          applyFilter();
+        });
+      });
+      setActivePill("All");
+    }
+
+    // ---------- init ----------
+    renderSection("Character", "tbody-character", "count-character");
+    renderSection("Building", "tbody-building", "count-building");
+    renderSection("Vehicle", "tbody-vehicle", "count-vehicle");
+
+    buildPills();
+    $("#q").addEventListener("input", applyFilter);
+    applyFilter();
+  </script>
+</body>
+</html>
