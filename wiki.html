@@ -11,7 +11,7 @@
     <div class="topbar-inner">
       <div class="top-left">
         <a class="btn" href="index.html">← Menu</a>
-        <div class="brand">Wiki <span class="badge">Hub</span> <span class="badge"><b>Work In Progress</b></span> </div>
+        <div class="brand">Wiki <span class="badge">Hub</span> <span class="badge"><b>Work In Progress</b></span></div>
       </div>
       <div class="top-right">
         <a class="btn" href="https://deadpoly.wiki/Main_Page" target="_blank" rel="noopener">Official Wiki ↗</a>
@@ -28,7 +28,7 @@
         <div class="nav">
           <a class="active" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
           <a href="weapons.html"><span>Weapons</span><span class="small">→</span></a>
-          <a class="active" href="masks.html"><span>Masks</span><span class="small">→</span></a>
+          <a href="masks.html"><span>Masks</span><span class="small">→</span></a>
           <a href="armor.html"><span>Armor</span><span class="small">→</span></a>
           <a href="ammo.html"><span>Ammo</span><span class="small">→</span></a>
           <a href="helmets.html"><span>Helmets</span><span class="small">→</span></a>
@@ -73,7 +73,9 @@
         <div class="section">
           <h2>Quick links</h2>
           <div class="small">Fast jump to local pages:</div>
+
           <div class="grid" style="margin-top:10px">
+
             <a class="card" href="helmets.html" style="text-decoration:none">
               <div class="row">
                 <div class="thumb"><img alt="" src="https://deadpoly.wiki/Special:FilePath/TM_HelmOfMight_E.png" onerror="this.style.display='none'"></div>
@@ -108,6 +110,15 @@
                 <div><h3>Collectibles</h3><div class="small">Neons + lamps + posters</div></div>
               </div>
             </a>
+
+            <!-- ✅ NEW: Character Modeler quick link -->
+            <a class="card" href="modeler.html" style="text-decoration:none">
+              <div class="row">
+                <div class="thumb"><div class="small">FBX</div></div>
+                <div><h3>Character Modeler</h3><div class="small">Swap shirt/pants/shoes/helmet/mask/backpack</div></div>
+              </div>
+            </a>
+
           </div>
         </div>
 
@@ -117,13 +128,12 @@
 
   <script src="wiki-shared.js"></script>
   <script>
-    // Minimal search index for the pages you currently have.
-    // Add items anytime. Format:
-    // { name, page, id, img, tags, notes, buy, sell, search:[] }
+    // Search index for hub search -> links to page#id
+    // NOTE: For modeler we don't need an #anchor, so use id:"top" and link to modeler.html.
     const INDEX = [
-      // Helmets (sample anchors used in helmets.html)
+      // Helmets
       { name:"Crown of the Trickster", page:"helmets.html", id:"crown-of-the-trickster", img:"TM_LokiHelm_I.png", tags:["Helmets"], notes:"Helmet / head item" },
-      { name:"Neck Collar", page:"helmets.html", id:"neck-collar", img:"TM_HelmOfMight_E.png", tags:["Helmets"], notes:"Mask/neck (listed on wiki under masks sometimes)" },
+      { name:"Neck Collar", page:"helmets.html", id:"neck-collar", img:"TM_HelmOfMight_E.png", tags:["Helmets"], notes:"Neck/face slot item" },
 
       // Backpacks
       { name:"Raid Backpack", page:"backpacks.html", id:"raid-backpack", img:"TM_BackpackRaid_1_E.png", tags:["Backpacks","Tier 3"], notes:"152 slots total" },
@@ -132,24 +142,19 @@
 
       // Consumables
       { name:"Water Bottle", page:"consumables.html", id:"water-bottle", img:"TM_WaterBottle_B_E.png", tags:["Consumables","Beverages"], notes:"Refillable bottle" },
-      { name:"Medical Kit", page:"consumables.html", id:"medical-kit", img:"", tags:["Consumables","Medicines"], buy:"$1,000", sell:"$500" },
+      { name:"Medical Kit", page:"consumables.html", id:"medical-kit", img:"", tags:["Consumables","Medicines"], notes:"Healing item" },
 
       // Crafting
-      { name:"Workbench", page:"crafting.html", id:"workbench", tags:["Crafting","Station"], notes:"Craft in inventory" },
-      { name:"Anvil", page:"crafting.html", id:"anvil", tags:["Crafting","Station"] },
-      { name:"Distiller", page:"crafting.html", id:"distiller", tags:["Crafting","Production"] },
+      { name:"Workbench", page:"crafting.html", id:"workbench", img:"", tags:["Crafting","Station"], notes:"Craft in inventory" },
+      { name:"Anvil", page:"crafting.html", id:"anvil", img:"", tags:["Crafting","Station"] },
+      { name:"Distiller", page:"crafting.html", id:"distiller", img:"", tags:["Crafting","Production"] },
 
       // Collectibles
       { name:"Skull Neon", page:"collectibles.html", id:"skull-neon", img:"Skull neon.png", tags:["Collectibles","Neon Signs"], notes:"Red" },
-      { name:"QR Sign", page:"collectibles.html", id:"qr-sign", img:"Qr sign.png", tags:["Collectibles","Posters"] }
+      { name:"QR Sign", page:"collectibles.html", id:"qr-sign", img:"Qr sign.png", tags:["Collectibles","Posters"] },
 
-      // Character Modeler
-      <a class="cardlink" href="modeler.html">
-  <div class="cardlink-inner">
-    <div class="cardlink-title">Character Modeler</div>
-    <div class="cardlink-sub">Swap shirts, pants, helmets, masks, backpacks (FBX)</div>
-  </div>
-</a>
+      // ✅ Character Modeler (search hit)
+      { name:"Character Modeler", page:"modeler.html", id:"", img:"", tags:["Tools","FBX"], notes:"Modular character gear builder (local FBX)" }
     ];
 
     const qEl = document.getElementById("q");
@@ -176,10 +181,21 @@
       countBadge.textContent = `${hits.length} results`;
       resultsEl.innerHTML = "";
 
+      if(!q){
+        resultsEl.innerHTML = `
+          <div class="section">
+            <h2>Search the hub</h2>
+            <div class="small">Type a name to jump to the exact item on a page.</div>
+          </div>
+        `;
+        countBadge.textContent = "0 results";
+        return;
+      }
+
       hits.slice(0, 48).forEach(it=>{
         const a = document.createElement("a");
         a.className = "card";
-        a.href = `${it.page}#${it.id}`;
+        a.href = it.id ? `${it.page}#${it.id}` : `${it.page}`;
         a.style.textDecoration = "none";
         const img = it.img ? `<img alt="" src="${imgUrl(it.img)}" onerror="this.style.display='none'">` : "";
         a.innerHTML = `
@@ -194,16 +210,6 @@
         `;
         resultsEl.appendChild(a);
       });
-
-      if(!q){
-        resultsEl.innerHTML = `
-          <div class="section">
-            <h2>Search the hub</h2>
-            <div class="small">Type a name to jump to the exact item on a page.</div>
-          </div>
-        `;
-        countBadge.textContent = "0 results";
-      }
     }
 
     qEl.addEventListener("input", render);
