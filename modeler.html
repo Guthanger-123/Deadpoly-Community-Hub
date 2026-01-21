@@ -3,11 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DeadPoly Hub — Character Modeler</title>
+  <title>DeadPoly Hub — Customize Character</title>
   <link rel="stylesheet" href="modeler.css" />
 
-  <!-- Option A (simple): load Three.js from CDN.
-       If you want ZERO CDN, see notes at bottom and host /vendor/ locally. -->
+  <!-- Three.js via CDN (works on GitHub Pages) -->
   <script type="importmap">
   {
     "imports": {
@@ -17,146 +16,104 @@
   }
   </script>
 </head>
+
 <body>
+  <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-inner">
       <div class="top-left">
-        <a class="btn" href="wiki.html"><span>Back to Wiki</span><span class="small">→</span></a>
-        <div class="brand">Tools <span class="badge">Character Modeler</span></div>
+        <a class="btn" href="wiki.html">← Back to Wiki</a>
+        <div class="brand">
+          Tools <span class="badge">Customize Character</span>
+        </div>
       </div>
+
       <div class="top-right">
         <button class="btn" id="resetBtn" type="button">Reset</button>
         <button class="btn" id="screenshotBtn" type="button">Screenshot</button>
-      <div class="brand">Wiki <span class="badge">Character Modeler</span></div>
-        <a class="btn" href="wiki.html"><span>Hub</span><span class="small">→</span></a>
-<div class="hr"></div>
       </div>
     </div>
   </div>
 
   <div class="container">
-    <div class="shell">
-      <div class="panel side">
-        <h2>Character Slots</h2>
-        <div class="muted">Swap gear. Drag & drop FBX onto the viewer, or use the picker.</div>
-
-        <div class="slot">
-          <label>Base Character (FBX)</label>
-          <div class="row">
-            <input class="text" id="basePath" value="assets/models/SK_BaseModel.fbx" />
-            <button class="btn" id="loadBaseBtn" type="button">Load</button>
-          </div>
-          <div class="small muted">
-            Put your base FBX at <span class="code">assets/models/SK_BaseModel.fbx</span> (or change path).
-          </div>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="slotgrid">
-          <div class="slot">
-            <label>Shirt</label>
-            <div class="row">
-              <select id="shirtSel"></select>
-              <button class="btn small" data-clear="shirt" type="button">Clear</button>
-            </div>
-          </div>
-
-          <div class="slot">
-            <label>Pants</label>
-            <div class="row">
-              <select id="pantsSel"></select>
-              <button class="btn small" data-clear="pants" type="button">Clear</button>
-            </div>
-          </div>
-
-          <div class="slot">
-            <label>Shoes</label>
-            <div class="row">
-              <select id="shoesSel"></select>
-              <button class="btn small" data-clear="shoes" type="button">Clear</button>
-            </div>
-          </div>
-
-          <div class="slot">
-            <label>Helmet</label>
-            <div class="row">
-              <select id="helmetSel"></select>
-              <button class="btn small" data-clear="helmet" type="button">Clear</button>
-            </div>
-          </div>
-
-          <div class="slot">
-            <label>Mask</label>
-            <div class="row">
-              <select id="maskSel"></select>
-              <button class="btn small" data-clear="mask" type="button">Clear</button>
-            </div>
-          </div>
-
-          <div class="slot">
-            <label>Backpack</label>
-            <div class="row">
-              <select id="backpackSel"></select>
-              <button class="btn small" data-clear="backpack" type="button">Clear</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="slot">
-          <label>Load Local FBX Into Slot</label>
-          <div class="row">
-            <select id="localSlotSel">
-              <option value="shirt">Shirt</option>
-              <option value="pants">Pants</option>
-              <option value="shoes">Shoes</option>
-              <option value="helmet">Helmet</option>
-              <option value="mask">Mask</option>
-              <option value="backpack">Backpack</option>
-            </select>
-            <input id="fileInput" type="file" accept=".fbx" />
-          </div>
-          <div class="small muted">Tip: drag an FBX onto the viewer to load it into the selected slot.</div>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="slot">
-          <label>Viewer</label>
-          <div class="small muted">
-            RMB drag = orbit • MMB drag = pan • wheel = zoom
-          </div>
-          <div class="small muted">
-            If parts load but look “exploded” or offset: the part is not skinned to the same skeleton / bone names.
-          </div>
-        </div>
-      </div>
-
-      <div class="panel main">
-        <div class="hero">
+    <div class="layout">
+      <!-- LEFT: 3D VIEW -->
+      <div class="panel viewerPanel">
+        <div class="viewerHeader">
           <div>
-            <h1>Modular Character Builder</h1>
-            <div class="sub">Base + interchangeable slots. Uses skeleton re-binding so clothing follows the base rig.</div>
+            <div class="title">Customize Character</div>
+            <div class="sub">Drag to rotate • Wheel to zoom • Right-drag to pan</div>
           </div>
-          <div class="badge" id="statusBadge">Ready</div>
+          <div class="status" id="statusBadge">Loading…</div>
         </div>
 
-        <div id="dropHint" class="dropHint" aria-hidden="true">
-          Drop FBX to load into selected slot
+        <div class="viewerWrap">
+          <div id="viewer" class="viewer"></div>
+
+          <div id="overlay" class="overlay">
+            <div class="overlayBox">
+              <div class="overlayTitle">Loading model…</div>
+              <div class="overlaySub" id="overlayText">assets/models/SK_BaseModel.fbx</div>
+            </div>
+          </div>
+
+          <div id="errorBox" class="errorBox" style="display:none;">
+            <div class="errorTitle">Model failed to load</div>
+            <div class="errorText" id="errorText"></div>
+            <div class="errorHint">
+              Common causes:
+              <ul>
+                <li>Wrong path or filename case (GitHub Pages is case-sensitive)</li>
+                <li>FBX not actually in <span class="code">assets/models/</span></li>
+                <li>GitHub Pages not set to serve the branch/folder you’re editing</li>
+              </ul>
+            </div>
+          </div>
         </div>
 
-        <div id="viewer" class="viewer"></div>
+        <!-- Bottom “inventory-style” strip (visual only; items come from the same catalog) -->
+        <div class="inventoryBar" id="inventoryBar"></div>
+      </div>
 
-        <div class="section">
-          <h2>How it works</h2>
-          <div class="small muted">
-            Each modular part FBX should be a skinned mesh rigged to the same bone names as the base.
-            This app loads the base skeleton, then binds modular skinned meshes to that skeleton.
+      <!-- RIGHT: SLOT UI -->
+      <div class="panel slotsPanel">
+        <div class="slotsHeader">
+          <div class="slotsTitle">Loadout</div>
+          <div class="slotsSub">Click any slot to pick an item (FBX). Clear to remove.</div>
+        </div>
+
+        <div class="slotsGrid" id="slotsGrid">
+          <!-- filled by JS -->
+        </div>
+
+        <div class="legend">
+          <div class="legendTitle">Notes</div>
+          <div class="legendText">
+            Modular parts must be skinned to the same skeleton/bone names as the base model.
+            If a part “explodes” or offsets, it doesn’t match the rig.
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- PICKER MODAL -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modalInner">
+      <div class="modalHeader">
+        <div>
+          <div class="modalTitle" id="modalTitle">Select Item</div>
+          <div class="modalSub" id="modalSub">Choose a model for this slot</div>
+        </div>
+        <button class="btn" id="modalClose" type="button">Close</button>
+      </div>
+
+      <div class="modalTools">
+        <input class="search" id="modalSearch" placeholder="Search items..." />
+        <button class="btn" id="modalClear" type="button">Clear Slot</button>
+      </div>
+
+      <div class="modalGrid" id="modalGrid"></div>
     </div>
   </div>
 
