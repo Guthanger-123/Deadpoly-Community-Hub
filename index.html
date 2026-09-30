@@ -1,16 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-<script>
-  window.location.replace("https://deadpoly-survivor-wiki.guthanger123.workers.dev/");
-</script>
-
-<noscript>
-  <meta http-equiv="refresh" content="0;url=https://deadpoly-survivor-wiki.guthanger123.workers.dev/">
-</noscript>
-
-<meta charset="utf-8">
-<meta charset="utf-8">
 <title>DeadPoly Community Hub</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -118,6 +108,42 @@ body {
 </div>
 
 </body>
+
+  <!-- New Website Popup -->
+<div id="newSitePopup" class="site-popup">
+  <div class="site-popup-box">
+    <button class="site-popup-close" onclick="closeNewSitePopup()">×</button>
+
+    <h2>We've Moved!</h2>
+
+    <p>
+      The DeadPoly Community Hub has moved to a new and improved website.
+    </p>
+
+    <p>
+      Follow us to the new DeadPoly Survivor Wiki for the latest content,
+      maps, items, tips, and more!
+    </p>
+
+    <a
+      href="https://deadpoly-survivor-wiki.guthanger123.workers.dev/"
+      class="site-popup-button"
+    >
+      Visit the New Survivor Wiki →
+    </a>
+
+    <button class="site-popup-stay" onclick="closeNewSitePopup()">
+      Stay on the Old Website
+    </button>
+  </div>
+</div>
+
+<script>
+function closeNewSitePopup() {
+  document.getElementById("newSitePopup").style.display = "none";
+}
+</script>
+  
 </html>
 
 
