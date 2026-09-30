@@ -1,153 +1,343 @@
 <!doctype html>
 <html lang="en">
 <head>
-<title>DeadPoly Community Hub</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <title>DeadPoly Community Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-GD7LNZHQMM"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GD7LNZHQMM"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
 
-  gtag('config', 'G-GD7LNZHQMM');
-</script>
+    function gtag() {
+      dataLayer.push(arguments);
+    }
 
-<style>
-body {
-  margin:0;
-  height:100vh;
-  background:#0e0e0e;
-  color:white;
-  font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-}
+    gtag('js', new Date());
+    gtag('config', 'G-GD7LNZHQMM');
+  </script>
 
-.logo {
-  width:420px;
-  max-width:80%;
-  margin-bottom:40px;
-}
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #0e0e0e;
+      color: white;
+      font-family: system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
 
-.menu {
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:30px 60px;
-  align-items:center;
-}
+    .logo {
+      width: 420px;
+      max-width: 80%;
+      margin-bottom: 40px;
+    }
 
-.menu a {
-  text-decoration:none;
-  color:white;
-  font-size:22px;
-  border:2px solid #555;
-  padding:14px 26px;
-  border-radius:10px;
-  text-align:center;
-  transition:background .15s ease, transform .15s ease;
-}
+    .menu {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px 60px;
+      align-items: center;
+    }
 
-.menu a:hover {
-  background:#222;
-  transform:none; /* NO bouncing */
-}
+    .menu a {
+      text-decoration: none;
+      color: white;
+      font-size: 22px;
+      border: 2px solid #555;
+      padding: 14px 26px;
+      border-radius: 10px;
+      text-align: center;
+      transition: background .15s ease;
+    }
 
-.center {
-  grid-column:1 / -1;
-}
+    .menu a:hover {
+      background: #222;
+    }
 
-.footer {
-  position:fixed;
-  bottom:12px;
-  width:100%;
-  display:flex;
-  justify-content:space-between;
-  padding:0 16px;
-}
+    .center {
+      grid-column: 1 / -1;
+    }
 
-.socials img {
-  width:26px;
-  margin-left:10px;
-  opacity:.8;
-}
+    .footer {
+      position: fixed;
+      bottom: 12px;
+      left: 0;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+    }
 
-.socials img:hover { opacity:1; }
+    .socials {
+      display: flex;
+      align-items: center;
+    }
 
-.credits {
-  font-size:12px;
-  opacity:.6;
-}
-</style>
+    .socials img {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      margin-left: 10px;
+      opacity: .8;
+    }
+
+    .socials img:hover {
+      opacity: 1;
+    }
+
+    .credits {
+      font-size: 12px;
+      opacity: .6;
+    }
+
+    /* =========================
+       NEW WEBSITE POPUP
+       ========================= */
+
+    .site-popup {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.82);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .site-popup-box {
+      position: relative;
+      width: 500px;
+      max-width: 90%;
+      box-sizing: border-box;
+      background: #151515;
+      border: 2px solid #555;
+      border-radius: 14px;
+      padding: 35px;
+      text-align: center;
+      box-shadow: 0 10px 50px rgba(0, 0, 0, 0.7);
+    }
+
+    .site-popup-box h2 {
+      margin: 0 0 15px;
+      font-size: 30px;
+      color: white;
+    }
+
+    .site-popup-box p {
+      color: #ccc;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+
+    .site-popup-button {
+      display: block;
+      margin-top: 25px;
+      padding: 15px 20px;
+      background: white;
+      color: #111;
+      text-decoration: none;
+      font-weight: 700;
+      border-radius: 8px;
+      transition: background .15s ease;
+    }
+
+    .site-popup-button:hover {
+      background: #ddd;
+    }
+
+    .site-popup-stay {
+      margin-top: 15px;
+      padding: 8px 12px;
+      background: transparent;
+      border: 0;
+      color: #aaa;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .site-popup-stay:hover {
+      color: white;
+    }
+
+    .site-popup-close {
+      position: absolute;
+      right: 15px;
+      top: 8px;
+      background: none;
+      border: 0;
+      color: #aaa;
+      font-size: 30px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .site-popup-close:hover {
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      .menu {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        width: 85%;
+      }
+
+      .center {
+        grid-column: auto;
+      }
+
+      .site-popup-box {
+        padding: 30px 20px;
+      }
+
+      .site-popup-box h2 {
+        font-size: 26px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<img src="assets/deadpoly_box-hor-wht.png" class="logo" alt="DeadPoly">
+  <!-- Main Site -->
+  <img
+    src="assets/deadpoly_box-hor-wht.png"
+    class="logo"
+    alt="DeadPoly"
+  >
 
-<div class="menu">
-  <a href="maps.html">Maps</a>
-  <a href="tips.html">Tips & Tricks</a>
+  <div class="menu">
+    <a href="maps.html">Maps</a>
+    <a href="tips.html">Tips &amp; Tricks</a>
 
-  <a href="wiki.html" class="center">Wiki [Work In Progress]</a>
-</div>
-
-<div class="footer">
-  <div class="credits">Credits</div>
-
-  <div class="socials">
-    <a href="https://discord.com/invite/DeadPoly" target="_blank"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmzShsYG0UebR3XWCgBA1eM6g0EvSmif5kKQ&s"></a>
-    <a href="https://www.youtube.com/@PlayDeadPoly" target="_blank"><img src="https://toppng.com/uploads/preview/youtube-logo-11609383902z56yosfap9.png"></a>
-    <a href="https://store.steampowered.com/app/1621070/DeadPoly/" target="_blank"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi_HTqOkI6MNfXfytgF2fTYecvkBQs3ZkI2w&s"></a>
-    <a href="https://store.epicgames.com/en-US/p/deadpoly-bce932" target="_blank"><img src="https://cdn2.unrealengine.com/Unreal+Engine%2Feg-logo-filled-1255x1272-0eb9d144a0f981d1cbaaa1eb957de7a3207b31bb.png"></a>
-    <a href="https://deadpoly.com/" target="_blank"><img src="assets/deadpoly_box_full-wht.png"></a>
+    <a href="wiki.html" class="center">
+      Wiki [Work In Progress]
+    </a>
   </div>
-</div>
+
+  <div class="footer">
+    <div class="credits">Credits</div>
+
+    <div class="socials">
+
+      <a
+        href="https://discord.com/invite/DeadPoly"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmzShsYG0UebR3XWCgBA1eM6g0EvSmif5kKQ&s"
+          alt="Discord"
+        >
+      </a>
+
+      <a
+        href="https://www.youtube.com/@PlayDeadPoly"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          src="https://toppng.com/uploads/preview/youtube-logo-11609383902z56yosfap9.png"
+          alt="YouTube"
+        >
+      </a>
+
+      <a
+        href="https://store.steampowered.com/app/1621070/DeadPoly/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi_HTqOkI6MNfXfytgF2fTYecvkBQs3ZkI2w&s"
+          alt="Steam"
+        >
+      </a>
+
+      <a
+        href="https://store.epicgames.com/en-US/p/deadpoly-bce932"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          src="https://cdn2.unrealengine.com/Unreal+Engine%2Feg-logo-filled-1255x1272-0eb9d144a0f981d1cbaaa1eb957de7a3207b31bb.png"
+          alt="Epic Games"
+        >
+      </a>
+
+      <a
+        href="https://deadpoly.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          src="assets/deadpoly_box_full-wht.png"
+          alt="DeadPoly"
+        >
+      </a>
+
+    </div>
+  </div>
+
+  <!-- =========================
+       NEW SURVIVOR WIKI POPUP
+       ========================= -->
+
+  <div id="newSitePopup" class="site-popup">
+
+    <div class="site-popup-box">
+
+      <button
+        class="site-popup-close"
+        type="button"
+        onclick="closeNewSitePopup()"
+        aria-label="Close"
+      >
+        &times;
+      </button>
+
+      <h2>We've Moved!</h2>
+
+      <p>
+        The DeadPoly Community Hub has moved to a new and improved website.
+      </p>
+
+      <p>
+        Follow us to the new DeadPoly Survivor Wiki for the latest
+        content, maps, items, tips, and more!
+      </p>
+
+      <a
+        href="https://deadpoly-survivor-wiki.guthanger123.workers.dev/"
+        class="site-popup-button"
+      >
+        Visit the New Survivor Wiki &rarr;
+      </a>
+
+      <button
+        class="site-popup-stay"
+        type="button"
+        onclick="closeNewSitePopup()"
+      >
+        Stay on the Old Website
+      </button>
+
+    </div>
+  </div>
+
+  <script>
+    function closeNewSitePopup() {
+      document.getElementById('newSitePopup').style.display = 'none';
+    }
+  </script>
 
 </body>
-
-  <!-- New Website Popup -->
-<div id="newSitePopup" class="site-popup">
-  <div class="site-popup-box">
-    <button class="site-popup-close" onclick="closeNewSitePopup()">×</button>
-
-    <h2>We've Moved!</h2>
-
-    <p>
-      The DeadPoly Community Hub has moved to a new and improved website.
-    </p>
-
-    <p>
-      Follow us to the new DeadPoly Survivor Wiki for the latest content,
-      maps, items, tips, and more!
-    </p>
-
-    <a
-      href="https://deadpoly-survivor-wiki.guthanger123.workers.dev/"
-      class="site-popup-button"
-    >
-      Visit the New Survivor Wiki →
-    </a>
-
-    <button class="site-popup-stay" onclick="closeNewSitePopup()">
-      Stay on the Old Website
-    </button>
-  </div>
-</div>
-
-<script>
-function closeNewSitePopup() {
-  document.getElementById("newSitePopup").style.display = "none";
-}
-</script>
-  
 </html>
-
-
-
-
-
-
